@@ -10,28 +10,31 @@
       font-family: Arial, sans-serif;
       background: #f7f7f7;
       margin: 0;
-      padding: 16px;
+      padding: 0;
     }
     .page {
       display: none;
       max-width: 480px;
       margin: auto;
       background: #fff;
-      padding: 16px;
-      border-radius: 8px;
+      min-height: 100vh;
     }
     .page.active {
       display: block;
     }
+    .content {
+      padding: 16px;
+    }
+    .topbar {
+      padding: 12px 16px;
+      border-bottom: 1px solid #ddd;
+      cursor: pointer;
+      font-size: 16px;
+      background: #fff;
+    }
     h2 {
       text-align: center;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 12px;
-      font-size: 16px;
-      cursor: pointer;
+      margin-top: 0;
     }
     .restaurant {
       padding: 12px;
@@ -41,6 +44,13 @@
     }
     .open { color: green; font-weight: bold; }
     .closed { color: red; font-weight: bold; }
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 12px;
+      font-size: 16px;
+      cursor: pointer;
+    }
     input, textarea {
       width: 100%;
       padding: 10px;
@@ -48,69 +58,75 @@
       font-size: 16px;
       box-sizing: border-box;
     }
-    .back {
-      background: #ddd;
-    }
   </style>
 </head>
 <body>
 
 <!-- PAGE 1: RESTAURANTS -->
 <div id="page-restaurants" class="page active">
-  <h2>Select Restaurant</h2>
+  <div class="content">
+    <h2>Select Restaurant</h2>
 
-  <div class="restaurant" onclick="openMenu('Hotel Anand')">
-    Hotel Anand – <span class="open">Open</span>
-  </div>
+    <div class="restaurant" onclick="openMenu('Hotel Anand')">
+      Hotel Anand – <span class="open">Open</span>
+    </div>
 
-  <div class="restaurant" onclick="openMenu('Shree Krishna Dhaba')">
-    Shree Krishna Dhaba – <span class="open">Open</span>
-  </div>
+    <div class="restaurant" onclick="openMenu('Shree Krishna Dhaba')">
+      Shree Krishna Dhaba – <span class="open">Open</span>
+    </div>
 
-  <div class="restaurant">
-    FoodXpress Kitchen – <span class="closed">Closed</span>
+    <div class="restaurant">
+      FoodXpress Kitchen – <span class="closed">Closed</span>
+    </div>
   </div>
 </div>
 
 <!-- PAGE 2: MENU -->
 <div id="page-menu" class="page">
-  <h2 id="menu-title"></h2>
+  <div class="topbar" onclick="goBack()">← Back</div>
 
-  <p><strong>Veg</strong></p>
-  <ul>
-    <li>Paneer Butter Masala</li>
-    <li>Veg Kolhapuri</li>
-  </ul>
+  <div class="content">
+    <h2 id="menu-title"></h2>
 
-  <p><strong>Non-Veg</strong></p>
-  <ul>
-    <li>Chicken Curry</li>
-    <li>Chicken Biryani</li>
-  </ul>
+    <p><strong>Veg</strong></p>
+    <ul>
+      <li>Paneer Butter Masala</li>
+      <li>Veg Kolhapuri</li>
+    </ul>
 
-  <button onclick="goToDetails()">Continue</button>
-  <button class="back" onclick="goBack()">Back to restaurants</button>
+    <p><strong>Non-Veg</strong></p>
+    <ul>
+      <li>Chicken Curry</li>
+      <li>Chicken Biryani</li>
+    </ul>
+
+    <button onclick="goToDetails()">Continue</button>
+  </div>
 </div>
 
 <!-- PAGE 3: CUSTOMER DETAILS -->
 <div id="page-details" class="page">
-  <h2>Customer Details</h2>
+  <div class="topbar" onclick="goBack()">← Back</div>
 
-  <label>Name</label>
-  <input type="text" placeholder="Your name">
+  <div class="content">
+    <h2>Customer Details</h2>
 
-  <label>Phone</label>
-  <input type="tel" placeholder="10 digit mobile number">
+    <label>Name</label>
+    <input type="text" placeholder="Your name">
 
-  <label>Address</label>
-  <textarea placeholder="Delivery address"></textarea>
+    <label>Phone</label>
+    <input type="tel" placeholder="10 digit mobile number">
 
-  <button onclick="placeOrder()">Place Order</button>
-  <button class="back" onclick="goBack()">Back</button>
+    <label>Address</label>
+    <textarea placeholder="Delivery address"></textarea>
+
+    <button onclick="placeOrder()">Place Order</button>
+  </div>
 </div>
 
 <script>
   let selectedRestaurant = "";
+  let previousPage = "page-restaurants";
 
   function showPage(id) {
     document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
@@ -120,14 +136,16 @@
   function openMenu(name) {
     selectedRestaurant = name;
     document.getElementById("menu-title").innerText = name + " Menu";
+    previousPage = "page-restaurants";
     showPage("page-menu");
   }
 
   function goBack() {
-    showPage("page-restaurants");
+    showPage(previousPage);
   }
 
   function goToDetails() {
+    previousPage = "page-menu";
     showPage("page-details");
   }
 
