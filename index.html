@@ -1,40 +1,34 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <title>FoodXpress Order</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <style>
-:root {
-  --brand:#ff9933;
-  --bg:#f7f7f7;
-}
-*{box-sizing:border-box;}
-body{margin:0;font-family:Arial,sans-serif;background:var(--bg);}
-.page{display:none;min-height:100vh;background:#fff;}
-.page.active{display:block;}
-.header{padding:10px 14px;border-bottom:1px solid #ddd;}
-.header img{height:40px;}
-.topbar{padding:12px 14px;border-bottom:1px solid #ddd;cursor:pointer;}
-.content{padding:14px;padding-bottom:90px;}
-h2{margin-top:0;text-align:center;}
-.search{width:100%;padding:10px;margin:10px 0;}
-.restaurant{display:flex;gap:12px;padding:12px;border:1px solid #ddd;margin-bottom:10px;cursor:pointer;}
-.restaurant img{width:56px;height:56px;border-radius:6px;}
-.open{color:green;font-weight:bold;}
-.closed{color:red;font-weight:bold;}
-.category{font-weight:bold;font-size:18px;margin-top:16px;}
-.item,.cart-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #eee;}
-.qty{display:flex;align-items:center;gap:8px;}
-.qty button{width:28px;height:28px;border:none;background:var(--brand);color:#fff;font-size:18px;}
-.cart-bar{position:fixed;bottom:0;left:0;right:0;background:var(--brand);color:#fff;padding:12px 14px;display:none;justify-content:space-between;}
-.bill{margin-top:16px;}
-.bill div{display:flex;justify-content:space-between;margin-bottom:6px;}
-.bill .total{font-weight:bold;font-size:18px;}
-button.primary{width:100%;padding:12px;background:var(--brand);color:#fff;border:none;font-size:16px;margin-top:16px;}
-input,textarea{width:100%;padding:10px;margin-top:6px;font-size:16px;}
-.small{font-size:12px;color:#666;}
+:root{--brand:#ff9933}
+body{margin:0;font-family:Arial;background:#f7f7f7}
+.page{display:none;min-height:100vh;background:#fff}
+.page.active{display:block}
+.header{padding:10px;border-bottom:1px solid #ddd}
+.header img{height:40px}
+.topbar{padding:12px;border-bottom:1px solid #ddd;cursor:pointer}
+.content{padding:14px;padding-bottom:90px}
+h2{text-align:center;margin-top:0}
+.search{width:100%;padding:10px;margin:10px 0}
+.restaurant{display:flex;gap:12px;padding:12px;border:1px solid #ddd;margin-bottom:10px;cursor:pointer}
+.restaurant img{width:56px;height:56px;border-radius:6px}
+.open{color:green;font-weight:bold}
+.closed{color:red;font-weight:bold}
+.small{font-size:12px;color:#666}
+.category{font-weight:bold;font-size:18px;margin-top:16px}
+.item,.cart-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #eee}
+.qty{display:flex;align-items:center;gap:8px}
+.qty button{width:28px;height:28px;border:none;background:var(--brand);color:#fff;font-size:18px}
+.cart-bar{position:fixed;bottom:0;left:0;right:0;background:var(--brand);color:#fff;padding:12px;display:none;justify-content:space-between}
+.bill div{display:flex;justify-content:space-between;margin-bottom:6px}
+.bill .total{font-weight:bold;font-size:18px}
+button.primary{width:100%;padding:12px;background:var(--brand);color:#fff;border:none;font-size:16px;margin-top:16px}
+input,textarea{width:100%;padding:10px;margin-top:6px;font-size:16px}
 </style>
 </head>
 <body>
@@ -66,13 +60,11 @@ input,textarea{width:100%;padding:10px;margin-top:6px;font-size:16px;}
   <div class="content">
     <h2 id="cartRestaurant"></h2>
     <div id="cartItems"></div>
-
     <div class="bill">
       <div><span>Item Total</span><span id="itemTotal">₹0</span></div>
-      <div><span>Delivery Charge</span><span id="deliveryCharge">₹40</span></div>
+      <div><span>Delivery Charge</span><span>₹40</span></div>
       <div class="total"><span>Total Payable</span><span id="grandTotal">₹0</span></div>
     </div>
-
     <button class="primary" onclick="goToAddress()">Continue → Address</button>
   </div>
 </div>
@@ -83,130 +75,116 @@ input,textarea{width:100%;padding:10px;margin-top:6px;font-size:16px;}
   <div class="header"><img src="company-logo.png"></div>
   <div class="content">
     <h2>Delivery Details</h2>
-
-    <label>Name</label>
-    <input id="custName">
-
-    <label>Phone</label>
-    <input id="custPhone">
-
-    <label>Address</label>
-    <textarea id="custAddress"></textarea>
-
-    <button class="primary" onclick="getLocation()">Use my current location</button>
-    <p id="locStatus" class="small"></p>
-
+    <label>Name</label><input id="custName">
+    <label>Phone</label><input id="custPhone">
+    <label>Address</label><textarea id="custAddress"></textarea>
     <button class="primary" onclick="placeOrder()">Place Order</button>
   </div>
 </div>
 
-<!-- CART BAR -->
 <div id="cartBar" class="cart-bar" onclick="openCart()">
-  <span id="cartInfo"></span>
-  <span>Checkout →</span>
+  <span id="cartInfo"></span><span>Checkout →</span>
 </div>
 
 <script>
 const restaurants=[
-{name:"Hotel Anand",open:true},
-{name:"Shree Krishna Dhaba",open:true},
-{name:"FoodXpress Kitchen",open:false}
+{name:"Hotel Anand",open:true,hrs:"9:00–14:00, 18:00–23:00"},
+{name:"Shree Krishna Dhaba",open:true,hrs:"10:00–15:00, 19:00–23:30"},
+{name:"FoodXpress Kitchen",open:false,hrs:"11:00–16:00, 18:00–22:00"}
 ];
-const menu={
-Veg:[{name:"Paneer Butter Masala",price:180},{name:"Veg Kolhapuri",price:160}],
-"Non-Veg":[{name:"Chicken Curry",price:200},{name:"Chicken Biryani",price:220}]
+
+const menus={
+"Hotel Anand":{
+Veg:[{n:"Paneer Butter Masala",p:180}],
+"Non-Veg":[{n:"Chicken Biryani",p:220}]
+},
+"Shree Krishna Dhaba":{
+Veg:[{n:"Veg Kolhapuri",p:160}],
+"Non-Veg":[{n:"Chicken Curry",p:200}]
+}
 };
-let cart={},stack=["page-restaurants"],currentRestaurant="",lat="",lng="",mapLink="";
-const deliveryCharge=40;
 
-function show(p){document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));document.getElementById(p).classList.add("active");}
-function nav(p){stack.push(p);show(p);}
-function goBack(){if(stack.length>1){stack.pop();show(stack[stack.length-1]);}}
+let cart={},currentRestaurant="",stack=["page-restaurants"];
 
-function shuffle(a){return a.sort(()=>Math.random()-0.5);}
+function show(p){document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));document.getElementById(p).classList.add("active")}
+function nav(p){stack.push(p);show(p)}
+function goBack(){if(stack.length>1){stack.pop();show(stack[stack.length-1])}}
+
 function renderRestaurants(){
 const l=document.getElementById("restaurantList");l.innerHTML="";
-[...shuffle(restaurants.filter(r=>r.open)),...restaurants.filter(r=>!r.open)]
-.forEach(r=>{
+restaurants.forEach(r=>{
 const d=document.createElement("div");
 d.className="restaurant";
-d.innerHTML=`<img src="rest-logo.png"><div><div>${r.name}</div><div class="${r.open?'open':'closed'}">${r.open?'Open':'Closed'}</div></div>`;
+d.innerHTML=`<img src="rest-logo.png"><div><div>${r.name}</div>
+<div class="${r.open?'open':'closed'}">${r.open?'Open':'Closed'}</div>
+${!r.open?`<div class="small">Hours: ${r.hrs}</div>`:""}</div>`;
 if(r.open)d.onclick=()=>openMenu(r.name);
 l.appendChild(d);
 });
 }
+
 function filterRestaurants(q){
 q=q.toLowerCase();
 document.querySelectorAll(".restaurant").forEach(r=>r.style.display=r.innerText.toLowerCase().includes(q)?"":"none");
 }
 
 function openMenu(name){
+cart={};updateBar();
 currentRestaurant=name;
 document.getElementById("menuTitle").innerText=name;
 renderMenu();
 nav("page-menu");
 }
+
 function renderMenu(){
 const b=document.getElementById("menuItems");b.innerHTML="";
-for(const c in menu){
+const m=menus[currentRestaurant];
+for(const c in m){
 b.innerHTML+=`<div class="category">${c}</div>`;
-menu[c].forEach(i=>{
-const q=cart[i.name]||0;
-b.innerHTML+=`<div class="item"><div>${i.name}<div class="small">₹${i.price}</div></div>
-<div class="qty"><button onclick="upd('${i.name}',-1)">−</button><span>${q}</span><button onclick="upd('${i.name}',1)">+</button></div></div>`;
+m[c].forEach(i=>{
+const q=cart[i.n]||0;
+b.innerHTML+=`<div class="item"><div>${i.n}<div class="small">₹${i.p}</div></div>
+<div class="qty"><button onclick="upd('${i.n}',${i.p},-1)">−</button><span>${q}</span>
+<button onclick="upd('${i.n}',${i.p},1)">+</button></div></div>`;
 });
 }
 }
-function upd(i,d){cart[i]=(cart[i]||0)+d;if(cart[i]<=0)delete cart[i];renderMenu();updateBar();}
+
+function upd(n,p,d){
+cart[n]=(cart[n]||0)+d;
+if(cart[n]<=0)delete cart[n];
+renderMenu();updateBar();
+}
+
 function updateBar(){
 let it=0,t=0;
-for(const i in cart){
-const p=Object.values(menu).flat().find(x=>x.name===i).price;
-it+=cart[i];t+=cart[i]*p;
-}
+for(const i in cart){it+=cart[i];t+=cart[i]*getPrice(i)}
 const bar=document.getElementById("cartBar");
-if(it===0)bar.style.display="none";
-else{bar.style.display="flex";document.getElementById("cartInfo").innerText=`${it} items | ₹${t}`;}
+if(it===0||stack[stack.length-1]==="page-restaurants")bar.style.display="none";
+else{bar.style.display="flex";cartInfo.innerText=`${it} items | ₹${t}`}
 }
 
-function openCart(){
-renderCart();
-nav("page-cart");
+function getPrice(n){
+return Object.values(menus[currentRestaurant]).flat().find(x=>x.n===n).p;
 }
+
+function openCart(){renderCart();nav("page-cart")}
+
 function renderCart(){
-document.getElementById("cartRestaurant").innerText=currentRestaurant;
-const b=document.getElementById("cartItems");b.innerHTML="";
+cartRestaurant.innerText=currentRestaurant;
+cartItems.innerHTML="";
 let t=0;
 for(const i in cart){
-const p=Object.values(menu).flat().find(x=>x.name===i).price;
-t+=cart[i]*p;
-b.innerHTML+=`<div class="cart-item"><div>${i}<div class="small">₹${p}</div></div>
-<div class="qty"><button onclick="upd('${i}',-1)">−</button><span>${cart[i]}</span><button onclick="upd('${i}',1)">+</button></div></div>`;
+const p=getPrice(i);t+=cart[i]*p;
+cartItems.innerHTML+=`<div class="cart-item"><div>${i}<div class="small">₹${p}</div></div>
+<div class="qty"><button onclick="upd('${i}',${p},-1)">−</button><span>${cart[i]}</span>
+<button onclick="upd('${i}',${p},1)">+</button></div></div>`;
 }
-document.getElementById("itemTotal").innerText=`₹${t}`;
-document.getElementById("grandTotal").innerText=`₹${t+deliveryCharge}`;
-}
-
-function goToAddress(){nav("page-address");}
-
-function getLocation(){
-if(!navigator.geolocation){document.getElementById("locStatus").innerText="Location not supported";return;}
-navigator.geolocation.getCurrentPosition(p=>{
-lat=p.coords.latitude;lng=p.coords.longitude;
-mapLink=`https://www.google.com/maps?q=${lat},${lng}`;
-document.getElementById("locStatus").innerText="Location captured ✓";
-},()=>document.getElementById("locStatus").innerText="Location permission denied");
+itemTotal.innerText=`₹${t}`;grandTotal.innerText=`₹${t+40}`;
 }
 
-function placeOrder(){
-alert(
-"Order Ready\n"+
-"Restaurant: "+currentRestaurant+"\n"+
-"Items: "+JSON.stringify(cart)+"\n"+
-"Address: "+custAddress.value+"\n"+
-"Map: "+mapLink
-);
-}
+function goToAddress(){nav("page-address")}
+function placeOrder(){alert("Order ready from "+currentRestaurant)}
 
 renderRestaurants();
 </script>
