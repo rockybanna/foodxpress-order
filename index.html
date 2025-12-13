@@ -126,31 +126,41 @@
 
 <script>
   let selectedRestaurant = "";
-  let previousPage = "page-restaurants";
+  let pageStack = ["page-restaurants"];
 
   function showPage(id) {
     document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
     document.getElementById(id).classList.add("active");
   }
 
-  function openMenu(name) {
-    selectedRestaurant = name;
-    document.getElementById("menu-title").innerText = name + " Menu";
-    previousPage = "page-restaurants";
-    showPage("page-menu");
+  function navigateTo(id) {
+    pageStack.push(id);
+    showPage(id);
   }
 
   function goBack() {
-    showPage(previousPage);
+    if (pageStack.length > 1) {
+      pageStack.pop();
+      const previous = pageStack[pageStack.length - 1];
+      showPage(previous);
+    }
+  }
+
+  function openMenu(name) {
+    selectedRestaurant = name;
+    document.getElementById("menu-title").innerText = name + " Menu";
+    navigateTo("page-menu");
   }
 
   function goToDetails() {
-    previousPage = "page-menu";
-    showPage("page-details");
+    navigateTo("page-details");
   }
 
   function placeOrder() {
-    alert("Order flow confirmed!\nRestaurant: " + selectedRestaurant);
+    alert(
+      "Order flow confirmed!\n" +
+      "Restaurant: " + selectedRestaurant
+    );
   }
 </script>
 
