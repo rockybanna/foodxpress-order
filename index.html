@@ -25,11 +25,9 @@
     .page { display: none; min-height: 100vh; background: #fff; }
     .page.active { display: block; }
 
-    /* HEADER */
     .header {
       display: flex;
       align-items: center;
-      gap: 10px;
       padding: 10px 14px;
       border-bottom: 1px solid #ddd;
       background: #fff;
@@ -52,7 +50,6 @@
 
     h2 { margin-top: 0; text-align: center; }
 
-    /* SEARCH */
     .search {
       width: 100%;
       padding: 10px;
@@ -60,7 +57,7 @@
       font-size: 16px;
     }
 
-    /* RESTAURANT LIST */
+    /* RESTAURANTS */
     .restaurant {
       display: flex;
       align-items: center;
@@ -130,6 +127,22 @@
       font-size: 16px;
       cursor: pointer;
     }
+
+    /* CART PAGE */
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 8px;
+    }
+
+    .total {
+      font-weight: bold;
+      font-size: 18px;
+      text-align: right;
+      margin-top: 16px;
+    }
   </style>
 </head>
 <body>
@@ -150,25 +163,35 @@
 <!-- PAGE 2: MENU -->
 <div id="page-menu" class="page">
   <div class="topbar" onclick="goBack()">← Back</div>
-
   <div class="header">
     <img src="company-logo.png" alt="FoodXpress" />
   </div>
-
   <div class="content">
     <h2 id="menuTitle"></h2>
     <div id="menuItems"></div>
   </div>
 </div>
 
+<!-- PAGE 3: CART -->
+<div id="page-cart" class="page">
+  <div class="topbar" onclick="goBack()">← Back</div>
+  <div class="header">
+    <img src="company-logo.png" alt="FoodXpress" />
+  </div>
+  <div class="content">
+    <h2>Your Cart</h2>
+    <div id="cartItems"></div>
+    <div id="cartTotal" class="total"></div>
+  </div>
+</div>
+
 <!-- CART BAR -->
-<div id="cartBar" class="cart-bar" onclick="alert('Cart & checkout later')">
+<div id="cartBar" class="cart-bar" onclick="openCart()">
   <span id="cartInfo"></span>
-  <span>Continue →</span>
+  <span>View Cart →</span>
 </div>
 
 <script>
-  /* DATA (dummy for UX) */
   const restaurants = [
     { name: "Hotel Anand", open: true },
     { name: "Shree Krishna Dhaba", open: true },
@@ -186,9 +209,8 @@
     ]
   };
 
-  let pageStack = ["page-restaurants"];
   let cart = {};
-  let currentRestaurant = "";
+  let pageStack = ["page-restaurants"];
 
   function showPage(id) {
     document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
@@ -207,7 +229,6 @@
     }
   }
 
-  /* RESTAURANTS */
   function shuffle(arr) {
     return arr.sort(() => Math.random() - 0.5);
   }
@@ -215,22 +236,20 @@
   function renderRestaurants() {
     const list = document.getElementById("restaurantList");
     list.innerHTML = "";
-
     const open = shuffle(restaurants.filter(r => r.open));
     const closed = restaurants.filter(r => !r.open);
 
     [...open, ...closed].forEach(r => {
-      const div = document.createElement("div");
-      div.className = "restaurant";
-      div.innerHTML = `
+      const d = document.createElement("div");
+      d.className = "restaurant";
+      d.innerHTML = `
         <img src="rest-logo.png">
         <div>
           <div>${r.name}</div>
           <div class="${r.open ? 'open' : 'closed'}">${r.open ? 'Open' : 'Closed'}</div>
-        </div>
-      `;
-      if (r.open) div.onclick = () => openMenu(r.name);
-      list.appendChild(div);
+        </div>`;
+      if (r.open) d.onclick = () => openMenu(r.name);
+      list.appendChild(d);
     });
   }
 
@@ -241,9 +260,7 @@
     });
   }
 
-  /* MENU */
   function openMenu(name) {
-    currentRestaurant = name;
     document.getElementById("menuTitle").innerText = name;
     renderMenu();
     navigate("page-menu");
@@ -252,7 +269,6 @@
   function renderMenu() {
     const box = document.getElementById("menuItems");
     box.innerHTML = "";
-
     for (const cat in menu) {
       const c = document.createElement("div");
       c.className = "category";
@@ -260,10 +276,9 @@
       box.appendChild(c);
 
       menu[cat].forEach(item => {
+        const qty = cart[item.name] || 0;
         const row = document.createElement("div");
         row.className = "item";
-        const qty = cart[item.name] || 0;
-
         row.innerHTML = `
           <div>
             <div class="item-name">${item.name}</div>
@@ -273,16 +288,14 @@
             <button onclick="updateCart('${item.name}', -1)">−</button>
             <span>${qty}</span>
             <button onclick="updateCart('${item.name}', 1)">+</button>
-          </div>
-        `;
+          </div>`;
         box.appendChild(row);
       });
     }
   }
 
-  /* CART */
-  function updateCart(item, delta) {
-    cart[item] = (cart[item] || 0) + delta;
+  function updateCart(item, d) {
+    cart[item] = (cart[item] || 0) + d;
     if (cart[item] <= 0) delete cart[item];
     renderMenu();
     updateCartBar();
@@ -291,17 +304,36 @@
   function updateCartBar() {
     let items = 0, total = 0;
     for (const i in cart) {
-      const price = Object.values(menu).flat().find(x => x.name === i).price;
+      const p = Object.values(menu).flat().find(x => x.name === i).price;
       items += cart[i];
-      total += cart[i] * price;
+      total += cart[i] * p;
     }
     const bar = document.getElementById("cartBar");
-    if (items === 0) {
-      bar.style.display = "none";
-    } else {
+    if (items === 0) bar.style.display = "none";
+    else {
       bar.style.display = "flex";
       document.getElementById("cartInfo").innerText = `${items} items | ₹${total}`;
     }
+  }
+
+  function openCart() {
+    renderCart();
+    navigate("page-cart");
+  }
+
+  function renderCart() {
+    const box = document.getElementById("cartItems");
+    box.innerHTML = "";
+    let total = 0;
+    for (const i in cart) {
+      const p = Object.values(menu).flat().find(x => x.name === i).price;
+      total += cart[i] * p;
+      const d = document.createElement("div");
+      d.className = "cart-item";
+      d.innerHTML = `<span>${i} × ${cart[i]}</span><span>₹${cart[i] * p}</span>`;
+      box.appendChild(d);
+    }
+    document.getElementById("cartTotal").innerText = `Total: ₹${total}`;
   }
 
   renderRestaurants();
