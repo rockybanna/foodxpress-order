@@ -4,41 +4,137 @@
   <meta charset="UTF-8">
   <title>FoodXpress Order</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      margin: 0;
+      padding: 16px;
+    }
+    .page {
+      display: none;
+      max-width: 480px;
+      margin: auto;
+      background: #fff;
+      padding: 16px;
+      border-radius: 8px;
+    }
+    .page.active {
+      display: block;
+    }
+    h2 {
+      text-align: center;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 12px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .restaurant {
+      padding: 12px;
+      border: 1px solid #ddd;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+    .open { color: green; font-weight: bold; }
+    .closed { color: red; font-weight: bold; }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    .back {
+      background: #ddd;
+    }
+  </style>
 </head>
 <body>
 
-    <h1>FoodXpress Order Page</h1>
-  <p>Please enter your details below.</p>
+<!-- PAGE 1: RESTAURANTS -->
+<div id="page-restaurants" class="page active">
+  <h2>Select Restaurant</h2>
 
-  <form>
-    <label>
-      Restaurant:<br>
-      <select>
-        <option value="">Select restaurant</option>
-        <option>Hotel Anand</option>
-        <option>Shree Krishna Dhaba</option>
-        <option>FoodXpress Kitchen</option>
-      </select>
-    </label>
-    <br><br>
+  <div class="restaurant" onclick="openMenu('Hotel Anand')">
+    Hotel Anand – <span class="open">Open</span>
+  </div>
 
-    <label>
-      Name:<br>
-      <input type="text" placeholder="Your name">
-    </label>
-    <br><br>
+  <div class="restaurant" onclick="openMenu('Shree Krishna Dhaba')">
+    Shree Krishna Dhaba – <span class="open">Open</span>
+  </div>
 
-    <label>
-      Phone:<br>
-      <input type="tel" placeholder="10 digit mobile number">
-    </label>
-    <br><br>
+  <div class="restaurant">
+    FoodXpress Kitchen – <span class="closed">Closed</span>
+  </div>
+</div>
 
-    <label>
-      Address:<br>
-      <textarea placeholder="Delivery address"></textarea>
-    </label>
-  </form>
+<!-- PAGE 2: MENU -->
+<div id="page-menu" class="page">
+  <h2 id="menu-title"></h2>
+
+  <p><strong>Veg</strong></p>
+  <ul>
+    <li>Paneer Butter Masala</li>
+    <li>Veg Kolhapuri</li>
+  </ul>
+
+  <p><strong>Non-Veg</strong></p>
+  <ul>
+    <li>Chicken Curry</li>
+    <li>Chicken Biryani</li>
+  </ul>
+
+  <button onclick="goToDetails()">Continue</button>
+  <button class="back" onclick="goBack()">Back to restaurants</button>
+</div>
+
+<!-- PAGE 3: CUSTOMER DETAILS -->
+<div id="page-details" class="page">
+  <h2>Customer Details</h2>
+
+  <label>Name</label>
+  <input type="text" placeholder="Your name">
+
+  <label>Phone</label>
+  <input type="tel" placeholder="10 digit mobile number">
+
+  <label>Address</label>
+  <textarea placeholder="Delivery address"></textarea>
+
+  <button onclick="placeOrder()">Place Order</button>
+  <button class="back" onclick="goBack()">Back</button>
+</div>
+
+<script>
+  let selectedRestaurant = "";
+
+  function showPage(id) {
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+  }
+
+  function openMenu(name) {
+    selectedRestaurant = name;
+    document.getElementById("menu-title").innerText = name + " Menu";
+    showPage("page-menu");
+  }
+
+  function goBack() {
+    showPage("page-restaurants");
+  }
+
+  function goToDetails() {
+    showPage("page-details");
+  }
+
+  function placeOrder() {
+    alert("Order flow confirmed!\nRestaurant: " + selectedRestaurant);
+  }
+</script>
 
 </body>
 </html>
