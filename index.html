@@ -1,343 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>FoodXpress Order</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8">
+<title>FoodXpress Order</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <style>
-    :root {
-      --brand: #ff9933; /* saffron */
-      --bg: #f7f7f7;
-      --text: #222;
-      --muted: #777;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-    }
-
-    .page { display: none; min-height: 100vh; background: #fff; }
-    .page.active { display: block; }
-
-    .header {
-      display: flex;
-      align-items: center;
-      padding: 10px 14px;
-      border-bottom: 1px solid #ddd;
-      background: #fff;
-    }
-
-    .header img {
-      height: 40px;
-      width: auto;
-    }
-
-    .topbar {
-      padding: 12px 14px;
-      border-bottom: 1px solid #ddd;
-      cursor: pointer;
-      font-size: 16px;
-      background: #fff;
-    }
-
-    .content { padding: 14px; padding-bottom: 90px; }
-
-    h2 { margin-top: 0; text-align: center; }
-
-    .search {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0 14px;
-      font-size: 16px;
-    }
-
-    /* RESTAURANTS */
-    .restaurant {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px;
-      border: 1px solid #ddd;
-      margin-bottom: 10px;
-      cursor: pointer;
-    }
-
-    .restaurant img {
-      width: 56px;
-      height: 56px;
-      object-fit: cover;
-      border-radius: 6px;
-    }
-
-    .open { color: green; font-weight: bold; }
-    .closed { color: red; font-weight: bold; }
-
-    /* MENU */
-    .category {
-      font-weight: bold;
-      font-size: 18px;
-      margin-top: 16px;
-    }
-
-    .item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 0;
-      border-bottom: 1px solid #eee;
-    }
-
-    .item-name { font-size: 16px; }
-    .item-price { color: var(--muted); font-size: 14px; }
-
-    .qty {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .qty button {
-      width: 28px;
-      height: 28px;
-      border: none;
-      background: var(--brand);
-      color: #fff;
-      font-size: 18px;
-      cursor: pointer;
-    }
-
-    /* CART BAR */
-    .cart-bar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: var(--brand);
-      color: #fff;
-      padding: 12px 14px;
-      display: none;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    /* CART PAGE */
-    .cart-item {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 10px;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 8px;
-    }
-
-    .total {
-      font-weight: bold;
-      font-size: 18px;
-      text-align: right;
-      margin-top: 16px;
-    }
-  </style>
+<style>
+:root {
+  --brand:#ff9933;
+  --bg:#f7f7f7;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:Arial,sans-serif;background:var(--bg);}
+.page{display:none;min-height:100vh;background:#fff;}
+.page.active{display:block;}
+.header{padding:10px 14px;border-bottom:1px solid #ddd;}
+.header img{height:40px;}
+.topbar{padding:12px 14px;border-bottom:1px solid #ddd;cursor:pointer;}
+.content{padding:14px;padding-bottom:90px;}
+h2{margin-top:0;text-align:center;}
+.search{width:100%;padding:10px;margin:10px 0;}
+.restaurant{display:flex;gap:12px;padding:12px;border:1px solid #ddd;margin-bottom:10px;cursor:pointer;}
+.restaurant img{width:56px;height:56px;border-radius:6px;}
+.open{color:green;font-weight:bold;}
+.closed{color:red;font-weight:bold;}
+.category{font-weight:bold;font-size:18px;margin-top:16px;}
+.item,.cart-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #eee;}
+.qty{display:flex;align-items:center;gap:8px;}
+.qty button{width:28px;height:28px;border:none;background:var(--brand);color:#fff;font-size:18px;}
+.cart-bar{position:fixed;bottom:0;left:0;right:0;background:var(--brand);color:#fff;padding:12px 14px;display:none;justify-content:space-between;}
+.bill{margin-top:16px;}
+.bill div{display:flex;justify-content:space-between;margin-bottom:6px;}
+.bill .total{font-weight:bold;font-size:18px;}
+button.primary{width:100%;padding:12px;background:var(--brand);color:#fff;border:none;font-size:16px;margin-top:16px;}
+input,textarea{width:100%;padding:10px;margin-top:6px;font-size:16px;}
+.small{font-size:12px;color:#666;}
+</style>
 </head>
 <body>
 
-<!-- PAGE 1: RESTAURANTS -->
+<!-- RESTAURANTS -->
 <div id="page-restaurants" class="page active">
-  <div class="header">
-    <img src="company-logo.png" alt="FoodXpress" />
-  </div>
-
+  <div class="header"><img src="company-logo.png"></div>
   <div class="content">
     <h2>Select Restaurant</h2>
-    <input class="search" placeholder="Search restaurant..." oninput="filterRestaurants(this.value)" />
+    <input class="search" placeholder="Search restaurant..." oninput="filterRestaurants(this.value)">
     <div id="restaurantList"></div>
   </div>
 </div>
 
-<!-- PAGE 2: MENU -->
+<!-- MENU -->
 <div id="page-menu" class="page">
   <div class="topbar" onclick="goBack()">← Back</div>
-  <div class="header">
-    <img src="company-logo.png" alt="FoodXpress" />
-  </div>
+  <div class="header"><img src="company-logo.png"></div>
   <div class="content">
     <h2 id="menuTitle"></h2>
     <div id="menuItems"></div>
   </div>
 </div>
 
-<!-- PAGE 3: CART -->
+<!-- CART -->
 <div id="page-cart" class="page">
   <div class="topbar" onclick="goBack()">← Back</div>
-  <div class="header">
-    <img src="company-logo.png" alt="FoodXpress" />
-  </div>
+  <div class="header"><img src="company-logo.png"></div>
   <div class="content">
-    <h2>Your Cart</h2>
+    <h2 id="cartRestaurant"></h2>
     <div id="cartItems"></div>
-    <div id="cartTotal" class="total"></div>
+
+    <div class="bill">
+      <div><span>Item Total</span><span id="itemTotal">₹0</span></div>
+      <div><span>Delivery Charge</span><span id="deliveryCharge">₹40</span></div>
+      <div class="total"><span>Total Payable</span><span id="grandTotal">₹0</span></div>
+    </div>
+
+    <button class="primary" onclick="goToAddress()">Continue → Address</button>
+  </div>
+</div>
+
+<!-- ADDRESS -->
+<div id="page-address" class="page">
+  <div class="topbar" onclick="goBack()">← Back</div>
+  <div class="header"><img src="company-logo.png"></div>
+  <div class="content">
+    <h2>Delivery Details</h2>
+
+    <label>Name</label>
+    <input id="custName">
+
+    <label>Phone</label>
+    <input id="custPhone">
+
+    <label>Address</label>
+    <textarea id="custAddress"></textarea>
+
+    <button class="primary" onclick="getLocation()">Use my current location</button>
+    <p id="locStatus" class="small"></p>
+
+    <button class="primary" onclick="placeOrder()">Place Order</button>
   </div>
 </div>
 
 <!-- CART BAR -->
 <div id="cartBar" class="cart-bar" onclick="openCart()">
   <span id="cartInfo"></span>
-  <span>View Cart →</span>
+  <span>Checkout →</span>
 </div>
 
 <script>
-  const restaurants = [
-    { name: "Hotel Anand", open: true },
-    { name: "Shree Krishna Dhaba", open: true },
-    { name: "FoodXpress Kitchen", open: false }
-  ];
+const restaurants=[
+{name:"Hotel Anand",open:true},
+{name:"Shree Krishna Dhaba",open:true},
+{name:"FoodXpress Kitchen",open:false}
+];
+const menu={
+Veg:[{name:"Paneer Butter Masala",price:180},{name:"Veg Kolhapuri",price:160}],
+"Non-Veg":[{name:"Chicken Curry",price:200},{name:"Chicken Biryani",price:220}]
+};
+let cart={},stack=["page-restaurants"],currentRestaurant="",lat="",lng="",mapLink="";
+const deliveryCharge=40;
 
-  const menu = {
-    Veg: [
-      { name: "Paneer Butter Masala", price: 180 },
-      { name: "Veg Kolhapuri", price: 160 }
-    ],
-    "Non-Veg": [
-      { name: "Chicken Curry", price: 200 },
-      { name: "Chicken Biryani", price: 220 }
-    ]
-  };
+function show(p){document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));document.getElementById(p).classList.add("active");}
+function nav(p){stack.push(p);show(p);}
+function goBack(){if(stack.length>1){stack.pop();show(stack[stack.length-1]);}}
 
-  let cart = {};
-  let pageStack = ["page-restaurants"];
+function shuffle(a){return a.sort(()=>Math.random()-0.5);}
+function renderRestaurants(){
+const l=document.getElementById("restaurantList");l.innerHTML="";
+[...shuffle(restaurants.filter(r=>r.open)),...restaurants.filter(r=>!r.open)]
+.forEach(r=>{
+const d=document.createElement("div");
+d.className="restaurant";
+d.innerHTML=`<img src="rest-logo.png"><div><div>${r.name}</div><div class="${r.open?'open':'closed'}">${r.open?'Open':'Closed'}</div></div>`;
+if(r.open)d.onclick=()=>openMenu(r.name);
+l.appendChild(d);
+});
+}
+function filterRestaurants(q){
+q=q.toLowerCase();
+document.querySelectorAll(".restaurant").forEach(r=>r.style.display=r.innerText.toLowerCase().includes(q)?"":"none");
+}
 
-  function showPage(id) {
-    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-    document.getElementById(id).classList.add("active");
-  }
+function openMenu(name){
+currentRestaurant=name;
+document.getElementById("menuTitle").innerText=name;
+renderMenu();
+nav("page-menu");
+}
+function renderMenu(){
+const b=document.getElementById("menuItems");b.innerHTML="";
+for(const c in menu){
+b.innerHTML+=`<div class="category">${c}</div>`;
+menu[c].forEach(i=>{
+const q=cart[i.name]||0;
+b.innerHTML+=`<div class="item"><div>${i.name}<div class="small">₹${i.price}</div></div>
+<div class="qty"><button onclick="upd('${i.name}',-1)">−</button><span>${q}</span><button onclick="upd('${i.name}',1)">+</button></div></div>`;
+});
+}
+}
+function upd(i,d){cart[i]=(cart[i]||0)+d;if(cart[i]<=0)delete cart[i];renderMenu();updateBar();}
+function updateBar(){
+let it=0,t=0;
+for(const i in cart){
+const p=Object.values(menu).flat().find(x=>x.name===i).price;
+it+=cart[i];t+=cart[i]*p;
+}
+const bar=document.getElementById("cartBar");
+if(it===0)bar.style.display="none";
+else{bar.style.display="flex";document.getElementById("cartInfo").innerText=`${it} items | ₹${t}`;}
+}
 
-  function navigate(id) {
-    pageStack.push(id);
-    showPage(id);
-  }
+function openCart(){
+renderCart();
+nav("page-cart");
+}
+function renderCart(){
+document.getElementById("cartRestaurant").innerText=currentRestaurant;
+const b=document.getElementById("cartItems");b.innerHTML="";
+let t=0;
+for(const i in cart){
+const p=Object.values(menu).flat().find(x=>x.name===i).price;
+t+=cart[i]*p;
+b.innerHTML+=`<div class="cart-item"><div>${i}<div class="small">₹${p}</div></div>
+<div class="qty"><button onclick="upd('${i}',-1)">−</button><span>${cart[i]}</span><button onclick="upd('${i}',1)">+</button></div></div>`;
+}
+document.getElementById("itemTotal").innerText=`₹${t}`;
+document.getElementById("grandTotal").innerText=`₹${t+deliveryCharge}`;
+}
 
-  function goBack() {
-    if (pageStack.length > 1) {
-      pageStack.pop();
-      showPage(pageStack[pageStack.length - 1]);
-    }
-  }
+function goToAddress(){nav("page-address");}
 
-  function shuffle(arr) {
-    return arr.sort(() => Math.random() - 0.5);
-  }
+function getLocation(){
+if(!navigator.geolocation){document.getElementById("locStatus").innerText="Location not supported";return;}
+navigator.geolocation.getCurrentPosition(p=>{
+lat=p.coords.latitude;lng=p.coords.longitude;
+mapLink=`https://www.google.com/maps?q=${lat},${lng}`;
+document.getElementById("locStatus").innerText="Location captured ✓";
+},()=>document.getElementById("locStatus").innerText="Location permission denied");
+}
 
-  function renderRestaurants() {
-    const list = document.getElementById("restaurantList");
-    list.innerHTML = "";
-    const open = shuffle(restaurants.filter(r => r.open));
-    const closed = restaurants.filter(r => !r.open);
+function placeOrder(){
+alert(
+"Order Ready\n"+
+"Restaurant: "+currentRestaurant+"\n"+
+"Items: "+JSON.stringify(cart)+"\n"+
+"Address: "+custAddress.value+"\n"+
+"Map: "+mapLink
+);
+}
 
-    [...open, ...closed].forEach(r => {
-      const d = document.createElement("div");
-      d.className = "restaurant";
-      d.innerHTML = `
-        <img src="rest-logo.png">
-        <div>
-          <div>${r.name}</div>
-          <div class="${r.open ? 'open' : 'closed'}">${r.open ? 'Open' : 'Closed'}</div>
-        </div>`;
-      if (r.open) d.onclick = () => openMenu(r.name);
-      list.appendChild(d);
-    });
-  }
-
-  function filterRestaurants(q) {
-    q = q.toLowerCase();
-    document.querySelectorAll(".restaurant").forEach(r => {
-      r.style.display = r.innerText.toLowerCase().includes(q) ? "" : "none";
-    });
-  }
-
-  function openMenu(name) {
-    document.getElementById("menuTitle").innerText = name;
-    renderMenu();
-    navigate("page-menu");
-  }
-
-  function renderMenu() {
-    const box = document.getElementById("menuItems");
-    box.innerHTML = "";
-    for (const cat in menu) {
-      const c = document.createElement("div");
-      c.className = "category";
-      c.innerText = cat;
-      box.appendChild(c);
-
-      menu[cat].forEach(item => {
-        const qty = cart[item.name] || 0;
-        const row = document.createElement("div");
-        row.className = "item";
-        row.innerHTML = `
-          <div>
-            <div class="item-name">${item.name}</div>
-            <div class="item-price">₹${item.price}</div>
-          </div>
-          <div class="qty">
-            <button onclick="updateCart('${item.name}', -1)">−</button>
-            <span>${qty}</span>
-            <button onclick="updateCart('${item.name}', 1)">+</button>
-          </div>`;
-        box.appendChild(row);
-      });
-    }
-  }
-
-  function updateCart(item, d) {
-    cart[item] = (cart[item] || 0) + d;
-    if (cart[item] <= 0) delete cart[item];
-    renderMenu();
-    updateCartBar();
-  }
-
-  function updateCartBar() {
-    let items = 0, total = 0;
-    for (const i in cart) {
-      const p = Object.values(menu).flat().find(x => x.name === i).price;
-      items += cart[i];
-      total += cart[i] * p;
-    }
-    const bar = document.getElementById("cartBar");
-    if (items === 0) bar.style.display = "none";
-    else {
-      bar.style.display = "flex";
-      document.getElementById("cartInfo").innerText = `${items} items | ₹${total}`;
-    }
-  }
-
-  function openCart() {
-    renderCart();
-    navigate("page-cart");
-  }
-
-  function renderCart() {
-    const box = document.getElementById("cartItems");
-    box.innerHTML = "";
-    let total = 0;
-    for (const i in cart) {
-      const p = Object.values(menu).flat().find(x => x.name === i).price;
-      total += cart[i] * p;
-      const d = document.createElement("div");
-      d.className = "cart-item";
-      d.innerHTML = `<span>${i} × ${cart[i]}</span><span>₹${cart[i] * p}</span>`;
-      box.appendChild(d);
-    }
-    document.getElementById("cartTotal").innerText = `Total: ₹${total}`;
-  }
-
-  renderRestaurants();
+renderRestaurants();
 </script>
-
 </body>
 </html>
