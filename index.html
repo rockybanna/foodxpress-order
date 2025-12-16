@@ -21,30 +21,88 @@ h2{text-align:center;margin-top:0}
 
 .category{font-weight:bold;font-size:18px;margin-top:20px}
 
-.item,.cart-item{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid #eee}
+.item,.cart-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  padding:10px 0;
+  border-bottom:1px solid #eee
+}
+
 .item-name{font-weight:600}
 .item-desc{font-size:13px;color:#777;margin-top:2px}
 
 .qty{display:flex;align-items:center;gap:8px}
-.qty button{width:28px;height:28px;border:none;background:var(--brand);color:#fff;font-size:18px}
+.qty button{
+  width:28px;height:28px;
+  border:none;
+  background:var(--brand);
+  color:#fff;
+  font-size:18px
+}
 
-.cart-bar{position:fixed;bottom:0;left:0;right:0;background:var(--brand);color:#fff;padding:12px;display:none;justify-content:space-between;cursor:pointer}
+.cart-bar{
+  position:fixed;
+  bottom:0;left:0;right:0;
+  background:var(--brand);
+  color:#fff;
+  padding:12px;
+  display:none;
+  justify-content:space-between;
+  cursor:pointer
+}
 
-.bill{margin-top:12px}
 .bill div{display:flex;justify-content:space-between;margin-bottom:6px}
 .bill .total{font-weight:bold;font-size:18px}
-
 .note{font-size:12px;color:#666;margin-top:8px}
 
-button.primary{width:100%;padding:12px;background:var(--brand);color:#fff;border:none;font-size:16px;margin-top:16px}
+button.primary{
+  width:100%;
+  padding:12px;
+  background:var(--brand);
+  color:#fff;
+  border:none;
+  font-size:16px;
+  margin-top:16px
+}
 
-.cat-btn{position:fixed;right:16px;bottom:80px;background:#333;color:#fff;padding:10px 14px;border-radius:20px;font-size:14px;cursor:pointer}
+.cat-btn{
+  position:fixed;
+  right:16px;
+  bottom:80px;
+  background:#333;
+  color:#fff;
+  padding:10px 14px;
+  border-radius:20px;
+  font-size:14px;
+  cursor:pointer
+}
 
-.cat-popup{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none}
-.cat-box{background:#fff;margin:20% auto;width:80%;border-radius:8px;padding:10px}
-.cat-box div{padding:10px;border-bottom:1px solid #eee;cursor:pointer}
+.cat-popup{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.4);
+  display:none
+}
+.cat-box{
+  background:#fff;
+  margin:20% auto;
+  width:80%;
+  border-radius:8px;
+  padding:10px
+}
+.cat-box div{
+  padding:10px;
+  border-bottom:1px solid #eee;
+  cursor:pointer
+}
 
-input,textarea{width:100%;padding:10px;margin-top:6px;font-size:16px}
+input,textarea{
+  width:100%;
+  padding:10px;
+  margin-top:6px;
+  font-size:16px
+}
 .small{font-size:12px;color:#666}
 </style>
 </head>
@@ -118,6 +176,7 @@ input,textarea{width:100%;padding:10px;margin-top:6px;font-size:16px}
 </div>
 
 <script>
+/* DATA */
 const restaurants=[{name:"Hotel Anand"},{name:"Shree Krishna Dhaba"}];
 
 const menus={
@@ -134,18 +193,21 @@ const menus={
 let cart={},currentRestaurant="",stack=["page-restaurants"];
 let lat="",lng="",mapLink="";
 
-/* DELIVERY CALCULATION (≤2.5 km) */
-function getDeliveryCharge(itemTotal){
-  if(itemTotal>=1199) return 1;
-  if(itemTotal>=999) return 9;
-  if(itemTotal>=799) return 19;
-  if(itemTotal>=599) return 29;
-  if(itemTotal>=399) return 39;
+/* DELIVERY */
+function getDeliveryCharge(t){
+  if(t>=1199)return 1;
+  if(t>=999)return 9;
+  if(t>=799)return 19;
+  if(t>=599)return 29;
+  if(t>=399)return 39;
   return 49;
 }
 
 /* NAV */
-function show(p){document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));document.getElementById(p).classList.add("active")}
+function show(p){
+  document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+  document.getElementById(p).classList.add("active");
+}
 function nav(p){stack.push(p);show(p)}
 function goBack(){stack.pop();show(stack[stack.length-1])}
 function backToRestaurants(){cart={};updateBar();stack=["page-restaurants"];show("page-restaurants")}
@@ -163,18 +225,22 @@ function renderRestaurants(){
 }
 function filterRestaurants(q){
   q=q.toLowerCase();
-  document.querySelectorAll(".restaurant").forEach(r=>r.style.display=r.innerText.toLowerCase().includes(q)?"":"none");
+  document.querySelectorAll(".restaurant").forEach(r=>{
+    r.style.display=r.innerText.toLowerCase().includes(q)?"":"none";
+  });
 }
 
 /* MENU */
 function openMenu(name){
-  cart={};currentRestaurant=name;
+  cart={};
+  currentRestaurant=name;
   menuTitle.innerText=name;
   renderMenu();
   nav("page-menu");
 }
 function renderMenu(){
-  menuItems.innerHTML="";catList.innerHTML="";
+  menuItems.innerHTML="";
+  catList.innerHTML="";
   const m=menus[currentRestaurant];
   for(const c in m){
     menuItems.innerHTML+=`<div class="category" id="cat-${c}">${c}</div>`;
@@ -222,7 +288,10 @@ function updateBar(){
     cartInfo.innerText=`${it} items | ₹${t}`;
   } else cartBar.style.display="none";
 }
-function openSummary(){renderSummary();nav("page-summary")}
+function openSummary(){
+  renderSummary();
+  nav("page-summary");
+}
 function renderSummary(){
   summaryItems.innerHTML="";
   let itemTotal=0;
@@ -239,11 +308,10 @@ function renderSummary(){
       </div>
     </div>`;
   }
-
   const dc=getDeliveryCharge(itemTotal);
-  itemTotalEl.innerText=`₹${itemTotal}`;
-  deliveryCharge.innerText=`₹${dc}`;
-  grandTotal.innerText=`₹${itemTotal+dc}`;
+  document.getElementById("itemTotal").innerText=`₹${itemTotal}`;
+  document.getElementById("deliveryCharge").innerText=`₹${dc}`;
+  document.getElementById("grandTotal").innerText=`₹${itemTotal+dc}`;
 }
 
 /* ADDRESS */
