@@ -1,177 +1,155 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <base target="_top">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>20nagar Food Xpress</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>20nagar Food Xpress</title>
 
-  <style>
-    body{font-family:Arial,sans-serif;margin:0;padding:16px;max-width:920px;margin:auto}
-    h1{text-align:center;margin:0}
-    .tagline{text-align:center;color:#666;margin-bottom:12px}
-    input,textarea{width:100%;padding:8px;margin:6px 0;border:1px solid #ccc;border-radius:6px}
-    .rest-card{border:1px solid #ddd;padding:12px;border-radius:8px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
-    .btn{background:#d62828;color:#fff;border:0;padding:10px;border-radius:8px;width:100%;cursor:pointer}
-    .btn:disabled{background:#aaa}
-    .hidden{display:none}
-    .item-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee}
-    .qty-box{display:flex;border:1px solid #bbb;border-radius:6px}
-    .qty-box button{padding:6px 10px;border:0;background:#eee}
-    .qty-box .val{width:32px;text-align:center}
-    .err{color:darkred;font-size:13px}
-  </style>
+<style>
+body{font-family:Arial;margin:0;padding:16px;max-width:900px;margin:auto}
+h1{text-align:center;margin-bottom:4px}
+.tagline{text-align:center;color:#666;margin-bottom:12px}
+input,button{width:100%;padding:10px;margin:6px 0;font-size:15px}
+button{background:#d62828;color:#fff;border:none;border-radius:8px}
+.rest{border:1px solid #ddd;padding:12px;border-radius:8px;margin-bottom:10px}
+.qty{display:flex;align-items:center;gap:10px}
+.qty button{width:40px}
+.hidden{display:none}
+.small{color:#666;font-size:13px}
+.total-row{display:flex;justify-content:space-between;margin-top:6px}
+.error{color:red;font-size:13px}
+</style>
 
 <script>
-/* ================= GLOBALS ================= */
-var RESTS=[], MENU=[], CART={}, currentRest=null;
-var userLat=null, userLng=null;
+let RESTS=[], MENU=[], CART={}, currentRest=null, userLocation='';
 
-/* ================= INIT ================= */
-window.onload=function(){
-  document.getElementById('search-rest').oninput=e=>renderRestaurants(e.target.value);
-  google.script.run.withSuccessHandler(r=>{RESTS=r;renderRestaurants('');}).getRestaurants();
+function init(){
+  google.script.run.withSuccessHandler(r=>{
+    RESTS=r||[];
+    renderRestaurants();
+  }).getRestaurants();
 }
 
-/* ================= RESTAURANTS ================= */
-function renderRestaurants(f){
-  f=(f||'').toLowerCase();
-  var box=document.getElementById('restaurants'); box.innerHTML='';
+function renderRestaurants(){
+  const box=document.getElementById('restaurants');
+  box.innerHTML='';
   RESTS.forEach(r=>{
-    if(f && !r.name.toLowerCase().includes(f) && !r.address.toLowerCase().includes(f)) return;
-    var d=document.createElement('div'); d.className='rest-card';
-    d.innerHTML=`<div><b>${r.name}</b><div>${r.address}</div></div>`;
-    var b=document.createElement('button'); b.className='btn'; b.style.width='auto';
-    b.innerText='Open Menu'; b.onclick=()=>openMenu(r.restaurant_id);
-    d.appendChild(b); box.appendChild(d);
+    box.innerHTML+=`
+      <div class="rest">
+        <b>${r.name}</b><br>
+        <span class="small">${r.address}</span><br><br>
+        <button onclick="openMenu('${r.restaurant_id}')">Open Menu</button>
+      </div>`;
   });
 }
 
-/* ================= MENU ================= */
 function openMenu(id){
   currentRest=RESTS.find(r=>r.restaurant_id===id);
-  CART={}; userLat=null; userLng=null;
-  document.getElementById('page-restaurants').classList.add('hidden');
+  document.getElementById('page-rest').classList.add('hidden');
   document.getElementById('page-menu').classList.remove('hidden');
   document.getElementById('rest-name').innerText=currentRest.name;
-  document.getElementById('rest-address').innerText=currentRest.address;
-  google.script.run.withSuccessHandler(m=>{MENU=m;renderMenu();}).getMenuForRestaurant(id);
+  google.script.run.withSuccessHandler(m=>{
+    MENU=m||[]; CART={}; renderMenu();
+  }).getMenuForRestaurant(id);
 }
 
 function renderMenu(){
-  var box=document.getElementById('menu-list'); box.innerHTML='';
-  MENU.forEach(it=>{
-    var r=document.createElement('div'); r.className='item-row';
-    r.innerHTML=`<div>${it.item_name}<br>₹${it.price}</div>
-    <div class="qty-box">
-      <button onclick="decQty('${it.menu_id}')">−</button>
-      <div class="val" id="val_${it.menu_id}">0</div>
-      <button onclick="incQty('${it.menu_id}','${it.item_name}',${it.price})">+</button>
-    </div>`;
-    box.appendChild(r);
+  const box=document.getElementById('menu');
+  box.innerHTML='';
+  MENU.forEach(i=>{
+    box.innerHTML+=`
+      <div class="rest">
+        <b>${i.item_name}</b> ₹${i.price}
+        <div class="qty">
+          <button onclick="chg('${i.menu_id}',-1)">−</button>
+          <span id="q_${i.menu_id}">0</span>
+          <button onclick="chg('${i.menu_id}',1)">+</button>
+        </div>
+      </div>`;
   });
 }
 
-/* ================= CART ================= */
-function incQty(id,n,p){
-  if(!CART[id]) CART[id]={qty:0,name:n,price:p};
-  CART[id].qty++; document.getElementById('val_'+id).innerText=CART[id].qty;
-  recalc();
-}
-function decQty(id){
-  if(!CART[id]) return;
-  CART[id].qty--; 
-  if(CART[id].qty<=0){delete CART[id];document.getElementById('val_'+id).innerText=0;}
-  else document.getElementById('val_'+id).innerText=CART[id].qty;
+function chg(id,d){
+  if(!CART[id]) CART[id]={qty:0};
+  CART[id].qty+=d;
+  if(CART[id].qty<0) CART[id].qty=0;
+  document.getElementById('q_'+id).innerText=CART[id].qty;
   recalc();
 }
 
-/* ================= TOTAL ================= */
 function recalc(){
-  var sub=0; for(let k in CART) sub+=CART[k].qty*CART[k].price;
-  document.getElementById('subtotal').innerText=sub;
+  let sub=0;
+  MENU.forEach(i=>{
+    if(CART[i.menu_id]) sub+=CART[i.menu_id].qty*i.price;
+  });
+  document.getElementById('sub').innerText=sub;
   google.script.run.withSuccessHandler(dc=>{
-    document.getElementById('delivery').innerText=dc;
-    document.getElementById('total').innerText=sub+dc;
+    document.getElementById('del').innerText=dc;
+    document.getElementById('tot').innerText=sub+dc;
   }).getDeliveryChargeForClient(sub,2.5);
 }
 
-/* ================= LOCATION (REQUIRED) ================= */
 function getLocation(){
   navigator.geolocation.getCurrentPosition(p=>{
-    userLat=p.coords.latitude; userLng=p.coords.longitude;
-    document.getElementById('loc-status').innerText='Location captured ✔';
-    validateForm();
+    userLocation=`https://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`;
+    document.getElementById('locStatus').innerText='Location captured';
   },()=>alert('Location required'));
 }
 
-/* ================= VALIDATION ================= */
-function validateForm(){
-  var name=document.getElementById('cust-name').value.trim();
-  var phone=document.getElementById('cust-phone').value.trim();
-  var addr=document.getElementById('cust-address').value.trim();
-  var ok=true;
-
-  if(!/^[A-Za-z ]{10,}$/.test(name)) ok=false;
-  if(!/^\d{10}$/.test(phone)) ok=false;
-  if(addr.length<15||addr.length>100) ok=false;
-  if(!userLat) ok=false;
-
-  document.getElementById('order-btn').disabled=!ok;
-}
-
-/* ================= CHECKOUT ================= */
 function checkout(){
-  var msg=`*New Order – ${currentRest.name}*\n\n`;
-  for(let k in CART){
-    let it=CART[k];
-    msg+=`${it.qty} x ${it.name} = ₹${it.qty*it.price}\n`;
-  }
-  msg+=`\nTotal: ₹${document.getElementById('total').innerText}\n`;
-  msg+=`Location: https://www.google.com/maps?q=${userLat},${userLng}`;
+  const name=document.getElementById('name').value.trim();
+  const phone=document.getElementById('phone').value.trim();
+  const addr=document.getElementById('addr').value.trim();
+
+  if(!/^[A-Za-z ]{10,}$/.test(name)) return alert('Name invalid');
+  if(!/^[0-9]{10}$/.test(phone)) return alert('Phone invalid');
+  if(addr.length<15||addr.length>100) return alert('Address invalid');
+  if(!userLocation) return alert('Location required');
+
+  let msg=`*Order - ${currentRest.name}*\n\n`;
+  let sub=0;
+  MENU.forEach(i=>{
+    if(CART[i.menu_id]&&CART[i.menu_id].qty>0){
+      let t=CART[i.menu_id].qty*i.price;
+      sub+=t;
+      msg+=`${CART[i.menu_id].qty} x ${i.item_name} = ₹${t}\n`;
+    }
+  });
+  msg+=`\nSubtotal: ₹${sub}\n`;
+  msg+=`Address: ${addr}\nLocation: ${userLocation}`;
 
   google.script.run.withSuccessHandler(s=>{
-    window.location.href=`https://wa.me/${s.whatsapp_number}?text=${encodeURIComponent(msg)}`;
+    window.location.href=`https://wa.me/${s.whatsapp_number}?text=`+encodeURIComponent(msg);
   }).getSettings();
 }
 
-function goBack(){
-  document.getElementById('page-menu').classList.add('hidden');
-  document.getElementById('page-restaurants').classList.remove('hidden');
-}
+window.onload=init;
 </script>
 </head>
 
 <body>
-
 <h1>20nagar Food Xpress</h1>
 <div class="tagline">Fast Delivery • Best Prices</div>
 
-<div id="page-restaurants">
-  <input id="search-rest" placeholder="Search restaurants">
+<div id="page-rest">
   <div id="restaurants"></div>
 </div>
 
 <div id="page-menu" class="hidden">
-  <button onclick="goBack()">← Back</button>
   <h2 id="rest-name"></h2>
-  <div id="rest-address"></div>
-  <div id="menu-list"></div>
+  <div id="menu"></div>
 
-  <hr>
-  <b>Subtotal:</b> ₹<span id="subtotal">0</span><br>
-  <b>Delivery:</b> ₹<span id="delivery">0</span><br>
-  <b>Total:</b> ₹<span id="total">0</span>
+  <div class="total-row"><span>Subtotal</span><span>₹<span id="sub">0</span></span></div>
+  <div class="total-row"><span>Delivery</span><span>₹<span id="del">0</span></span></div>
+  <div class="total-row"><b>Total</b><b>₹<span id="tot">0</span></b></div>
 
-  <hr>
-  <input id="cust-name" placeholder="Full Name" oninput="validateForm()">
-  <input id="cust-phone" placeholder="10 digit phone" oninput="validateForm()">
-  <textarea id="cust-address" placeholder="Full delivery address" oninput="validateForm()"></textarea>
+  <input id="name" placeholder="Full name">
+  <input id="phone" placeholder="10-digit phone">
+  <input id="addr" placeholder="Full address">
 
-  <button onclick="getLocation()">Share Location</button>
-  <div id="loc-status"></div>
+  <button onclick="getLocation()">Get Location</button>
+  <div id="locStatus" class="small"></div>
 
-  <button id="order-btn" class="btn" disabled onclick="checkout()">Order on WhatsApp</button>
+  <button onclick="checkout()">Order on WhatsApp</button>
 </div>
-
 </body>
 </html>
