@@ -17,13 +17,11 @@ body{margin:0;font-family:Arial,sans-serif;background:#f7f7f7}
 h2{text-align:center;margin-top:0}
 
 .search{width:100%;padding:10px;margin:10px 0}
-
 .restaurant{padding:12px;border:1px solid #ddd;margin-bottom:10px;cursor:pointer}
 
 .category{font-weight:bold;font-size:18px;margin-top:20px}
 
 .item,.cart-item{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid #eee}
-
 .item-name{font-weight:600}
 .item-desc{font-size:13px;color:#777;margin-top:2px}
 
@@ -31,6 +29,12 @@ h2{text-align:center;margin-top:0}
 .qty button{width:28px;height:28px;border:none;background:var(--brand);color:#fff;font-size:18px}
 
 .cart-bar{position:fixed;bottom:0;left:0;right:0;background:var(--brand);color:#fff;padding:12px;display:none;justify-content:space-between;cursor:pointer}
+
+.bill{margin-top:12px}
+.bill div{display:flex;justify-content:space-between;margin-bottom:6px}
+.bill .total{font-weight:bold;font-size:18px}
+
+.note{font-size:12px;color:#666;margin-top:8px}
 
 button.primary{width:100%;padding:12px;background:var(--brand);color:#fff;border:none;font-size:16px;margin-top:16px}
 
@@ -67,7 +71,6 @@ input,textarea{width:100%;padding:10px;margin-top:6px;font-size:16px}
   <div class="cat-btn" onclick="openCats()">☰ Categories</div>
 </div>
 
-<!-- CATEGORY POPUP -->
 <div id="catPopup" class="cat-popup" onclick="closeCats()">
   <div class="cat-box" onclick="event.stopPropagation()" id="catList"></div>
 </div>
@@ -79,6 +82,18 @@ input,textarea{width:100%;padding:10px;margin-top:6px;font-size:16px}
   <div class="content">
     <h2>Order Summary</h2>
     <div id="summaryItems"></div>
+
+    <div class="bill">
+      <div><span>Item Total</span><span id="itemTotal">₹0</span></div>
+      <div><span>Delivery Charge</span><span id="deliveryCharge">₹0</span></div>
+      <div class="total"><span>Total Payable</span><span id="grandTotal">₹0</span></div>
+    </div>
+
+    <div class="note">
+      Delivery charges shown are applicable up to 2.5 km.
+      Charges may vary for longer distances.
+    </div>
+
     <button class="primary" onclick="goToAddress()">Continue → Address</button>
   </div>
 </div>
@@ -118,7 +133,16 @@ const menus={
 
 let cart={},currentRestaurant="",stack=["page-restaurants"];
 let lat="",lng="",mapLink="";
-const deliveryCharge=40;
+
+/* DELIVERY CALCULATION (≤2.5 km) */
+function getDeliveryCharge(itemTotal){
+  if(itemTotal>=1199) return 1;
+  if(itemTotal>=999) return 9;
+  if(itemTotal>=799) return 19;
+  if(itemTotal>=599) return 29;
+  if(itemTotal>=399) return 39;
+  return 49;
+}
 
 /* NAV */
 function show(p){document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));document.getElementById(p).classList.add("active")}
@@ -201,17 +225,25 @@ function updateBar(){
 function openSummary(){renderSummary();nav("page-summary")}
 function renderSummary(){
   summaryItems.innerHTML="";
+  let itemTotal=0;
   for(const i in cart){
+    const p=getPrice(i);
+    itemTotal+=cart[i]*p;
     summaryItems.innerHTML+=`
     <div class="cart-item">
-      <div>${i}<div class="small">₹${getPrice(i)}</div></div>
+      <div>${i}<div class="small">₹${p}</div></div>
       <div class="qty">
-        <button onclick="upd('${i}',${getPrice(i)},-1)">−</button>
+        <button onclick="upd('${i}',${p},-1)">−</button>
         <span>${cart[i]}</span>
-        <button onclick="upd('${i}',${getPrice(i)},1)">+</button>
+        <button onclick="upd('${i}',${p},1)">+</button>
       </div>
     </div>`;
   }
+
+  const dc=getDeliveryCharge(itemTotal);
+  itemTotalEl.innerText=`₹${itemTotal}`;
+  deliveryCharge.innerText=`₹${dc}`;
+  grandTotal.innerText=`₹${itemTotal+dc}`;
 }
 
 /* ADDRESS */
@@ -228,18 +260,22 @@ function captureLocation(){
 function placeOrder(){
   const name=custName.value.trim();
   if(!/^[A-Za-z ]{5,25}$/.test(name)){alert("Name must be 5–25 letters only.");return;}
-
   const phone=custPhone.value.trim();
   if(!/^[0-9]{10}$/.test(phone)){alert("Phone must be exactly 10 digits.");return;}
-
   const address=custAddress.value.trim();
   if(address.length<15||address.length>100){alert("Address must be 15–100 characters.");return;}
-
   if(!mapLink){alert("Please capture location.");return;}
 
-  let text=`20nagar Food Xpress\nRestaurant: ${currentRestaurant}\n\n`;
-  for(const i in cart){text+=`${i} × ${cart[i]}\n`;}
-  text+=`\nCustomer:\n${name}\n${phone}\n${address}\nLocation:\n${mapLink}`;
+  let itemTotal=0;
+  let text=`20nagar Food Xpress\nRestaurant: ${currentRestaurant}\n\nItems:\n`;
+  for(const i in cart){
+    const p=getPrice(i);
+    itemTotal+=cart[i]*p;
+    text+=`${i} × ${cart[i]} = ₹${cart[i]*p}\n`;
+  }
+  const dc=getDeliveryCharge(itemTotal);
+  text+=`\nItem Total: ₹${itemTotal}\nDelivery Charge: ₹${dc}\nTotal Payable: ₹${itemTotal+dc}\n\n`;
+  text+=`Customer:\n${name}\n${phone}\n${address}\nLocation:\n${mapLink}`;
 
   navigator.clipboard.writeText(text);
   window.location.href="https://wa.me/919484818194?text="+encodeURIComponent(text);
