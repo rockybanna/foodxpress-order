@@ -195,6 +195,7 @@ let lat="",lng="",mapLink="";
 
 /* DELIVERY */
 function getDeliveryCharge(t){
+  if(t<=0) return 0;
   if(t>=1199)return 1;
   if(t>=999)return 9;
   if(t>=799)return 19;
@@ -315,7 +316,13 @@ function renderSummary(){
 }
 
 /* ADDRESS */
-function goToAddress(){nav("page-address")}
+function goToAddress(){
+  let itemTotal=0;
+  for(const i in cart){itemTotal+=cart[i]*getPrice(i);}
+  if(itemTotal===0){alert("Please add items to your order.");return;}
+  if(itemTotal<99){alert("Minimum order value is ₹99.");return;}
+  nav("page-address");
+}
 function captureLocation(){
   navigator.geolocation.getCurrentPosition(p=>{
     lat=p.coords.latitude;lng=p.coords.longitude;
@@ -326,6 +333,11 @@ function captureLocation(){
 
 /* PLACE ORDER */
 function placeOrder(){
+  let itemTotal=0;
+  for(const i in cart){itemTotal+=cart[i]*getPrice(i);}
+  if(itemTotal===0){alert("Order cannot be empty.");return;}
+  if(itemTotal<99){alert("Minimum order value is ₹99.");return;}
+
   const name=custName.value.trim();
   if(!/^[A-Za-z ]{5,25}$/.test(name)){alert("Name must be 5–25 letters only.");return;}
   const phone=custPhone.value.trim();
@@ -334,11 +346,9 @@ function placeOrder(){
   if(address.length<15||address.length>100){alert("Address must be 15–100 characters.");return;}
   if(!mapLink){alert("Please capture location.");return;}
 
-  let itemTotal=0;
   let text=`20nagar Food Xpress\nRestaurant: ${currentRestaurant}\n\nItems:\n`;
   for(const i in cart){
     const p=getPrice(i);
-    itemTotal+=cart[i]*p;
     text+=`${i} × ${cart[i]} = ₹${cart[i]*p}\n`;
   }
   const dc=getDeliveryCharge(itemTotal);
