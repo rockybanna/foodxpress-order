@@ -350,11 +350,13 @@ function placeOrder(){
  let t=0;for(const i in cart)t+=cart[i]*price(i);
  if(t<99){alert("Minimum order ₹99");return}
  const n=custName.value.trim();
- if(!/^[A-Za-z ]{5,25}$/.test(n)){alert("Invalid name");return}
+ if(!/^[A-Za-z ]{5,25}$/.test(n)){alert("Please enter your full name (only letters, 5–25 characters).
+");return}
  const ph=custPhone.value.trim();
  if(!/^[0-9]{10}$/.test(ph)){alert("Invalid phone");return}
  const a=custAddress.value.trim();
- if(a.length<15||a.length>100){alert("Invalid address");return}
+ if(a.length<15||a.length>100){alert("Please enter a complete delivery address (minimum 15 characters).
+");return}
  if(!mapLink){alert("Location required");return}
 
  let txt=`20nagar Food Xpress\nRestaurant: ${currentRestaurant}\n\nItems:\n`;
