@@ -275,6 +275,21 @@ function renderMenu(){
  updateBar()
 }
 
+  /* ================= CATEGORY SCROLL ================= */
+function openCats(){
+ document.getElementById("catPopup").style.display="block";
+}
+
+function closeCats(){
+ document.getElementById("catPopup").style.display="none";
+}
+
+function scrollCat(c){
+ const el=document.getElementById("cat-"+c);
+ if(el) el.scrollIntoView({behavior:"smooth"});
+ closeCats();
+}
+
 /* ================= CART ================= */
 function upd(n,p,d){
  cart[n]=(cart[n]||0)+d;
