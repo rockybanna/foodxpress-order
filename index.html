@@ -6,122 +6,47 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-:root { --brand:#ff9933; }
-body { margin:0; font-family:Arial, sans-serif; background:#f7f7f7; }
-.page { display:none; min-height:100vh; background:#fff; }
-.page.active { display:block; }
-.header { padding:10px; border-bottom:1px solid #ddd; text-align:center; }
-.header h1 { margin:0; font-size:18px; }
-.topbar { padding:12px; border-bottom:1px solid #ddd; cursor:pointer; }
-.content { padding:14px; padding-bottom:90px; }
-h2 { text-align:center; margin-top:0; }
+:root{--brand:#ff9933}
+body{margin:0;font-family:Arial,sans-serif;background:#f7f7f7}
+.page{display:none;min-height:100vh;background:#fff}
+.page.active{display:block}
+.header{padding:10px;border-bottom:1px solid #ddd;text-align:center}
+.header h1{margin:0;font-size:18px}
+.topbar{padding:12px;border-bottom:1px solid #ddd;cursor:pointer}
+.content{padding:14px;padding-bottom:90px}
+h2{text-align:center;margin-top:0}
 
-.search { width:100%; padding:10px; margin:10px 0; }
+.search{width:100%;padding:10px;margin:10px 0}
 
-.restaurant {
-  padding:12px;
-  border:1px solid #ddd;
-  margin-bottom:10px;
-  cursor:pointer;
-}
+.restaurant{padding:12px;border:1px solid #ddd;margin-bottom:10px;cursor:pointer}
 
-.category {
-  font-weight:bold;
-  font-size:18px;
-  margin-top:20px;
-}
+.category{font-weight:bold;font-size:18px;margin-top:20px}
 
-.item {
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  padding:10px 0;
-  border-bottom:1px solid #eee;
-}
+.item,.cart-item{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid #eee}
 
-.item-name { font-weight:600; }
-.item-desc {
-  font-size:13px;
-  color:#777;
-  margin-top:2px;
-}
+.item-name{font-weight:600}
+.item-desc{font-size:13px;color:#777;margin-top:2px}
 
-.qty { display:flex; align-items:center; gap:8px; }
-.qty button {
-  width:28px; height:28px;
-  border:none;
-  background:var(--brand);
-  color:#fff;
-  font-size:18px;
-}
+.qty{display:flex;align-items:center;gap:8px}
+.qty button{width:28px;height:28px;border:none;background:var(--brand);color:#fff;font-size:18px}
 
-.cart-bar {
-  position:fixed;
-  bottom:0; left:0; right:0;
-  background:var(--brand);
-  color:#fff;
-  padding:12px;
-  display:none;
-  justify-content:space-between;
-  cursor:pointer;
-}
+.cart-bar{position:fixed;bottom:0;left:0;right:0;background:var(--brand);color:#fff;padding:12px;display:none;justify-content:space-between;cursor:pointer}
 
-button.primary {
-  width:100%;
-  padding:12px;
-  background:var(--brand);
-  color:#fff;
-  border:none;
-  font-size:16px;
-  margin-top:16px;
-}
+button.primary{width:100%;padding:12px;background:var(--brand);color:#fff;border:none;font-size:16px;margin-top:16px}
 
-/* CATEGORY BUTTON */
-.cat-btn {
-  position:fixed;
-  right:16px;
-  bottom:80px;
-  background:#333;
-  color:#fff;
-  padding:10px 14px;
-  border-radius:20px;
-  font-size:14px;
-  cursor:pointer;
-}
+.cat-btn{position:fixed;right:16px;bottom:80px;background:#333;color:#fff;padding:10px 14px;border-radius:20px;font-size:14px;cursor:pointer}
 
-/* CATEGORY POPUP */
-.cat-popup {
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.4);
-  display:none;
-}
-.cat-box {
-  background:#fff;
-  margin:20% auto;
-  width:80%;
-  border-radius:8px;
-  padding:10px;
-}
-.cat-box div {
-  padding:10px;
-  border-bottom:1px solid #eee;
-  cursor:pointer;
-}
-.cat-box div:last-child { border-bottom:none; }
+.cat-popup{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none}
+.cat-box{background:#fff;margin:20% auto;width:80%;border-radius:8px;padding:10px}
+.cat-box div{padding:10px;border-bottom:1px solid #eee;cursor:pointer}
 
-input, textarea {
-  width:100%;
-  padding:10px;
-  margin-top:6px;
-  font-size:16px;
-}
-.small { font-size:12px; color:#666; }
+input,textarea{width:100%;padding:10px;margin-top:6px;font-size:16px}
+.small{font-size:12px;color:#666}
 </style>
 </head>
 <body>
 
-<!-- PAGE 1: RESTAURANTS -->
+<!-- PAGE 1 -->
 <div id="page-restaurants" class="page active">
   <div class="header"><h1>20nagar Food Xpress</h1></div>
   <div class="content">
@@ -131,7 +56,7 @@ input, textarea {
   </div>
 </div>
 
-<!-- PAGE 2: MENU -->
+<!-- PAGE 2 -->
 <div id="page-menu" class="page">
   <div class="topbar" onclick="backToRestaurants()">← Back</div>
   <div class="header"><h1>20nagar Food Xpress</h1></div>
@@ -147,7 +72,7 @@ input, textarea {
   <div class="cat-box" onclick="event.stopPropagation()" id="catList"></div>
 </div>
 
-<!-- PAGE 3: ORDER SUMMARY -->
+<!-- PAGE 3 -->
 <div id="page-summary" class="page">
   <div class="topbar" onclick="goBack()">← Back</div>
   <div class="header"><h1>20nagar Food Xpress</h1></div>
@@ -158,7 +83,7 @@ input, textarea {
   </div>
 </div>
 
-<!-- PAGE 4: ADDRESS -->
+<!-- PAGE 4 -->
 <div id="page-address" class="page">
   <div class="topbar" onclick="goBack()">← Back</div>
   <div class="header"><h1>20nagar Food Xpress</h1></div>
@@ -173,32 +98,21 @@ input, textarea {
   </div>
 </div>
 
-<!-- CART BAR -->
 <div id="cartBar" class="cart-bar" onclick="openSummary()">
-  <span id="cartInfo"></span>
-  <span>View Order →</span>
+  <span id="cartInfo"></span><span>View Order →</span>
 </div>
 
 <script>
-/* SAMPLE DATA */
 const restaurants=[{name:"Hotel Anand"},{name:"Shree Krishna Dhaba"}];
 
 const menus={
   "Hotel Anand":{
-    "Veg":[
-      {n:"Paneer Butter Masala",p:180,d:"Rich tomato gravy with butter and cream"}
-    ],
-    "Non-Veg":[
-      {n:"Chicken Biryani",p:220,d:"Slow cooked rice with aromatic spices"}
-    ]
+    Veg:[{n:"Paneer Butter Masala",p:180,d:"Rich tomato gravy with butter and cream"}],
+    "Non-Veg":[{n:"Chicken Biryani",p:220,d:"Slow cooked rice with spices"}]
   },
   "Shree Krishna Dhaba":{
-    "Veg":[
-      {n:"Veg Kolhapuri",p:160}
-    ],
-    "Non-Veg":[
-      {n:"Chicken Curry",p:200,d:"Spicy traditional gravy"}
-    ]
+    Veg:[{n:"Veg Kolhapuri",p:160}],
+    "Non-Veg":[{n:"Chicken Curry",p:200,d:"Traditional spicy gravy"}]
   }
 };
 
@@ -207,10 +121,10 @@ let lat="",lng="",mapLink="";
 const deliveryCharge=40;
 
 /* NAV */
-function show(p){document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));document.getElementById(p).classList.add("active");}
-function nav(p){stack.push(p);show(p);}
-function goBack(){stack.pop();show(stack[stack.length-1]);}
-function backToRestaurants(){cart={};updateBar();stack=["page-restaurants"];show("page-restaurants");}
+function show(p){document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));document.getElementById(p).classList.add("active")}
+function nav(p){stack.push(p);show(p)}
+function goBack(){stack.pop();show(stack[stack.length-1])}
+function backToRestaurants(){cart={};updateBar();stack=["page-restaurants"];show("page-restaurants")}
 
 /* RESTAURANTS */
 function renderRestaurants(){
@@ -230,15 +144,13 @@ function filterRestaurants(q){
 
 /* MENU */
 function openMenu(name){
-  cart={};
-  currentRestaurant=name;
+  cart={};currentRestaurant=name;
   menuTitle.innerText=name;
   renderMenu();
   nav("page-menu");
 }
 function renderMenu(){
-  menuItems.innerHTML="";
-  catList.innerHTML="";
+  menuItems.innerHTML="";catList.innerHTML="";
   const m=menus[currentRestaurant];
   for(const c in m){
     menuItems.innerHTML+=`<div class="category" id="cat-${c}">${c}</div>`;
@@ -264,8 +176,8 @@ function renderMenu(){
 }
 
 /* CATEGORY */
-function openCats(){catPopup.style.display="block";}
-function closeCats(){catPopup.style.display="none";}
+function openCats(){catPopup.style.display="block"}
+function closeCats(){catPopup.style.display="none"}
 function scrollCat(c){
   document.getElementById("cat-"+c).scrollIntoView({behavior:"smooth"});
   closeCats();
@@ -275,7 +187,8 @@ function scrollCat(c){
 function upd(n,p,d){
   cart[n]=(cart[n]||0)+d;
   if(cart[n]<=0)delete cart[n];
-  renderMenu();
+  if(stack[stack.length-1]==="page-menu")renderMenu();
+  if(stack[stack.length-1]==="page-summary")renderSummary();
 }
 function updateBar(){
   let it=0,t=0;
@@ -285,22 +198,49 @@ function updateBar(){
     cartInfo.innerText=`${it} items | ₹${t}`;
   } else cartBar.style.display="none";
 }
-function openSummary(){nav("page-summary");}
+function openSummary(){renderSummary();nav("page-summary")}
+function renderSummary(){
+  summaryItems.innerHTML="";
+  for(const i in cart){
+    summaryItems.innerHTML+=`
+    <div class="cart-item">
+      <div>${i}<div class="small">₹${getPrice(i)}</div></div>
+      <div class="qty">
+        <button onclick="upd('${i}',${getPrice(i)},-1)">−</button>
+        <span>${cart[i]}</span>
+        <button onclick="upd('${i}',${getPrice(i)},1)">+</button>
+      </div>
+    </div>`;
+  }
+}
 
 /* ADDRESS */
-function goToAddress(){nav("page-address");}
+function goToAddress(){nav("page-address")}
 function captureLocation(){
   navigator.geolocation.getCurrentPosition(p=>{
     lat=p.coords.latitude;lng=p.coords.longitude;
     mapLink=`https://www.google.com/maps?q=${lat},${lng}`;
     locStatus.innerText="Location captured ✓";
-  });
+  },()=>alert("Location permission required"));
 }
 
 /* PLACE ORDER */
 function placeOrder(){
+  const name=custName.value.trim();
+  if(!/^[A-Za-z ]{5,25}$/.test(name)){alert("Name must be 5–25 letters only.");return;}
+
+  const phone=custPhone.value.trim();
+  if(!/^[0-9]{10}$/.test(phone)){alert("Phone must be exactly 10 digits.");return;}
+
+  const address=custAddress.value.trim();
+  if(address.length<15||address.length>100){alert("Address must be 15–100 characters.");return;}
+
+  if(!mapLink){alert("Please capture location.");return;}
+
   let text=`20nagar Food Xpress\nRestaurant: ${currentRestaurant}\n\n`;
   for(const i in cart){text+=`${i} × ${cart[i]}\n`;}
+  text+=`\nCustomer:\n${name}\n${phone}\n${address}\nLocation:\n${mapLink}`;
+
   navigator.clipboard.writeText(text);
   window.location.href="https://wa.me/919484818194?text="+encodeURIComponent(text);
 }
