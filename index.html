@@ -99,19 +99,28 @@ input,textarea{width:100%;padding:10px;margin-top:6px;font-size:16px}
 <div id="page-address" class="page">
   <div class="topbar" onclick="goBack()">← Back</div>
   <div class="header"><img src="company-logo.png"></div>
+
   <div class="content">
     <h2>Delivery Details</h2>
-    <label>Name</label><input id="custName">
-    <label>Phone</label><input id="custPhone">
-    <label>Address</label><textarea id="custAddress"></textarea>
+
+    <label>Name</label>
+    <input id="custName" placeholder="Your full name">
+
+    <label>Phone</label>
+    <input id="custPhone" placeholder="10 digit mobile number">
+
+    <label>Address</label>
+    <textarea id="custAddress" placeholder="Complete delivery address"></textarea>
+
+    <label>Delivery Location (Required)</label>
     <button class="primary" onclick="captureLocation()">Use my current location</button>
+    <p class="small">OR</p>
+    <input id="manualMapLink" placeholder="Paste Google Maps link here">
+
     <p id="locStatus" class="small"></p>
+
     <button class="primary" onclick="placeOrder()">Place Order</button>
   </div>
-</div>
-
-<div id="cartBar" class="cart-bar" onclick="openSummary()">
-  <span id="cartInfo"></span><span>View Order →</span>
 </div>
 
 <script>
@@ -326,27 +335,64 @@ function delivery(t){if(t<=0)return 0;if(t>=1199)return 1;if(t>=999)return 9;if(
 function goToAddress(){let t=0;for(const i in cart)t+=cart[i]*price(i);if(t<99){alert("Minimum order ₹99");return}nav("page-address")}
 function captureLocation(){navigator.geolocation.getCurrentPosition(p=>{lat=p.coords.latitude;lng=p.coords.longitude;mapLink=`https://maps.google.com/?q=${lat},${lng}`;locStatus.innerText="Location captured ✓"},()=>alert("Location required"))}
 
-/* ================= PLACE ORDER ================= */
+  /* ================= PLACE ORDER ================= */
 function placeOrder(){
- let t=0;for(const i in cart)t+=cart[i]*price(i);
- if(t<99){alert("Minimum order ₹99");return}
- const n=custName.value.trim();if(!/^[A-Za-z ]{5,25}$/.test(n)){alert("Enter valid name");return}
- const ph=custPhone.value.trim();if(!/^[0-9]{10}$/.test(ph)){alert("Invalid phone");return}
- const a=custAddress.value.trim();if(a.length<15){alert("Enter full address");return}
- if(!mapLink){alert("Location required");return}
 
- let txt=`20nagar Food Xpress\nRestaurant: ${currentRestaurant}\n\nItems:\n`;
- for(const i in cart){txt+=`${i} × ${cart[i]} = ₹${cart[i]*price(i)}\n`}
- const d=delivery(t);
- txt+=`\nItem Total: ₹${t}\nDelivery: ₹${d}\nTotal: ₹${t+d}\n\n${n}\n${ph}\n${a}\n${mapLink}`;
- navigator.clipboard.writeText(txt);
+  let t = 0;
+  for (const i in cart) t += cart[i] * price(i);
 
- /* ORDER SAVE (DISABLED – OPTION A)
- fetch("YOUR_ORDER_API_URL",{method:"POST",body:JSON.stringify({text:txt})});
- */
+  if (t < 99) {
+    alert("Minimum order ₹99");
+    return;
+  }
 
- setTimeout(()=>{location.href="https://wa.me/919484818194?text="+encodeURIComponent(txt)},200);
+  const n = custName.value.trim();
+  if (!/^[A-Za-z ]{5,25}$/.test(n)) {
+    alert("Please enter your full name (only letters, 5–25 characters)");
+    return;
+  }
+
+  const ph = custPhone.value.trim();
+  if (!/^[0-9]{10}$/.test(ph)) {
+    alert("Please enter a valid 10-digit mobile number");
+    return;
+  }
+
+  const a = custAddress.value.trim();
+  if (a.length < 15 || a.length > 100) {
+    alert("Please enter a complete delivery address");
+    return;
+  }
+
+  const manualLink =
+    document.getElementById("manualMapLink")?.value.trim();
+
+  if (!mapLink && !manualLink) {
+    alert("Please provide delivery location (GPS or Google Maps link)");
+    return;
+  }
+
+  const finalLocation = mapLink || manualLink;
+
+  let txt = `20nagar Food Xpress\nRestaurant: ${currentRestaurant}\n\nItems:\n`;
+
+  for (const i in cart) {
+    const p = price(i);
+    txt += `${i} × ${cart[i]} = ₹${cart[i] * p}\n`;
+  }
+
+  const d = delivery(t);
+  txt += `\nItem Total: ₹${t}\nDelivery: ₹${d}\nTotal: ₹${t + d}\n\n`;
+  txt += `${n}\n${ph}\n${a}\n${finalLocation}`;
+
+  navigator.clipboard.writeText(txt);
+
+  setTimeout(() => {
+    window.location.href =
+      "https://wa.me/919484818194?text=" + encodeURIComponent(txt);
+  }, 200);
 }
+
 </script>
 </body>
 </html>
