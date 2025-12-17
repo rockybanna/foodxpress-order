@@ -120,7 +120,13 @@ let restaurants=[],categories=[],items=[];
 let cart={},currentRestaurant="",stack=["page-restaurants"];
 let lat="",lng="",mapLink="";
 
-function toTime(v){if(!v)return"";const d=new Date(v);return d.toISOString().substring(11,16);}
+function toTime(v) {
+  if (!v) return "";
+  const d = new Date(v);
+  const h = d.getHours().toString().padStart(2, "0");
+  const m = d.getMinutes().toString().padStart(2, "0");
+  return `${h}:${m}`;
+}
 
 fetch("https://script.google.com/macros/s/AKfycbw66W91wIe-cAXwIZPgfEGJ1gy4TQ_MQ5WANbm3jQ9g4t_OmKNgqD7K8-pq7njoteWwEg/exec")
 .then(r=>r.json()).then(d=>{
