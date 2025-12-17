@@ -283,30 +283,55 @@ function openMenu(n){
  cart={};currentRestaurant=n;menuTitle.innerText=n;
  renderMenu();nav("page-menu")
 }
-function renderMenu(){
- menuItems.innerHTML="";catList.innerHTML="";
- const m=menus[currentRestaurant];
- for(const c in m){
-  menuItems.innerHTML+=`<div class="category" id="cat-${c}">${c}</div>`;
-  catList.innerHTML+=`<div onclick="scrollCat('${c}')">${c}</div>`;
-  m[c].forEach(i=>{
-   const q=cart[i.n]||0;
-   menuItems.innerHTML+=`
-   <div class="item">
-    <div>
-     <div class="item-name">${i.n}</div>
-     ${i.d?`<div class="item-desc">${i.d}</div>`:""}
-     <div class="small">₹${i.p}</div>
-    </div>
-    <div class="qty">
-     <button onclick="upd('${i.n}',${i.p},-1)">−</button>
-     <span>${q}</span>
-     <button onclick="upd('${i.n}',${i.p},1)">+</button>
-    </div>
-   </div>`;
-  })
- }
- updateBar()
+function renderMenu() {
+  menuItems.innerHTML = "";
+  catList.innerHTML = "";
+
+  const rest = restaurants.find(r => r.name === currentRestaurant);
+  if (!rest) return;
+
+  const restCats = categories
+    .filter(c => c.RestaurantID === rest.id)
+    .sort((a, b) => (a.SortOrder || 0) - (b.SortOrder || 0));
+
+  restCats.forEach(cat => {
+    menuItems.innerHTML += `
+      <div class="category" id="cat-${cat.CategoryID}">
+        ${cat.CategoryName}
+      </div>
+    `;
+
+    catList.innerHTML += `
+      <div onclick="scrollCat('${cat.CategoryID}')">
+        ${cat.CategoryName}
+      </div>
+    `;
+
+    items
+      .filter(i =>
+        i.RestaurantID === rest.id &&
+        i.CategoryID === cat.CategoryID
+      )
+      .forEach(i => {
+        const q = cart[i.ItemName] || 0;
+        menuItems.innerHTML += `
+          <div class="item">
+            <div>
+              <div class="item-name">${i.ItemName}</div>
+              ${i.ItemDescription ? `<div class="item-desc">${i.ItemDescription}</div>` : ""}
+              <div class="small">₹${i.Price}</div>
+            </div>
+            <div class="qty">
+              <button onclick="upd('${i.ItemName}', ${i.Price}, -1)">−</button>
+              <span>${q}</span>
+              <button onclick="upd('${i.ItemName}', ${i.Price}, 1)">+</button>
+            </div>
+          </div>
+        `;
+      });
+  });
+
+  updateBar();
 }
 
   /* ================= CATEGORY SCROLL ================= */
