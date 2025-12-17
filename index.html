@@ -162,14 +162,34 @@ input,textarea{
 </div>
 
 <script>
-/* ================= DATA ================= */
+
+  /* ================= DATA ================= */
 let restaurants = [];
+
+// helper to convert Apps Script date-time to HH:MM
+function toTime(v) {
+  if (!v) return "";
+  const d = new Date(v);
+  return d.toISOString().substring(11, 16);
+}
 
 fetch("https://script.google.com/macros/s/AKfycbyfv3XbDCrjznSvQ1p5YUsZchMgV1rklHtlbGl9IkH8p8u2MKRtJG6xue0klAycaf9x/exec")
   .then(r => r.json())
   .then(data => {
     if (data.success) {
-      restaurants = data.restaurants;
+      restaurants = data.restaurants.map(r => ({
+        name: r.RestaurantName,
+        logo: r.LogoURL && r.LogoURL.trim() !== "" ? r.LogoURL : "restaurant-logo.png",
+        slots: [
+          r.Slot1_Open && r.Slot1_Close
+            ? [toTime(r.Slot1_Open), toTime(r.Slot1_Close)]
+            : null,
+          r.Slot2_Open && r.Slot2_Close
+            ? [toTime(r.Slot2_Open), toTime(r.Slot2_Close)]
+            : null
+        ].filter(Boolean)
+      }));
+
       renderRestaurants();
     } else {
       alert("Failed to load restaurants");
