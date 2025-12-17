@@ -182,24 +182,65 @@ function filterRestaurants(q){
 }
 
 /* ================= MENU ================= */
-function openMenu(n){cart={};currentRestaurant=n;menuTitle.innerText=n;renderMenu();nav("page-menu")}
+function openMenu(name){
+  cart = {};
+  currentRestaurant = name;
+  menuTitle.innerText = name;
+  renderMenu();
+  nav("page-menu");
+}
+
 function renderMenu(){
- menuItems.innerHTML="";catList.innerHTML="";
- const r=restaurants.find(x=>x.name===currentRestaurant);if(!r)return;
- categories.filter(c=>c.RestaurantID===r.id).sort((a,b)=>(a.SortOrder||0)-(b.SortOrder||0))
- .forEach(c=>{
-  menuItems.innerHTML+=`<div class="category" id="cat-${c.CategoryID}">${c.CategoryName}</div>`;
-  catList.innerHTML+=`<div onclick="scrollCat('${c.CategoryID}')">${c.CategoryName}</div>`;
-  items.filter(i=>i.RestaurantID===r.id&&i.CategoryID===c.CategoryID).forEach(i=>{
-   const q=cart[i.ItemName]||0;
-   menuItems.innerHTML+=`<div class="item"><div><div class="item-name">${i.ItemName}</div>
-   ${i.ItemDescription?`<div class="item-desc">${i.ItemDescription}</div>`:""}
-   <div class="small">₹${i.Price}</div></div>
-   <div class="qty"><button onclick="upd('${i.ItemName}',${i.Price},-1)">−</button><span>${q}</span>
-   <button onclick="upd('${i.ItemName}',${i.Price},1)">+</button></div></div>`;
+  menuItems.innerHTML = "";
+  catList.innerHTML = "";
+
+  const rest = restaurants.find(r => r.name === currentRestaurant);
+  if (!rest) return;
+
+  const restCats = categories
+    .filter(c => c.RestaurantID === rest.id && c.IsActive)
+    .sort((a,b) => (a.SortOrder||0) - (b.SortOrder||0));
+
+  restCats.forEach(cat => {
+    menuItems.innerHTML += `
+      <div class="category" id="cat-${cat.CategoryID}">
+        ${cat.CategoryName}
+      </div>
+    `;
+
+    catList.innerHTML += `
+      <div onclick="scrollCat('${cat.CategoryID}')">
+        ${cat.CategoryName}
+      </div>
+    `;
+
+    items
+      .filter(i =>
+        i.RestaurantID === rest.id &&
+        i.CategoryID === cat.CategoryID &&
+        i.IsAvailable
+      )
+      .forEach(it => {
+        const q = cart[it.ItemName] || 0;
+
+        menuItems.innerHTML += `
+          <div class="item">
+            <div>
+              <div class="item-name">${it.ItemName}</div>
+              ${it.ItemDescription ? `<div class="item-desc">${it.ItemDescription}</div>` : ""}
+              <div class="small">₹${it.Price}</div>
+            </div>
+            <div class="qty">
+              <button onclick="upd('${it.ItemName}', 0, -1)">−</button>
+              <span>${q}</span>
+              <button onclick="upd('${it.ItemName}', 0, 1)">+</button>
+            </div>
+          </div>
+        `;
+      });
   });
- });
- updateBar();
+
+  updateBar();
 }
 
 /* ================= CATEGORY ================= */
