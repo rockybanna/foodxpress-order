@@ -191,10 +191,15 @@ function filterRestaurants(q){
 }
 
 /* ================= MENU ================= */
-function openMenu(name){
+function openMenu(restaurantId){
   cart = {};
-  currentRestaurant = name;
-  menuTitle.innerText = name;
+
+  const rest = restaurants.find(r => r.id === restaurantId);
+  if (!rest) return;
+
+  currentRestaurant = restaurantId;
+  menuTitle.innerText = rest.name;
+
   renderMenu();
   nav("page-menu");
 }
