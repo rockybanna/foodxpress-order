@@ -366,8 +366,7 @@ function placeOrder(){
  txt+=`\nItem Total: ₹${t}\nDelivery: ₹${d}\nTotal: ₹${t+d}\n\n`;
  txt+=`${n}\n${ph}\n${a}\n${mapLink}`;
  navigator.clipboard.writeText(txt);
-  
-  // Save order to Google Sheets (safe with delay)
+  // Save order to Google Sheets (background)
 fetch("https://script.google.com/macros/s/AKfycbxtwpc7KZDYRBUFXYHb9N1CxCIVJTkRu5ra_NG7N5tE4jSFcHvIYaOyYT7x00ESVSoI3w/exec", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
@@ -382,13 +381,13 @@ fetch("https://script.google.com/macros/s/AKfycbxtwpc7KZDYRBUFXYHb9N1CxCIVJTkRu5
     customerAddress: a,
     customerLocation: mapLink
   })
-})
-.then(() => {
-  setTimeout(() => {
-    window.location.href =
-      "https://wa.me/919484818194?text=" + encodeURIComponent(txt);
-  }, 300);
 });
+
+// WhatsApp redirect (always runs)
+setTimeout(() => {
+  window.location.href =
+    "https://wa.me/919484818194?text=" + encodeURIComponent(txt);
+}, 200);
 }
 
 renderRestaurants();
