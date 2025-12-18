@@ -170,24 +170,45 @@ function backToRestaurants(){cart={};updateBar();stack=["page-restaurants"];show
 
 /* ================= RESTAURANTS ================= */
 function renderRestaurants(){
- restaurantList.innerHTML="";
- const o=[],c=[];
- restaurants.forEach(r=>{
-  const s=status(r);
-  const d=document.createElement("div");
-  d.className="restaurant "+(s.open?"open":"closed");
-  d.innerHTML=`<img src="${r.logo}"><div class="rest-info"><div class="rest-name">${r.name}</div>
-  <div class="rest-status ${s.open?"open-text":"closed-text"}">${s.open?"Open • Closes "+s.closes:"Closed • Opens "+s.opens}</div></div>`;
-  if(s.open)d.onclick=()=>openMenu(r.name);
-  (s.open?o:c).push(d);
- });
- [...o,...c].forEach(x=>restaurantList.appendChild(x))
+  restaurantList.innerHTML = "";
+
+  const openList = [];
+  const closedList = [];
+
+  restaurants.forEach(r => {
+    const s = status(r);
+
+    const d = document.createElement("div");
+    d.className = "restaurant " + (s.open ? "open" : "closed");
+
+    d.innerHTML = `
+      <img src="${r.logo}">
+      <div class="rest-info">
+        <div class="rest-name">${r.name}</div>
+        <div class="rest-status ${s.open ? "open-text" : "closed-text"}">
+          ${s.open ? "Open • Closes " + s.closes : "Closed • Opens " + s.opens}
+        </div>
+      </div>
+    `;
+
+    /* IMPORTANT: pass RestaurantID, NOT name */
+    if (s.open) {
+      d.onclick = () => openMenu(r.id);
+    }
+
+    (s.open ? openList : closedList).push(d);
+  });
+
+  [...openList, ...closedList].forEach(el => restaurantList.appendChild(el));
 }
-setInterval(renderRestaurants,60000);
+
+setInterval(renderRestaurants, 60000);
 
 function filterRestaurants(q){
- q=q.toLowerCase();
- document.querySelectorAll(".restaurant").forEach(r=>r.style.display=r.innerText.toLowerCase().includes(q)?"":"none")
+  q = q.toLowerCase();
+  document.querySelectorAll(".restaurant").forEach(r => {
+    r.style.display = r.innerText.toLowerCase().includes(q) ? "" : "none";
+  });
 }
 
 /* ================= MENU ================= */
