@@ -137,3 +137,221 @@ input,textarea{
     <button class="primary" onclick="goToAddress()">Continue → Address</button>
   </div>
 </div>
+
+  <script>
+/* ================= TIME HELPERS ================= */
+function toMin(t){
+  const [h,m]=t.split(":").map(Number);
+  return h*60+m;
+}
+function nowMin(){
+  const d=new Date();
+  return d.getHours()*60+d.getMinutes();
+}
+function status(r){
+  const n=nowMin();
+  for(const s of r.slots){
+    if(n>=toMin(s[0]) && n<=toMin(s[1])) return {open:true,closes:s[1]};
+    if(n<toMin(s[0])) return {open:false,opens:s[0]};
+  }
+  return {open:false,opens:r.slots[0][0]};
+}
+
+/* ================= NAVIGATION ================= */
+function show(p){
+  document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+  document.getElementById(p).classList.add("active");
+}
+function nav(p){ stack.push(p); show(p); }
+function goBack(){ stack.pop(); show(stack.at(-1)); }
+function backToRestaurants(){
+  cart={}; updateBar();
+  stack=["page-restaurants"];
+  show("page-restaurants");
+}
+
+/* ================= RESTAURANTS ================= */
+function renderRestaurants(){
+  restaurantList.innerHTML="";
+  const open=[],closed=[];
+  restaurants.forEach(r=>{
+    const s=status(r);
+    const d=document.createElement("div");
+    d.className="restaurant "+(s.open?"open":"closed");
+    d.innerHTML=`
+      <img src="${r.logo}">
+      <div class="rest-info">
+        <div class="rest-name">${r.name}</div>
+        <div class="rest-status ${s.open?"open-text":"closed-text"}">
+          ${s.open?"Open • Closes "+s.closes:"Closed • Opens "+s.opens}
+        </div>
+      </div>`;
+    if(s.open) d.onclick=()=>openMenu(r.id);
+    (s.open?open:closed).push(d);
+  });
+  [...open,...closed].forEach(x=>restaurantList.appendChild(x));
+}
+setInterval(renderRestaurants,60000);
+
+function filterRestaurants(q){
+  q=q.toLowerCase();
+  document.querySelectorAll(".restaurant").forEach(r=>{
+    r.style.display=r.innerText.toLowerCase().includes(q)?"":"none";
+  });
+}
+
+/* ================= MENU ================= */
+function openMenu(id){
+  cart={};
+  const r=restaurants.find(x=>x.id===id);
+  if(!r) return;
+  currentRestaurant=id;
+  menuTitle.innerText=r.name;
+  renderMenu();
+  nav("page-menu");
+}
+
+function renderMenu(){
+  menuItems.innerHTML="";
+  catList.innerHTML="";
+  const r=restaurants.find(x=>x.id===currentRestaurant);
+  if(!r) return;
+
+  const cats=categories
+    .filter(c=>c.RestaurantID===r.id && c.IsActive)
+    .sort((a,b)=>(a.SortOrder||0)-(b.SortOrder||0));
+
+  cats.forEach(c=>{
+    menuItems.innerHTML+=`<div class="category" id="cat-${c.CategoryID}">${c.CategoryName}</div>`;
+    catList.innerHTML+=`<div onclick="scrollCat('${c.CategoryID}')">${c.CategoryName}</div>`;
+
+    items.filter(i=>
+      i.RestaurantID===r.id &&
+      i.CategoryID===c.CategoryID &&
+      i.IsAvailable
+    ).forEach(i=>{
+      const q=cart[i.ItemName]||0;
+      menuItems.innerHTML+=`
+        <div class="item">
+          <div>
+            <div class="item-name">${i.ItemName}</div>
+            ${i.ItemDescription?`<div class="item-desc">${i.ItemDescription}</div>`:""}
+            <div class="small">₹${i.Price}</div>
+          </div>
+          <div class="qty">
+            <button onclick="upd('${i.ItemName}',-1)">−</button>
+            <span>${q}</span>
+            <button onclick="upd('${i.ItemName}',1)">+</button>
+          </div>
+        </div>`;
+    });
+  });
+  updateBar();
+}
+
+/* ================= CATEGORY POPUP ================= */
+function openCats(){ catPopup.style.display="block"; }
+function closeCats(){ catPopup.style.display="none"; }
+function scrollCat(id){
+  document.getElementById("cat-"+id)?.scrollIntoView({behavior:"smooth"});
+  closeCats();
+}
+
+/* ================= CART ================= */
+function upd(n,d){
+  cart[n]=(cart[n]||0)+d;
+  if(cart[n]<=0) delete cart[n];
+  if(stack.at(-1)==="page-menu") renderMenu();
+  if(stack.at(-1)==="page-summary") renderSummary();
+  updateBar();
+}
+function price(n){
+  const r=restaurants.find(x=>x.id===currentRestaurant);
+  const i=items.find(x=>x.RestaurantID===r.id && x.ItemName===n);
+  return i?Number(i.Price):0;
+}
+function updateBar(){
+  let it=0,t=0;
+  for(const i in cart){ it+=cart[i]; t+=cart[i]*price(i); }
+  if(it>0 && stack.at(-1)==="page-menu"){
+    cartBar.style.display="flex";
+    cartInfo.innerText=`${it} items | ₹${t}`;
+  }else cartBar.style.display="none";
+}
+function openSummary(){ renderSummary(); nav("page-summary"); }
+function renderSummary(){
+  summaryItems.innerHTML="";
+  let t=0;
+  for(const i in cart){
+    const p=price(i); t+=cart[i]*p;
+    summaryItems.innerHTML+=`
+      <div class="cart-item">
+        <div>${i}<div class="small">₹${p}</div></div>
+        <div class="qty">
+          <button onclick="upd('${i}',-1)">−</button>
+          <span>${cart[i]}</span>
+          <button onclick="upd('${i}',1)">+</button>
+        </div>
+      </div>`;
+  }
+  const d=delivery(t);
+  itemTotal.innerText=`₹${t}`;
+  deliveryCharge.innerText=`₹${d}`;
+  grandTotal.innerText=`₹${t+d}`;
+}
+
+/* ================= DELIVERY RULE ================= */
+function delivery(t){
+  if(t<=0) return 0;
+  if(t>=1199) return 1;
+  if(t>=999) return 9;
+  if(t>=799) return 19;
+  if(t>=599) return 29;
+  if(t>=399) return 39;
+  return 49;
+}
+
+/* ================= ADDRESS ================= */
+function goToAddress(){
+  let t=0; for(const i in cart) t+=cart[i]*price(i);
+  if(t<99){ alert("Minimum order ₹99"); return; }
+  nav("page-address");
+}
+function captureLocation(){
+  navigator.geolocation.getCurrentPosition(p=>{
+    lat=p.coords.latitude; lng=p.coords.longitude;
+    mapLink=`https://maps.google.com/?q=${lat},${lng}`;
+    locStatus.innerText="Location captured ✓";
+  },()=>alert("Location required"));
+}
+
+/* ================= PLACE ORDER ================= */
+function placeOrder(){
+  let t=0; for(const i in cart) t+=cart[i]*price(i);
+  if(t<99){ alert("Minimum order ₹99"); return; }
+
+  const n=custName.value.trim();
+  if(!/^[A-Za-z ]{5,25}$/.test(n)){ alert("Enter valid name"); return; }
+
+  const ph=custPhone.value.trim();
+  if(!/^[0-9]{10}$/.test(ph)){ alert("Invalid phone"); return; }
+
+  const a=custAddress.value.trim();
+  if(a.length<15){ alert("Enter full address"); return; }
+
+  const manual=document.getElementById("manualMapLink").value.trim();
+  if(!mapLink && !manual){ alert("Location required"); return; }
+
+  const loc=mapLink||manual;
+
+  let txt=`20nagar Food Xpress\nRestaurant: ${restaurants.find(r=>r.id===currentRestaurant).name}\n\nItems:\n`;
+  for(const i in cart){ txt+=`${i} × ${cart[i]} = ₹${cart[i]*price(i)}\n`; }
+  const d=delivery(t);
+  txt+=`\nItem Total: ₹${t}\nDelivery: ₹${d}\nTotal: ₹${t+d}\n\n${n}\n${ph}\n${a}\n${loc}`;
+
+  navigator.clipboard.writeText(txt);
+  setTimeout(()=>{ location.href="https://wa.me/919484818194?text="+encodeURIComponent(txt); },200);
+}
+</script>
+</body>
+</html>
