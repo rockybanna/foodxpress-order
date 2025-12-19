@@ -4,118 +4,52 @@
   <meta charset="UTF-8">
   <link rel="icon" type="image/png" href="company-logo.png">
   <title>FoodXpress</title>
-</head>
 
-<body>
+  <style>
+  :root{--brand:#ff9933}
+  body{margin:0;font-family:Arial,sans-serif;background:#f7f7f7}
+  .page{display:none;min-height:100vh;background:#fff}
+  .page.active{display:block}
+  .header{padding:10px;border-bottom:1px solid #ddd;text-align:center}
+  .header img{height:42px}
+  .topbar{padding:12px;border-bottom:1px solid #ddd;cursor:pointer}
+  .content{padding:14px;padding-bottom:90px}
+  .search{width:100%;padding:10px;margin:10px 0}
 
-<style>
-:root{--brand:#ff9933}
-body{margin:0;font-family:Arial,sans-serif;background:#f7f7f7}
-.page{display:none;min-height:100vh;background:#fff}
-.page.active{display:block}
-.header{padding:10px;border-bottom:1px solid #ddd;text-align:center}
-.header img{height:42px}
-.topbar{padding:12px;border-bottom:1px solid #ddd;cursor:pointer}
-.content{padding:14px;padding-bottom:90px}
-.search{width:100%;padding:10px;margin:10px 0}
+  .restaurant{display:flex;gap:12px;align-items:center;padding:12px;border:1px solid #ddd;margin-bottom:10px}
+  .restaurant.open{cursor:pointer}
+  .restaurant.closed{opacity:.6}
+  .restaurant img{width:48px;height:48px;border-radius:6px;object-fit:cover}
+  .rest-info{flex:1}
+  .rest-name{font-weight:600}
+  .rest-status{font-size:12px;margin-top:4px}
+  .open-text{color:green}
+  .closed-text{color:red}
 
-.restaurant{display:flex;gap:12px;align-items:center;padding:12px;border:1px solid #ddd;margin-bottom:10px}
-.restaurant.open{cursor:pointer}
-.restaurant.closed{opacity:.6}
-.restaurant img{width:48px;height:48px;border-radius:6px;object-fit:cover}
-.rest-info{flex:1}
-.rest-name{font-weight:600}
-.rest-status{font-size:12px;margin-top:4px}
-.open-text{color:green}
-.closed-text{color:red}
+  .category{font-weight:bold;font-size:18px;margin-top:20px}
+  .item,.cart-item{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid #eee}
+  .item-name{font-weight:600}
+  .item-desc{font-size:13px;color:#777;margin-top:2px}
 
-.category{font-weight:bold;font-size:18px;margin-top:20px}
-.item,.cart-item{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid #eee}
-.item-name{font-weight:600}
-.item-desc{font-size:13px;color:#777;margin-top:2px}
+  .qty{display:flex;align-items:center;gap:8px}
+  .qty button{width:28px;height:28px;border:none;background:var(--brand);color:#fff;font-size:18px}
 
-.qty{display:flex;align-items:center;gap:8px}
-.qty button{width:28px;height:28px;border:none;background:var(--brand);color:#fff;font-size:18px}
+  .cart-bar{position:fixed;bottom:0;left:0;right:0;background:var(--brand);color:#fff;padding:12px;display:none;justify-content:space-between;cursor:pointer}
 
-.cart-bar{position:fixed;bottom:0;left:0;right:0;background:var(--brand);color:#fff;padding:12px;display:none;justify-content:space-between;cursor:pointer}
+  .bill div{display:flex;justify-content:space-between;margin-bottom:6px}
+  .bill .total{font-weight:bold;font-size:18px}
+  .note{font-size:12px;color:#666;margin-top:8px}
 
-.bill div{display:flex;justify-content:space-between;margin-bottom:6px}
-.bill .total{font-weight:bold;font-size:18px}
-.note{font-size:12px;color:#666;margin-top:8px}
+  button.primary{width:100%;padding:12px;background:var(--brand);color:#fff;border:none;font-size:16px;margin-top:16px}
 
-button.primary{width:100%;padding:12px;background:var(--brand);color:#fff;border:none;font-size:16px;margin-top:16px}
+  .cat-btn{position:fixed;right:16px;bottom:80px;background:#333;color:#fff;padding:10px 14px;border-radius:20px;font-size:14px;cursor:pointer}
+  .cat-popup{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none}
+  .cat-box{background:#fff;margin:20% auto;width:80%;border-radius:8px;padding:10px}
+  .cat-box div{padding:10px;border-bottom:1px solid #eee;cursor:pointer}
 
-.cat-btn{position:fixed;right:16px;bottom:80px;background:#333;color:#fff;padding:10px 14px;border-radius:20px;font-size:14px;cursor:pointer}
-.cat-popup{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none}
-.cat-box{background:#fff;margin:20% auto;width:80%;border-radius:8px;padding:10px}
-.cat-box div{padding:10px;border-bottom:1px solid #eee;cursor:pointer}
-
-input,textarea{width:100%;padding:10px;margin-top:6px;font-size:16px}
-.small{font-size:12px;color:#666}
-</style>
-</head>
-
-<body>
-
-<!-- PAGE 1: RESTAURANTS -->
-<div id="page-restaurants" class="page active">
-  <div class="header"><img src="company-logo.png"></div>
-  <div class="content">
-    <input class="search" placeholder="Search restaurant..." oninput="filterRestaurants(this.value)">
-    <div id="restaurantList"></div>
-  </div>
-</div>
-
-<!-- PAGE 2: MENU -->
-<div id="page-menu" class="page">
-  <div class="topbar" onclick="backToRestaurants()">← Back</div>
-  <div class="header"><img src="company-logo.png"></div>
-  <div class="content">
-    <h2 id="menuTitle"></h2>
-    <div id="menuItems"></div>
-  </div>
-  <div class="cat-btn" onclick="openCats()">☰ Categories</div>
-</div>
-
-<div id="catPopup" class="cat-popup" onclick="closeCats()">
-  <div class="cat-box" onclick="event.stopPropagation()" id="catList"></div>
-</div>
-
-<!-- PAGE 3: ORDER SUMMARY -->
-<div id="page-summary" class="page">
-  <div class="topbar" onclick="goBack()">← Back</div>
-  <div class="header"><img src="company-logo.png"></div>
-  <div class="content">
-    <h2>Order Summary</h2>
-    <div id="summaryItems"></div>
-    <div class="bill">
-      <div><span>Item Total</span><span id="itemTotal">₹0</span></div>
-      <div><span>Delivery Charge</span><span id="deliveryCharge">₹0</span></div>
-      <div class="total"><span>Total Payable</span><span id="grandTotal">₹0</span></div>
-    </div>
-    <div class="note">Delivery charges apply up to 2.5 km. May vary for longer distances.</div>
-    <button class="primary" onclick="goToAddress()">Continue → Address</button>
-  </div>
-</div>
-
-<!-- PAGE 4: ADDRESS -->
-<div id="page-address" class="page">
-  <div class="topbar" onclick="goBack()">← Back</div>
-  <div class="header"><img src="company-logo.png"></div>
-  <div class="content">
-    <h2>Delivery Details</h2>
-    <label>Name</label><input id="custName">
-    <label>Phone</label><input id="custPhone">
-    <label>Address</label><textarea id="custAddress"></textarea>
-    <button class="primary" onclick="captureLocation()">Use my current location</button>
-    <p id="locStatus" class="small"></p>
-    <button class="primary" onclick="placeOrder()">Place Order</button>
-  </div>
-</div>
-
-<div id="cartBar" class="cart-bar" onclick="openSummary()">
-  <span id="cartInfo"></span><span>View Order →</span>
-</div>
+  input,textarea{width:100%;padding:10px;margin-top:6px;font-size:16px}
+  .small{font-size:12px;color:#666}
+      </style>
 
 <script>
 /* ================= DATA ================= */
