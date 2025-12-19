@@ -220,54 +220,71 @@ function renderRestaurants(){
 setInterval(renderRestaurants,60000);
 
 /* ================= MENU ================= */
-function openMenu(id){
-  cart={};
-  const r=restaurants.find(x=>x.id===id);
-  if(!r) return;
-  currentRestaurant=id;
-  menuTitle.innerText=r.name;
+function openMenu(restaurantId){
+  cart = {};
+  currentRestaurant = restaurantId;
+
+  const rest = restaurants.find(r => r.id === restaurantId);
+  if (!rest) return;
+
+  menuTitle.innerText = rest.name;
   renderMenu();
   nav("page-menu");
 }
 
 function renderMenu(){
-  menuItems.innerHTML="";
-  catList.innerHTML="";
-  const r=restaurants.find(x=>x.id===currentRestaurant);
-  if(!r) return;
+  menuItems.innerHTML = "";
+  catList.innerHTML = "";
 
-  const cats=categories
-    .filter(c=>c.RestaurantID===r.id && c.IsActive)
-    .sort((a,b)=>(a.SortOrder||0)-(b.SortOrder||0));
+  const rest = restaurants.find(r => r.id === currentRestaurant);
+  if (!rest) return;
 
-  cats.forEach(c=>{
-    menuItems.innerHTML+=`<div class="category" id="cat-${c.CategoryID}">${c.CategoryName}</div>`;
-    catList.innerHTML+=`<div onclick="scrollCat('${c.CategoryID}')">${c.CategoryName}</div>`;
+  const restCats = categories
+    .filter(c => c.RestaurantID === rest.id && c.IsActive)
+    .sort((a,b) => (a.SortOrder || 0) - (b.SortOrder || 0));
 
-    items.filter(i=>
-      i.RestaurantID===r.id &&
-      i.CategoryID===c.CategoryID &&
-      i.IsAvailable
-    ).forEach(i=>{
-      const q=cart[i.ItemName]||0;
-      menuItems.innerHTML+=`
-        <div class="item">
-          <div>
-            <div class="item-name">${i.ItemName}</div>
-            ${i.ItemDescription?`<div class="item-desc">${i.ItemDescription}</div>`:""}
-            <div class="small">₹${i.Price}</div>
+  restCats.forEach(cat => {
+
+    menuItems.innerHTML += `
+      <div class="category" id="cat-${cat.CategoryID}">
+        ${cat.CategoryName}
+      </div>
+    `;
+
+    catList.innerHTML += `
+      <div onclick="scrollCat('${cat.CategoryID}')">
+        ${cat.CategoryName}
+      </div>
+    `;
+
+    items
+      .filter(i =>
+        i.RestaurantID === rest.id &&
+        i.CategoryID === cat.CategoryID &&
+        i.IsAvailable
+      )
+      .forEach(it => {
+        const q = cart[it.ItemName] || 0;
+
+        menuItems.innerHTML += `
+          <div class="item">
+            <div>
+              <div class="item-name">${it.ItemName}</div>
+              ${it.ItemDescription ? `<div class="item-desc">${it.ItemDescription}</div>` : ""}
+              <div class="small">₹${it.Price}</div>
+            </div>
+            <div class="qty">
+              <button onclick="upd('${it.ItemName}', -1)">−</button>
+              <span>${q}</span>
+              <button onclick="upd('${it.ItemName}', 1)">+</button>
+            </div>
           </div>
-          <div class="qty">
-            <button onclick="upd('${i.ItemName}',-1)">−</button>
-            <span>${q}</span>
-            <button onclick="upd('${i.ItemName}',1)">+</button>
-          </div>
-        </div>`;
-    });
+        `;
+      });
   });
+
   updateBar();
 }
-
 /* ================= CATEGORY POPUP ================= */
 function openCats(){ catPopup.style.display="block"; }
 function closeCats(){ catPopup.style.display="none"; }
