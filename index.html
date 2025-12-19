@@ -139,8 +139,9 @@ input,textarea{
 </div>
 
   <script>
-/* ================= TIME HELPERS ================= */
+/* ================= TIME ================= */
 function toMin(t){
+  if(!t || !t.includes(":")) return null;
   const [h,m]=t.split(":").map(Number);
   return h*60+m;
 }
@@ -149,12 +150,25 @@ function nowMin(){
   return d.getHours()*60+d.getMinutes();
 }
 function status(r){
-  const n=nowMin();
-  for(const s of r.slots){
-    if(n>=toMin(s[0]) && n<=toMin(s[1])) return {open:true,closes:s[1]};
-    if(n<toMin(s[0])) return {open:false,opens:s[0]};
+  if(!r.slots || r.slots.length===0){
+    return { open:false, opens:"N/A" };
   }
-  return {open:false,opens:r.slots[0][0]};
+
+  const n = nowMin();
+
+  for(const s of r.slots){
+    const start = toMin(s[0]);
+    const end   = toMin(s[1]);
+    if(start===null || end===null) continue;
+
+    if(n >= start && n <= end){
+      return { open:true, closes:s[1] };
+    }
+    if(n < start){
+      return { open:false, opens:s[0] };
+    }
+  }
+  return { open:false, opens:r.slots[0][0] };
 }
 
 /* ================= NAVIGATION ================= */
@@ -172,33 +186,38 @@ function backToRestaurants(){
 
 /* ================= RESTAURANTS ================= */
 function renderRestaurants(){
-  restaurantList.innerHTML="";
-  const open=[],closed=[];
+  restaurantList.innerHTML = "";
+
+  const openList = [];
+  const closedList = [];
+
   restaurants.forEach(r=>{
-    const s=status(r);
-    const d=document.createElement("div");
-    d.className="restaurant "+(s.open?"open":"closed");
-    d.innerHTML=`
+    const s = status(r);
+
+    const d = document.createElement("div");
+    d.className = "restaurant " + (s.open ? "open" : "closed");
+
+    d.innerHTML = `
       <img src="${r.logo}">
       <div class="rest-info">
         <div class="rest-name">${r.name}</div>
-        <div class="rest-status ${s.open?"open-text":"closed-text"}">
-          ${s.open?"Open • Closes "+s.closes:"Closed • Opens "+s.opens}
+        <div class="rest-status ${s.open ? "open-text" : "closed-text"}">
+          ${s.open ? "Open • Closes " + s.closes : "Closed • Opens " + s.opens}
         </div>
-      </div>`;
-    if(s.open) d.onclick=()=>openMenu(r.id);
-    (s.open?open:closed).push(d);
-  });
-  [...open,...closed].forEach(x=>restaurantList.appendChild(x));
-}
-setInterval(renderRestaurants,60000);
+      </div>
+    `;
 
-function filterRestaurants(q){
-  q=q.toLowerCase();
-  document.querySelectorAll(".restaurant").forEach(r=>{
-    r.style.display=r.innerText.toLowerCase().includes(q)?"":"none";
+    if(s.open){
+      d.onclick = () => openMenu(r.id);
+    }
+
+    (s.open ? openList : closedList).push(d);
   });
+
+  [...openList, ...closedList].forEach(el=>restaurantList.appendChild(el));
 }
+
+setInterval(renderRestaurants,60000);
 
 /* ================= MENU ================= */
 function openMenu(id){
