@@ -1,88 +1,97 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>20nagar Food Xpress</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
 <style>
 :root{
   --brand:#ff9933;
   --light:#fff3e6;
+  --bg:#f2f2f2;
 }
 
-/* ===== BASE ===== */
+/* ===== RESET & SAFETY ===== */
+*, *::before, *::after{
+  box-sizing:border-box;
+}
+
 body{
   margin:0;
   font-family:Arial,sans-serif;
-  background:#f4f4f4;
+  background:var(--bg);
+  overflow-x:hidden;
 }
 
+/* ===== APP FRAME (MOBILE LOOK) ===== */
 .page{
   display:none;
   min-height:100vh;
-  background:#fafafa;
+  max-width:420px;
+  margin:0 auto;
+  background:#ffffff;
+  box-shadow:0 0 14px rgba(0,0,0,.12);
 }
-.page.active{display:block}
 
-/* ===== HEADER ===== */
+.page.active{
+  display:block;
+}
+
+/* ===== HEADER (LOGO) ===== */
 .header{
-  padding:10px;
+  position:sticky;
+  top:0;
+  background:#ffffff;
   border-bottom:1px solid #ddd;
+  padding:8px 0;
   text-align:center;
-  background:#fff;
+  z-index:9;
 }
-.header img{height:42px}
 
-/* ===== TOP BAR ===== */
+.header img{
+  height:42px;
+}
+
+/* ===== BACK BUTTON (TOP LEFT, SMALL) ===== */
 .topbar{
   position:sticky;
   top:0;
   left:0;
-
-  display:inline-flex;
-  align-items:center;
-
-  padding:6px 10px;
   margin:8px;
-
+  padding:6px 10px;
   font-size:14px;
   font-weight:600;
-
-  background:#fff;
+  background:#ffffff;
   border:1px solid #ddd;
   border-radius:6px;
-
+  display:inline-flex;
+  align-items:center;
   cursor:pointer;
-  z-index:20;
+  z-index:10;
 }
 
-/* ===== CONTENT ===== */
+/* ===== CONTENT AREA ===== */
 .content{
   padding:14px;
-  padding-bottom:90px;
+  padding-bottom:100px;
   background:#fafafa;
 }
 
-/* ===== SEARCH ===== */
+/* ===== SEARCH BAR ===== */
 .search{
   width:100%;
+  max-width:100%;
   padding:10px;
-  margin:10px 0;
   font-size:16px;
+  margin:10px 0;
 }
 
-/* ===== RESTAURANT LIST ===== */
+/* ===== RESTAURANT CARD ===== */
 .restaurant{
   display:flex;
   gap:12px;
   align-items:center;
   padding:12px;
-  border:1px solid #ddd;
   margin-bottom:10px;
-  background:#fff;
+  background:#ffffff;
+  border:1px solid #ddd;
   border-radius:6px;
 }
+
 .restaurant.open{cursor:pointer}
 .restaurant.closed{opacity:.6}
 
@@ -99,76 +108,85 @@ body{
 .open-text{color:green}
 .closed-text{color:red}
 
-/* ===== CATEGORY ===== */
+/* ===== CATEGORY TITLE ===== */
 .category{
   font-weight:bold;
   font-size:18px;
-  margin:24px auto 10px;
-  padding:8px 14px;
+  margin:24px auto 12px;
+  padding:8px 16px;
   background:var(--light);
   border-radius:20px;
+  border:1px solid var(--brand);
   width:fit-content;
   text-align:center;
-  border:1px solid var(--brand);
 }
 
-/* ===== ITEMS ===== */
+/* ===== ITEM CARD ===== */
 .item,
 .cart-item{
   display:flex;
   justify-content:space-between;
   align-items:flex-start;
   padding:12px;
-  margin-top:6px;
-  background:#fff;
+  margin-top:8px;
+  background:#ffffff;
   border-radius:6px;
+  border:1px solid #eee;
 }
 
-.item-name{font-weight:600}
+.item-name{
+  font-weight:600;
+}
 
+/* DESCRIPTION */
 .item-desc{
   font-size:13px;
-  color:#777;
+  color:#666;
   margin-top:2px;
 }
 
-/* PRICE */
+/* PRICE (FIXED VISIBILITY) */
 .small{
   font-size:14px;
-  color:#000;
+  color:#000000;
   font-weight:600;
   margin-top:4px;
 }
 
-/* ===== QTY ===== */
+/* ===== QTY BUTTONS ===== */
 .qty{
   display:flex;
   align-items:center;
   gap:8px;
 }
+
 .qty button{
   width:28px;
   height:28px;
   border:none;
   background:var(--brand);
-  color:#fff;
+  color:#ffffff;
   font-size:18px;
   border-radius:4px;
+  cursor:pointer;
 }
 
 /* ===== CART BAR ===== */
 .cart-bar{
   position:fixed;
   bottom:0;
-  left:0;
-  right:0;
+  left:50%;
+  transform:translateX(-50%);
+  max-width:420px;
+  width:100%;
   background:var(--brand);
-  color:#fff;
+  color:#ffffff;
   padding:12px;
   display:none;
   justify-content:space-between;
-  cursor:pointer;
   font-weight:600;
+  cursor:pointer;
+  z-index:20;
 }
 
 /* ===== BILL ===== */
@@ -177,9 +195,10 @@ body{
   justify-content:space-between;
   margin-bottom:6px;
 }
+
 .bill .total{
-  font-weight:bold;
   font-size:18px;
+  font-weight:bold;
 }
 
 /* ===== NOTE ===== */
@@ -189,40 +208,45 @@ body{
   margin-top:8px;
 }
 
-/* ===== BUTTONS ===== */
+/* ===== PRIMARY BUTTON ===== */
 button.primary{
   width:100%;
   padding:12px;
   background:var(--brand);
-  color:#fff;
+  color:#ffffff;
   border:none;
   font-size:16px;
   margin-top:16px;
   border-radius:6px;
+  cursor:pointer;
 }
 
-/* ===== CATEGORY POPUP ===== */
+/* ===== CATEGORY FLOAT BUTTON (FIXED INSIDE FRAME) ===== */
 .cat-btn{
   position:fixed;
-  right:16px;
-  bottom:80px;
+  bottom:90px;
+  left:50%;
+  transform:translateX(150px);
   background:#333;
-  color:#fff;
+  color:#ffffff;
   padding:10px 14px;
   border-radius:20px;
   font-size:14px;
   cursor:pointer;
+  z-index:30;
 }
 
+/* ===== CATEGORY POPUP ===== */
 .cat-popup{
   position:fixed;
   inset:0;
   background:rgba(0,0,0,.4);
   display:none;
+  z-index:40;
 }
 
 .cat-box{
-  background:#fff;
+  background:#ffffff;
   margin:20% auto;
   width:80%;
   border-radius:8px;
@@ -243,62 +267,6 @@ textarea{
   margin-top:6px;
   font-size:16px;
 }
-
-/* 🔒 UI LOCK — MAIN CONTENT FRAME (DO NOT TOUCH) */
-.page.active .content{
-  max-width:720px;
-  margin:0 auto;
-  background:#ffffff;
-  border-radius:10px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.06);
-}
-
-  /* 🔒 UI LOCK — HORIZONTAL OVERFLOW FIX (DO NOT TOUCH) */
-*, *::before, *::after{
-  box-sizing:border-box;
-}
-
-body{
-  overflow-x:hidden;
-}
-
-.search{
-  width:100%;
-  max-width:100%;
-}
-
-  /* 🔒 FIXED TOP BAR (LOGO + BACK) */
-.topbar{
-  position:sticky;
-  top:0;
-  background:#fff;
-  z-index:10;
-  display:inline-flex;
-  align-items:center;
-  padding:8px 12px;
-  width:auto;
-}
-
-.header{
-  position:sticky;
-  top:0;
-  background:#fff;
-  z-index:9;
-  padding:8px 0;
-}
-
-  /* 🔒 APP FRAME LOOK */
-.page{
-  max-width:420px;       /* mobile frame */
-  margin:0 auto;
-  box-shadow:0 0 12px rgba(0,0,0,.08);
-  background:#fff;
-}
-
-body{
-  background:#eee;       /* frame contrast */
-}
-
 </style>
 
 <body>
