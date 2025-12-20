@@ -6,51 +6,229 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-:root{--brand:#ff9933}
-body{margin:0;font-family:Arial,sans-serif;background:#f7f7f7}
-.page{display:none;min-height:100vh;background:#fff}
-.page.active{display:block}
-.header{padding:10px;border-bottom:1px solid #ddd;text-align:center}
-.header img{height:42px}
-.topbar{padding:12px;border-bottom:1px solid #ddd;cursor:pointer}
-.content{padding:14px;padding-bottom:90px}
-.search{width:100%;padding:10px;margin:10px 0}
+:root{
+  --brand:#ff9933;
+  --light:#fff3e6;
+}
 
-.restaurant{display:flex;gap:12px;align-items:center;padding:12px;border:1px solid #ddd;margin-bottom:10px}
+/* ===== BASE ===== */
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f4f4f4;
+}
+
+.page{
+  display:none;
+  min-height:100vh;
+  background:#fafafa;
+}
+.page.active{display:block}
+
+/* ===== HEADER ===== */
+.header{
+  padding:10px;
+  border-bottom:1px solid #ddd;
+  text-align:center;
+  background:#fff;
+}
+.header img{height:42px}
+
+/* ===== TOP BAR ===== */
+.topbar{
+  padding:12px;
+  border-bottom:1px solid #ddd;
+  cursor:pointer;
+  position:sticky;
+  top:0;
+  background:#fff;
+  z-index:10;
+}
+
+/* ===== CONTENT ===== */
+.content{
+  padding:14px;
+  padding-bottom:90px;
+  background:#fafafa;
+}
+
+/* ===== SEARCH ===== */
+.search{
+  width:100%;
+  padding:10px;
+  margin:10px 0;
+  font-size:16px;
+}
+
+/* ===== RESTAURANT LIST ===== */
+.restaurant{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  padding:12px;
+  border:1px solid #ddd;
+  margin-bottom:10px;
+  background:#fff;
+  border-radius:6px;
+}
 .restaurant.open{cursor:pointer}
 .restaurant.closed{opacity:.6}
-.restaurant img{width:48px;height:48px;border-radius:6px;object-fit:cover}
+
+.restaurant img{
+  width:48px;
+  height:48px;
+  border-radius:6px;
+  object-fit:cover;
+}
+
 .rest-info{flex:1}
 .rest-name{font-weight:600}
 .rest-status{font-size:12px;margin-top:4px}
 .open-text{color:green}
 .closed-text{color:red}
 
-.category{font-weight:bold;font-size:18px;margin-top:20px}
-.item,.cart-item{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid #eee}
+/* ===== CATEGORY ===== */
+.category{
+  font-weight:bold;
+  font-size:18px;
+  margin-top:22px;
+  padding:8px 10px;
+  background:var(--light);
+  border-left:4px solid var(--brand);
+}
+
+/* ===== ITEMS ===== */
+.item,
+.cart-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  padding:12px;
+  margin-top:6px;
+  background:#fff;
+  border-radius:6px;
+}
+
 .item-name{font-weight:600}
-.item-desc{font-size:13px;color:#777;margin-top:2px}
 
-.qty{display:flex;align-items:center;gap:8px}
-.qty button{width:28px;height:28px;border:none;background:var(--brand);color:#fff;font-size:18px}
+.item-desc{
+  font-size:13px;
+  color:#777;
+  margin-top:2px;
+}
 
-.cart-bar{position:fixed;bottom:0;left:0;right:0;background:var(--brand);color:#fff;padding:12px;display:none;justify-content:space-between;cursor:pointer}
+/* PRICE */
+.small{
+  font-size:14px;
+  color:#000;
+  font-weight:600;
+  margin-top:4px;
+}
 
-.bill div{display:flex;justify-content:space-between;margin-bottom:6px}
-.bill .total{font-weight:bold;font-size:18px}
-.note{font-size:12px;color:#666;margin-top:8px}
+/* ===== QTY ===== */
+.qty{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.qty button{
+  width:28px;
+  height:28px;
+  border:none;
+  background:var(--brand);
+  color:#fff;
+  font-size:18px;
+  border-radius:4px;
+}
 
-button.primary{width:100%;padding:12px;background:var(--brand);color:#fff;border:none;font-size:16px;margin-top:16px}
+/* ===== CART BAR ===== */
+.cart-bar{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:var(--brand);
+  color:#fff;
+  padding:12px;
+  display:none;
+  justify-content:space-between;
+  cursor:pointer;
+  font-weight:600;
+}
 
-.cat-btn{position:fixed;right:16px;bottom:80px;background:#333;color:#fff;padding:10px 14px;border-radius:20px;font-size:14px;cursor:pointer}
-.cat-popup{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none}
-.cat-box{background:#fff;margin:20% auto;width:80%;border-radius:8px;padding:10px}
-.cat-box div{padding:10px;border-bottom:1px solid #eee;cursor:pointer}
+/* ===== BILL ===== */
+.bill div{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:6px;
+}
+.bill .total{
+  font-weight:bold;
+  font-size:18px;
+}
 
-input,textarea{width:100%;padding:10px;margin-top:6px;font-size:16px}
-.small{font-size:12px;color:#666}
+/* ===== NOTE ===== */
+.note{
+  font-size:12px;
+  color:#666;
+  margin-top:8px;
+}
+
+/* ===== BUTTONS ===== */
+button.primary{
+  width:100%;
+  padding:12px;
+  background:var(--brand);
+  color:#fff;
+  border:none;
+  font-size:16px;
+  margin-top:16px;
+  border-radius:6px;
+}
+
+/* ===== CATEGORY POPUP ===== */
+.cat-btn{
+  position:fixed;
+  right:16px;
+  bottom:80px;
+  background:#333;
+  color:#fff;
+  padding:10px 14px;
+  border-radius:20px;
+  font-size:14px;
+  cursor:pointer;
+}
+
+.cat-popup{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.4);
+  display:none;
+}
+
+.cat-box{
+  background:#fff;
+  margin:20% auto;
+  width:80%;
+  border-radius:8px;
+  padding:10px;
+}
+
+.cat-box div{
+  padding:10px;
+  border-bottom:1px solid #eee;
+  cursor:pointer;
+}
+
+/* ===== INPUTS ===== */
+input,
+textarea{
+  width:100%;
+  padding:10px;
+  margin-top:6px;
+  font-size:16px;
+}
 </style>
-</head>
 
 <body>
 
