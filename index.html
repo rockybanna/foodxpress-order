@@ -367,26 +367,46 @@ function nav(p){stack.push(p);show(p)}
 function goBack(){stack.pop();show(stack.at(-1))}
 function backToRestaurants(){cart={};updateBar();stack=["page-restaurants"];show("page-restaurants")}
 
+  /* 🔒 LOGIC LOCK — RESTAURANT SHUFFLE (SAFE) */
+function shuffle(arr){
+  for(let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
 /* ================= RESTAURANTS ================= */
 function renderRestaurants(){
- restaurantList.innerHTML="";
- const o=[],c=[];
- restaurants.forEach(r=>{
-  const s=status(r);
-  const d=document.createElement("div");
-  d.className="restaurant "+(s.open?"open":"closed");
-  d.innerHTML=`<img src="${r.logo}"><div class="rest-info"><div class="rest-name">${r.name}</div>
-  <div class="rest-status ${s.open?"open-text":"closed-text"}">${s.open?"Open • Closes "+s.closes:"Closed • Opens "+s.opens}</div></div>`;
-  if(s.open)d.onclick=()=>openMenu(r.name);
-  (s.open?o:c).push(d);
- });
- [...o,...c].forEach(x=>restaurantList.appendChild(x))
-}
-setInterval(renderRestaurants,60000);
+  restaurantList.innerHTML = "";
 
-function filterRestaurants(q){
- q=q.toLowerCase();
- document.querySelectorAll(".restaurant").forEach(r=>r.style.display=r.innerText.toLowerCase().includes(q)?"":"none")
+  const openList = [];
+  const closedList = [];
+
+  // 🔒 shuffle restaurants ONCE per render
+  const shuffled = [...restaurants];
+  shuffle(shuffled);
+
+  shuffled.forEach(r => {
+    const s = status(r);
+    const d = document.createElement("div");
+
+    d.className = "restaurant " + (s.open ? "open" : "closed");
+    d.innerHTML = `
+      <img src="${r.logo}">
+      <div class="rest-info">
+        <div class="rest-name">${r.name}</div>
+        <div class="rest-status ${s.open ? "open-text" : "closed-text"}">
+          ${s.open ? "Open • Closes " + s.closes : "Closed • Opens " + s.opens}
+        </div>
+      </div>
+    `;
+
+    if (s.open) d.onclick = () => openMenu(r.name);
+
+    (s.open ? openList : closedList).push(d);
+  });
+
+  [...openList, ...closedList].forEach(el => restaurantList.appendChild(el));
 }
 
 /* ================= MENU ================= */
