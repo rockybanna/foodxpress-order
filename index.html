@@ -1,23 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>20nagar Food Xpress</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <style>
 :root{
   --brand:#ff9933;
   --light:#fff3e6;
-  --bg:#f2f2f2;
 }
 
-/* ===== RESET & SAFETY ===== */
-*, *::before, *::after{
-  box-sizing:border-box;
-}
-
+/* ===== BASE ===== */
 body{
   margin:0;
   font-family:Arial,sans-serif;
-  background:#d9d9d9;   /* darker outside */
-  overflow-x:hidden;
+  background:#f4f4f4;
 }
 
-/* ===== APP FRAME (MOBILE LOOK) ===== */
 .page{
   display:none;
   min-height:100vh;
@@ -25,94 +25,64 @@ body{
 }
 .page.active{display:block}
 
-/* ACTIVE PAGE */
-.page.active{
-  display:block;
-}
-
-/* DESKTOP ONLY FRAME */
-@media (min-width: 768px){
-  .page{
-    max-width:420px;
-    margin:16px auto;
-    border:2px solid #ff9933;
-    border-radius:12px;
-    box-shadow:0 12px 28px rgba(0,0,0,.25);
-  }
-}
-
-/* MOBILE OVERRIDE */
-@media (max-width: 480px){
-  .page{
-    max-width:100%;
-    margin:0;
-    border-radius:0;
-    border-left:none;
-    border-right:none;
-  }
-}
-
-/* ===== HEADER (LOGO) ===== */
+/* ===== HEADER ===== */
 .header{
-  position:sticky;
-  top:0;
-  background:#ffffff;
+  padding:10px;
   border-bottom:1px solid #ddd;
-  padding:8px 0;
   text-align:center;
-  z-index:9;
+  background:#fff;
 }
+.header img{height:42px}
 
-.header img{
-  height:42px;
-}
-
-/* ===== BACK BUTTON (TOP LEFT, SMALL) ===== */
+/* ===== TOP BAR ===== */
 .topbar{
   position:sticky;
   top:0;
   left:0;
-  margin:8px;
-  padding:6px 10px;
-  font-size:14px;
-  font-weight:600;
-  background:#ffffff;
-  border:1px solid #ddd;
-  border-radius:6px;
+
   display:inline-flex;
   align-items:center;
+
+  padding:6px 10px;
+  margin:8px;
+
+  font-size:14px;
+  font-weight:600;
+
+  background:#fff;
+  border:1px solid #ddd;
+  border-radius:6px;
+
   cursor:pointer;
-  z-index:10;
+  z-index:20;
 }
 
-/* ===== CONTENT AREA ===== */
+/* ===== CONTENT ===== */
 .content{
   padding:14px;
-  padding-bottom:100px;
+  padding-bottom:90px;
   background:#fafafa;
 }
 
-/* ===== SEARCH BAR ===== */
+/* ===== SEARCH ===== */
 .search{
   width:100%;
-  max-width:100%;
   padding:10px;
-  font-size:16px;
   margin:10px 0;
+  font-size:16px;
 }
 
-/* ===== RESTAURANT CARD ===== */
+/* ===== RESTAURANT LIST ===== */
 .restaurant{
   display:flex;
   gap:12px;
   align-items:center;
   padding:12px;
-  margin-bottom:10px;
-  background:#ffffff;
   border:1px solid #ddd;
+  margin-bottom:10px;
+  background:#fff;
   border-radius:6px;
 }
-
 .restaurant.open{cursor:pointer}
 .restaurant.closed{opacity:.6}
 
@@ -129,85 +99,76 @@ body{
 .open-text{color:green}
 .closed-text{color:red}
 
-/* ===== CATEGORY TITLE ===== */
+/* ===== CATEGORY ===== */
 .category{
   font-weight:bold;
   font-size:18px;
-  margin:24px auto 12px;
-  padding:8px 16px;
+  margin:24px auto 10px;
+  padding:8px 14px;
   background:var(--light);
   border-radius:20px;
-  border:1px solid var(--brand);
   width:fit-content;
   text-align:center;
+  border:1px solid var(--brand);
 }
 
-/* ===== ITEM CARD ===== */
+/* ===== ITEMS ===== */
 .item,
 .cart-item{
   display:flex;
   justify-content:space-between;
   align-items:flex-start;
   padding:12px;
-  margin-top:8px;
-  background:#ffffff;
+  margin-top:6px;
+  background:#fff;
   border-radius:6px;
-  border:1px solid #eee;
 }
 
-.item-name{
-  font-weight:600;
-}
+.item-name{font-weight:600}
 
-/* DESCRIPTION */
 .item-desc{
   font-size:13px;
-  color:#666;
+  color:#777;
   margin-top:2px;
 }
 
-/* PRICE (FIXED VISIBILITY) */
+/* PRICE */
 .small{
   font-size:14px;
-  color:#000000;
+  color:#000;
   font-weight:600;
   margin-top:4px;
 }
 
-/* ===== QTY BUTTONS ===== */
+/* ===== QTY ===== */
 .qty{
   display:flex;
   align-items:center;
   gap:8px;
 }
-
 .qty button{
   width:28px;
   height:28px;
   border:none;
   background:var(--brand);
-  color:#ffffff;
+  color:#fff;
   font-size:18px;
   border-radius:4px;
-  cursor:pointer;
 }
 
 /* ===== CART BAR ===== */
 .cart-bar{
   position:fixed;
   bottom:0;
-  left:50%;
-  transform:translateX(-50%);
-  max-width:420px;
-  width:100%;
+  left:0;
+  right:0;
   background:var(--brand);
-  color:#ffffff;
+  color:#fff;
   padding:12px;
   display:none;
   justify-content:space-between;
-  font-weight:600;
   cursor:pointer;
-  z-index:20;
+  font-weight:600;
 }
 
 /* ===== BILL ===== */
@@ -216,10 +177,9 @@ body{
   justify-content:space-between;
   margin-bottom:6px;
 }
-
 .bill .total{
-  font-size:18px;
   font-weight:bold;
+  font-size:18px;
 }
 
 /* ===== NOTE ===== */
@@ -229,45 +189,40 @@ body{
   margin-top:8px;
 }
 
-/* ===== PRIMARY BUTTON ===== */
+/* ===== BUTTONS ===== */
 button.primary{
   width:100%;
   padding:12px;
   background:var(--brand);
-  color:#ffffff;
+  color:#fff;
   border:none;
   font-size:16px;
   margin-top:16px;
   border-radius:6px;
-  cursor:pointer;
 }
 
-/* ===== CATEGORY FLOAT BUTTON (FIXED INSIDE FRAME) ===== */
+/* ===== CATEGORY POPUP ===== */
 .cat-btn{
   position:fixed;
-  bottom:90px;
-  left:50%;
-  transform:translateX(150px);
+  right:16px;
+  bottom:80px;
   background:#333;
-  color:#ffffff;
+  color:#fff;
   padding:10px 14px;
   border-radius:20px;
   font-size:14px;
   cursor:pointer;
-  z-index:30;
 }
 
-/* ===== CATEGORY POPUP ===== */
 .cat-popup{
   position:fixed;
   inset:0;
   background:rgba(0,0,0,.4);
   display:none;
-  z-index:40;
 }
 
 .cat-box{
-  background:#ffffff;
+  background:#fff;
   margin:20% auto;
   width:80%;
   border-radius:8px;
@@ -288,9 +243,65 @@ textarea{
   margin-top:6px;
   font-size:16px;
 }
+
+/* 🔒 UI LOCK — MAIN CONTENT FRAME (DO NOT TOUCH) */
+.page.active .content{
+  max-width:720px;
+  margin:0 auto;
+  background:#ffffff;
+  border-radius:10px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.06);
+}
+
+  /* 🔒 UI LOCK — HORIZONTAL OVERFLOW FIX (DO NOT TOUCH) */
+*, *::before, *::after{
+  box-sizing:border-box;
+}
+
+body{
+  overflow-x:hidden;
+}
+
+.search{
+  width:100%;
+  max-width:100%;
+}
+
+  /* 🔒 FIXED TOP BAR (LOGO + BACK) */
+.topbar{
+  position:sticky;
+  top:0;
+  background:#fff;
+  z-index:10;
+  display:inline-flex;
+  align-items:center;
+  padding:8px 12px;
+  width:auto;
+}
+
+.header{
+  position:sticky;
+  top:0;
+  background:#fff;
+  z-index:9;
+  padding:8px 0;
+}
+
+  /* 🔒 APP FRAME LOOK */
+.page{
+  max-width:420px;       /* mobile frame */
+  margin:0 auto;
+  box-shadow:0 0 12px rgba(0,0,0,.08);
+  background:#fff;
+}
+
+body{
+  background:#eee;       /* frame contrast */
+}
+
 </style>
 
-<body>
+  <body>
 
 <!-- PAGE 1: RESTAURANTS -->
 <div id="page-restaurants" class="page active">
