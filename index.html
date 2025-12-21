@@ -11,57 +11,79 @@
   --light:#fff3e6;
 }
 
-/* ===== BASE ===== */
+/* ===== RESET ===== */
+*,*::before,*::after{
+  box-sizing:border-box;
+}
+
 body{
   margin:0;
   font-family:Arial,sans-serif;
-  background:#f4f4f4;
+  background:#eee;
+  overflow-x:hidden;
 }
 
+/* ===== PAGE ===== */
 .page{
   display:none;
   min-height:100vh;
+  width:100%;
   background:#fafafa;
 }
-.page.active{display:block}
+
+.page.active{
+  display:block;
+}
+
+/* ===== DESKTOP FRAME ONLY ===== */
+@media (min-width:768px){
+  .page{
+    max-width:420px;
+    margin:16px auto;
+    background:#fff;
+    border:2px solid var(--brand);
+    border-radius:14px;
+    box-shadow:0 14px 32px rgba(0,0,0,.25);
+  }
+}
 
 /* ===== HEADER ===== */
 .header{
+  position:sticky;
+  top:0;
+  background:#fff;
   padding:10px;
   border-bottom:1px solid #ddd;
   text-align:center;
-  background:#fff;
+  z-index:9;
 }
-.header img{height:42px}
 
-/* ===== TOP BAR ===== */
+.header img{
+  height:42px;
+}
+
+/* ===== BACK BUTTON ===== */
 .topbar{
   position:sticky;
   top:0;
   left:0;
-
   display:inline-flex;
   align-items:center;
-
   padding:6px 10px;
   margin:8px;
-
   font-size:14px;
   font-weight:600;
-
   background:#fff;
   border:1px solid #ddd;
   border-radius:6px;
-
   cursor:pointer;
-  z-index:20;
+  z-index:10;
 }
 
 /* ===== CONTENT ===== */
 .content{
   padding:14px;
   padding-bottom:90px;
-  background:#fafafa;
 }
 
 /* ===== SEARCH ===== */
@@ -72,17 +94,18 @@ body{
   font-size:16px;
 }
 
-/* ===== RESTAURANT LIST ===== */
+/* ===== RESTAURANTS ===== */
 .restaurant{
   display:flex;
   gap:12px;
   align-items:center;
   padding:12px;
-  border:1px solid #ddd;
   margin-bottom:10px;
   background:#fff;
-  border-radius:6px;
+  border:1px solid #ddd;
+  border-radius:8px;
 }
+
 .restaurant.open{cursor:pointer}
 .restaurant.closed{opacity:.6}
 
@@ -103,25 +126,24 @@ body{
 .category{
   font-weight:bold;
   font-size:18px;
-  margin:24px auto 10px;
-  padding:8px 14px;
+  margin:24px auto 12px;
+  padding:8px 16px;
   background:var(--light);
+  border:1px solid var(--brand);
   border-radius:20px;
   width:fit-content;
   text-align:center;
-  border:1px solid var(--brand);
 }
 
 /* ===== ITEMS ===== */
-.item,
-.cart-item{
+.item,.cart-item{
   display:flex;
   justify-content:space-between;
   align-items:flex-start;
   padding:12px;
-  margin-top:6px;
+  margin-bottom:8px;
   background:#fff;
-  border-radius:6px;
+  border-radius:8px;
 }
 
 .item-name{font-weight:600}
@@ -132,7 +154,6 @@ body{
   margin-top:2px;
 }
 
-/* PRICE */
 .small{
   font-size:14px;
   color:#000;
@@ -146,6 +167,7 @@ body{
   align-items:center;
   gap:8px;
 }
+
 .qty button{
   width:28px;
   height:28px;
@@ -167,7 +189,6 @@ body{
   padding:12px;
   display:none;
   justify-content:space-between;
-  cursor:pointer;
   font-weight:600;
 }
 
@@ -177,16 +198,10 @@ body{
   justify-content:space-between;
   margin-bottom:6px;
 }
+
 .bill .total{
   font-weight:bold;
   font-size:18px;
-}
-
-/* ===== NOTE ===== */
-.note{
-  font-size:12px;
-  color:#666;
-  margin-top:8px;
 }
 
 /* ===== BUTTONS ===== */
@@ -225,7 +240,7 @@ button.primary{
   background:#fff;
   margin:20% auto;
   width:80%;
-  border-radius:8px;
+  border-radius:10px;
   padding:10px;
 }
 
@@ -236,70 +251,14 @@ button.primary{
 }
 
 /* ===== INPUTS ===== */
-input,
-textarea{
+input,textarea{
   width:100%;
   padding:10px;
   margin-top:6px;
   font-size:16px;
 }
-
-/* 🔒 UI LOCK — MAIN CONTENT FRAME (DO NOT TOUCH) */
-.page.active .content{
-  max-width:720px;
-  margin:0 auto;
-  background:#ffffff;
-  border-radius:10px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.06);
-}
-
-  /* 🔒 UI LOCK — HORIZONTAL OVERFLOW FIX (DO NOT TOUCH) */
-*, *::before, *::after{
-  box-sizing:border-box;
-}
-
-body{
-  overflow-x:hidden;
-}
-
-.search{
-  width:100%;
-  max-width:100%;
-}
-
-  /* 🔒 FIXED TOP BAR (LOGO + BACK) */
-.topbar{
-  position:sticky;
-  top:0;
-  background:#fff;
-  z-index:10;
-  display:inline-flex;
-  align-items:center;
-  padding:8px 12px;
-  width:auto;
-}
-
-.header{
-  position:sticky;
-  top:0;
-  background:#fff;
-  z-index:9;
-  padding:8px 0;
-}
-
-  /* 🔒 APP FRAME LOOK */
-.page{
-  max-width:420px;       /* mobile frame */
-  margin:0 auto;
-  box-shadow:0 0 12px rgba(0,0,0,.08);
-  background:#fff;
-}
-
-body{
-  background:#eee;       /* frame contrast */
-}
-
 </style>
+
 
   <body>
 
