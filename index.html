@@ -12,7 +12,7 @@
 }
 
 /* ===== RESET ===== */
-,::before,*::after{
+*,*::before,*::after{
   box-sizing:border-box;
 }
 
@@ -52,18 +52,14 @@ body{
   position:sticky;
   top:0;
   background:#fff;
-  padding:0;                 /* remove side gaps */
+  padding:10px;
   border-bottom:1px solid #ddd;
   text-align:center;
   z-index:9;
 }
 
 .header img{
-  width:100%;
-  height:auto;
-  max-height:120px;   /* adjust if needed */
-  object-fit:contain;
-  display:block;
+  height:42px;
 }
 
 /* ===== BACK BUTTON ===== */
@@ -337,7 +333,7 @@ function toTime(v) {
   const d = new Date(v);
   const h = d.getHours().toString().padStart(2, "0");
   const m = d.getMinutes().toString().padStart(2, "0");
-  return ${h}:${m};
+  return `${h}:${m}`;
 }
 
 fetch("https://script.google.com/macros/s/AKfycbw66W91wIe-cAXwIZPgfEGJ1gy4TQ_MQ5WANbm3jQ9g4t_OmKNgqD7K8-pq7njoteWwEg/exec")
@@ -459,7 +455,7 @@ function renderMenu(){
           <div class="item">
             <div>
               <div class="item-name">${it.ItemName}</div>
-              ${it.ItemDescription ? <div class="item-desc">${it.ItemDescription}</div> : ""}
+              ${it.ItemDescription ? `<div class="item-desc">${it.ItemDescription}</div>` : ""}
               <div class="small">₹${it.Price}</div>
             </div>
             <div class="qty">
@@ -511,7 +507,7 @@ function updateBar(){
 
   if (itemCount > 0 && stack.at(-1) === "page-menu"){
     cartBar.style.display = "flex";
-    cartInfo.innerText = ${itemCount} items | ₹${total};
+    cartInfo.innerText = `${itemCount} items | ₹${total}`;
   } else {
     cartBar.style.display = "none";
   }
@@ -546,9 +542,9 @@ function renderSummary(){
   }
 
   const d = delivery(total);
-  itemTotal.innerText = ₹${total};
-  deliveryCharge.innerText = ₹${d};
-  grandTotal.innerText = ₹${total + d};
+  itemTotal.innerText = `₹${total}`;
+  deliveryCharge.innerText = `₹${d}`;
+  grandTotal.innerText = `₹${total + d}`;
 }
 
 /* ================= DELIVERY ================= */
@@ -556,102 +552,29 @@ function delivery(t){if(t<=0)return 0;if(t>=1199)return 1;if(t>=999)return 9;if(
 
 /* ================= ADDRESS ================= */
 function goToAddress(){let t=0;for(const i in cart)t+=cart[i]*price(i);if(t<99){alert("Minimum order ₹99");return}nav("page-address")}
-function captureLocation(){navigator.geolocation.getCurrentPosition(p=>{lat=p.coords.latitude;lng=p.coords.longitude;mapLink=https://maps.google.com/?q=${lat},${lng};locStatus.innerText="Location captured ✓"},()=>alert("Location required"))}
+function captureLocation(){navigator.geolocation.getCurrentPosition(p=>{lat=p.coords.latitude;lng=p.coords.longitude;mapLink=`https://maps.google.com/?q=${lat},${lng}`;locStatus.innerText="Location captured ✓"},()=>alert("Location required"))}
 
 /* ================= PLACE ORDER ================= */
 function placeOrder(){
+ let t=0;for(const i in cart)t+=cart[i]*price(i);
+ if(t<99){alert("Minimum order ₹99");return}
+ const n=custName.value.trim();if(!/^[A-Za-z ]{5,25}$/.test(n)){alert("Enter valid name");return}
+ const ph=custPhone.value.trim();if(!/^[0-9]{10}$/.test(ph)){alert("Invalid phone");return}
+ const a=custAddress.value.trim();if(a.length<15){alert("Enter full address");return}
+ if(!mapLink){alert("Location required");return}
 
-  /* ===== CALCULATIONS ===== */
-  let itemTotal = 0;
-  let totalQty = 0;
+ let txt=`20nagar Food Xpress\nRestaurant: ${currentRestaurant}\n\nItems:\n`;
+ for(const i in cart){txt+=`${i} × ${cart[i]} = ₹${cart[i]*price(i)}\n`}
+ const d=delivery(t);
+ txt+=`\nItem Total: ₹${t}\nDelivery: ₹${d}\nTotal: ₹${t+d}\n\n${n}\n${ph}\n${a}\n${mapLink}`;
+ navigator.clipboard.writeText(txt);
 
-  for (const i in cart){
-    itemTotal += cart[i] * price(i);
-    totalQty += cart[i];
-  }
+ /* ORDER SAVE (DISABLED – OPTION A)
+ fetch("YOUR_ORDER_API_URL",{method:"POST",body:JSON.stringify({text:txt})});
+ */
 
-  if (itemTotal < 99){
-    alert("Minimum order ₹99");
-    return;
-  }
-
-  /* ===== VALIDATIONS ===== */
-  const n = custName.value.trim();
-  if (!/^[A-Za-z ]{5,25}$/.test(n)){
-    alert("Please enter your full name");
-    return;
-  }
-
-  const ph = custPhone.value.trim();
-  if (!/^[0-9]{10}$/.test(ph)){
-    alert("Please enter valid 10 digit mobile number");
-    return;
-  }
-
-  const a = custAddress.value.trim();
-  if (a.length < 15){
-    alert("Please enter complete delivery address");
-    return;
-  }
-
-  if (!mapLink){
-    alert("Delivery location required");
-    return;
-  }
-
-  const d = delivery(itemTotal);
-  const grandTotal = itemTotal + d;
-
-  /* ===== WHATSAPP MESSAGE (ADMIN FORMAT) ===== */
-  let txt =
-`🍽️ NEW ORDER — 20nagar Food Xpress
-
-🏪 Restaurant
-${currentRestaurant}
-
-📦 Items Ordered`;
-
-  for (const i in cart){
-    txt += \n• ${i} × ${cart[i]}  — ₹${cart[i] * price(i)};
-  }
-
-  txt +=
-`
-
--------------------------
-💰 Billing Summary
-Item Total : ₹${itemTotal}
-Delivery   : ₹${d}
--------------------------
-Total Payable : ₹${grandTotal}
--------------------------
-
-👤 Customer Details
-Name   : ${n}
-Phone  : ${ph}
-
-📍 Delivery Address
-${a}
-
-🗺️ Location
-${mapLink}
-
-⚠️ Delivery will be handled by
-20nagar Food Xpress
-
-📝 Action Required
-Please reply with expected preparation time:
-10 / 20 / 30 minutes`;
-
-  /* ===== COPY & REDIRECT ===== */
-  navigator.clipboard.writeText(txt);
-
-  setTimeout(() => {
-    window.location.href =
-      "https://wa.me/919484818194?text=" + encodeURIComponent(txt);
-  }, 200);
+ setTimeout(()=>{location.href="https://wa.me/919484818194?text="+encodeURIComponent(txt)},200);
 }
-   
 </script>
 </body>
 </html>
