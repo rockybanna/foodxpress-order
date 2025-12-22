@@ -6,93 +6,99 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-/* ================= THEME VARIABLES ================= */
 :root{
-  --gold:#d89b2a;
-  --gold-dark:#b07a12;
-  --gold-light:#fff2cc;
-  --bg:#f2f2f2;
-  --card:#ffffff;
-  --text:#222;
+  --brand:#ff9933;
+  --light:#fff3e6;
 }
 
-/* ================= RESET & BASE ================= */
-*,
-*::before,
-*::after{
+/* ===== RESET ===== */
+,::before,*::after{
   box-sizing:border-box;
 }
 
-html,body{
+body{
   margin:0;
-  padding:0;
-  width:100%;
-  overflow-x:hidden;
   font-family:Arial,sans-serif;
-  background:var(--bg);
-  color:var(--text);
+  background:#eee;
+  overflow-x:hidden;
 }
 
-/* ================= APP FRAME (MOBILE FIRST) ================= */
+/* ===== PAGE ===== */
 .page{
   display:none;
   min-height:100vh;
-  max-width:420px;
-  margin:12px auto;
-  background:var(--card);
-  border:3px solid var(--gold);
-  border-radius:14px;
-  box-shadow:0 14px 32px rgba(0,0,0,.25);
+  width:100%;
+  background:#fafafa;
 }
 
-.page.active{display:block}
+.page.active{
+  display:block;
+}
 
-/* ================= HEADER ================= */
+/* ===== DESKTOP FRAME ONLY ===== */
+@media (min-width:768px){
+  .page{
+    max-width:420px;
+    margin:16px auto;
+    background:#fff;
+    border:2px solid var(--brand);
+    border-radius:14px;
+    box-shadow:0 14px 32px rgba(0,0,0,.25);
+  }
+}
+
+/* ===== HEADER ===== */
 .header{
   position:sticky;
   top:0;
-  background:linear-gradient(180deg,#000,#1a1a1a);
+  background:#fff;
+  padding:0;                 /* remove side gaps */
+  border-bottom:1px solid #ddd;
   text-align:center;
-  padding:10px 0;
-  z-index:10;
+  z-index:9;
 }
 
 .header img{
-  height:44px;
+  width:100%;
+  height:auto;
+  max-height:120px;   /* adjust if needed */
+  object-fit:contain;
+  display:block;
 }
 
-/* ================= BACK BUTTON ================= */
+/* ===== BACK BUTTON ===== */
 .topbar{
-  position:fixed;
-  top:10px;
-  left:10px;
-  z-index:20;
+  position:sticky;
+  top:30px;
+  left:0;
+  display:inline-flex;
+  align-items:center;
   padding:6px 10px;
+  margin:8px;
   font-size:14px;
   font-weight:600;
   background:#fff;
-  border:1px solid var(--gold);
+  border:1px solid #ddd;
   border-radius:6px;
   cursor:pointer;
+  z-index:10;
 }
 
-/* ================= CONTENT ================= */
+/* ===== CONTENT ===== */
 .content{
-  padding:16px;
-  padding-bottom:100px;
+  padding:14px;
+  padding-bottom:90px;
 }
 
-/* ================= SEARCH ================= */
+/* ===== SEARCH ===== */
 .search{
   width:100%;
-  padding:12px;
+  padding:10px;
+  margin:10px 0;
   font-size:16px;
-  border:2px solid var(--gold);
-  border-radius:8px;
-  margin-bottom:12px;
 }
 
-/* ================= RESTAURANT CARD ================= */
+/* ===== RESTAURANTS ===== */
 .restaurant{
   display:flex;
   gap:12px;
@@ -108,62 +114,58 @@ html,body{
 .restaurant.closed{opacity:.6}
 
 .restaurant img{
-  width:46px;
-  height:46px;
+  width:48px;
+  height:48px;
   border-radius:6px;
   object-fit:cover;
 }
 
 .rest-info{flex:1}
-.rest-name{font-weight:700}
+.rest-name{font-weight:600}
 .rest-status{font-size:12px;margin-top:4px}
 .open-text{color:green}
 .closed-text{color:red}
 
-/* ================= CATEGORY CHIP ================= */
+/* ===== CATEGORY ===== */
 .category{
-  margin:22px auto 10px;
+  font-weight:bold;
+  font-size:18px;
+  margin:24px auto 12px;
   padding:8px 16px;
-  width:fit-content;
-  font-size:16px;
-  font-weight:700;
-  background:linear-gradient(145deg,var(--gold-light),#fff);
-  border:1px solid var(--gold);
+  background:var(--light);
+  border:1px solid var(--brand);
   border-radius:20px;
+  width:fit-content;
   text-align:center;
 }
 
-/* ================= ITEMS ================= */
-.item,
-.cart-item{
+/* ===== ITEMS ===== */
+.item,.cart-item{
   display:flex;
   justify-content:space-between;
   align-items:flex-start;
   padding:12px;
-  margin-top:8px;
+  margin-bottom:8px;
   background:#fff;
   border-radius:8px;
-  border:1px solid #eee;
 }
 
-.item-name{
-  font-weight:700;
-}
+.item-name{font-weight:600}
 
 .item-desc{
   font-size:13px;
-  color:#666;
+  color:#777;
   margin-top:2px;
 }
 
 .small{
   font-size:14px;
-  font-weight:700;
   color:#000;
+  font-weight:600;
   margin-top:4px;
 }
 
-/* ================= QTY ================= */
+/* ===== QTY ===== */
 .qty{
   display:flex;
   align-items:center;
@@ -174,33 +176,27 @@ html,body{
   width:28px;
   height:28px;
   border:none;
-  border-radius:4px;
-  background:linear-gradient(145deg,var(--gold),var(--gold-dark));
+  background:var(--brand);
   color:#fff;
   font-size:18px;
-  cursor:pointer;
+  border-radius:4px;
 }
 
-/* ================= CART BAR ================= */
+/* ===== CART BAR ===== */
 .cart-bar{
   position:fixed;
   bottom:0;
   left:0;
   right:0;
-  max-width:420px;
-  margin:0 auto;
-  background:linear-gradient(145deg,var(--gold),var(--gold-dark));
+  background:var(--brand);
   color:#fff;
-  padding:14px;
+  padding:12px;
   display:none;
   justify-content:space-between;
-  font-weight:700;
-  cursor:pointer;
-  border-top-left-radius:12px;
-  border-top-right-radius:12px;
+  font-weight:600;
 }
 
-/* ================= BILL ================= */
+/* ===== BILL ===== */
 .bill div{
   display:flex;
   justify-content:space-between;
@@ -208,37 +204,28 @@ html,body{
 }
 
 .bill .total{
+  font-weight:bold;
   font-size:18px;
-  font-weight:800;
 }
 
-/* ================= NOTE ================= */
-.note{
-  font-size:12px;
-  color:#666;
-  margin-top:10px;
-}
-
-/* ================= BUTTON ================= */
+/* ===== BUTTONS ===== */
 button.primary{
   width:100%;
-  padding:14px;
-  font-size:16px;
-  font-weight:700;
-  background:linear-gradient(145deg,var(--gold),var(--gold-dark));
+  padding:12px;
+  background:var(--brand);
   color:#fff;
   border:none;
-  border-radius:8px;
+  font-size:16px;
   margin-top:16px;
-  cursor:pointer;
+  border-radius:6px;
 }
 
-/* ================= CATEGORY POPUP ================= */
+/* ===== CATEGORY POPUP ===== */
 .cat-btn{
   position:fixed;
   right:16px;
-  bottom:90px;
-  background:#000;
+  bottom:80px;
+  background:#333;
   color:#fff;
   padding:10px 14px;
   border-radius:20px;
@@ -249,32 +236,30 @@ button.primary{
 .cat-popup{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.5);
+  background:rgba(0,0,0,.4);
   display:none;
 }
 
 .cat-box{
   background:#fff;
+  margin:20% auto;
   width:80%;
-  margin:25% auto;
   border-radius:10px;
   padding:10px;
 }
 
 .cat-box div{
-  padding:12px;
+  padding:10px;
   border-bottom:1px solid #eee;
   cursor:pointer;
 }
 
-/* ================= INPUTS ================= */
+/* ===== INPUTS ===== */
 input,textarea{
   width:100%;
-  padding:12px;
-  font-size:16px;
-  border:1px solid #ccc;
-  border-radius:6px;
+  padding:10px;
   margin-top:6px;
+  font-size:16px;
 }
 </style>
 
@@ -292,97 +277,55 @@ input,textarea{
 
 <!-- PAGE 2: MENU -->
 <div id="page-menu" class="page">
-  <div class="header">
-    <span class="back-arrow" onclick="goBack()">←</span>
-    <img src="company-logo.png">
-  </div>
-
+  <div class="topbar" onclick="backToRestaurants()">← Back</div>
+  <div class="header"><img src="company-logo.png"></div>
   <div class="content">
     <h2 id="menuTitle"></h2>
-
-    <!-- ITEM SEARCH (RESTAURANT ONLY) -->
-    <input 
-      class="search" 
-      placeholder="Search items..." 
-      oninput="filterMenuItems(this.value)"
-    >
-
     <div id="menuItems"></div>
   </div>
-
   <div class="cat-btn" onclick="openCats()">☰ Categories</div>
+</div>
+
+<div id="catPopup" class="cat-popup" onclick="closeCats()">
+  <div class="cat-box" onclick="event.stopPropagation()" id="catList"></div>
 </div>
 
 <!-- PAGE 3: ORDER SUMMARY -->
 <div id="page-summary" class="page">
-  <div class="header">
-    <span class="back-arrow" onclick="goBack()">←</span>
-    <img src="company-logo.png">
-  </div>
-
+  <div class="topbar" onclick="goBack()">← Back</div>
+  <div class="header"><img src="company-logo.png"></div>
   <div class="content">
     <h2>Order Summary</h2>
-
     <div id="summaryItems"></div>
-
     <div class="bill">
       <div><span>Item Total</span><span id="itemTotal">₹0</span></div>
       <div><span>Delivery Charge</span><span id="deliveryCharge">₹0</span></div>
       <div class="total"><span>Total Payable</span><span id="grandTotal">₹0</span></div>
     </div>
-
-    <!-- ACTION BUTTONS -->
-    <button class="primary" onclick="goBack()">Edit Cart</button>
-    <button class="primary" onclick="goToAddress()">Proceed → Address</button>
+    <div class="note">Delivery charges apply up to 2.5 km. May vary for longer distances.</div>
+    <button class="primary" onclick="goToAddress()">Continue → Address</button>
   </div>
 </div>
 
 <!-- PAGE 4: ADDRESS -->
 <div id="page-address" class="page">
-  <div class="header">
-    <span class="back-arrow" onclick="goBack()">←</span>
-    <img src="company-logo.png">
-  </div>
-
+  <div class="topbar" onclick="goBack()">← Back</div>
+  <div class="header"><img src="company-logo.png"></div>
   <div class="content">
     <h2>Delivery Details</h2>
-
-    <label>Name</label>
-    <input id="custName" placeholder="Full name">
-
-    <label>Phone</label>
-    <input id="custPhone" placeholder="10 digit mobile">
-
-    <label>Address</label>
-    <textarea id="custAddress" placeholder="Complete delivery address"></textarea>
-
-    <button class="primary" onclick="captureLocation()">Use Current Location</button>
+    <label>Name</label><input id="custName">
+    <label>Phone</label><input id="custPhone">
+    <label>Address</label><textarea id="custAddress"></textarea>
+    <button class="primary" onclick="captureLocation()">Use my current location</button>
     <p id="locStatus" class="small"></p>
-
     <button class="primary" onclick="placeOrder()">Place Order</button>
   </div>
 </div>
 
-/* BACK ARROW */
-.back-arrow{
-  position:absolute;
-  left:12px;
-  top:12px;
-  font-size:18px;
-  font-weight:700;
-  cursor:pointer;
-}
+<div id="cartBar" class="cart-bar" onclick="openSummary()">
+  <span id="cartInfo"></span><span>View Order →</span>
+</div>
 
-/* MENU SEARCH */
-#page-menu .search{
-  margin:12px 0;
-}
-
-/* SUMMARY BUTTON SPACING */
-#page-summary button.primary{
-  margin-top:12px;
-}
-    
 <script>
 /* ================= DATA ================= */
 let restaurants=[],categories=[],items=[];
@@ -394,7 +337,7 @@ function toTime(v) {
   const d = new Date(v);
   const h = d.getHours().toString().padStart(2, "0");
   const m = d.getMinutes().toString().padStart(2, "0");
-  return `${h}:${m}`;
+  return ${h}:${m};
 }
 
 fetch("https://script.google.com/macros/s/AKfycbw66W91wIe-cAXwIZPgfEGJ1gy4TQ_MQ5WANbm3jQ9g4t_OmKNgqD7K8-pq7njoteWwEg/exec")
@@ -479,15 +422,57 @@ function openMenu(name){
   nav("page-menu");
 }
 
-function renderMenu(){ menuItems.innerHTML = ""; catList.innerHTML = ""; const rest = restaurants.find(r => r.name === currentRestaurant); if (!rest) return; const restCats = categories .filter(c => c.RestaurantID === rest.id && c.IsActive) .sort((a,b) => (a.SortOrder||0) - (b.SortOrder||0)); restCats.forEach(cat => { menuItems.innerHTML += <div class="category" id="cat-${cat.CategoryID}"> ${cat.CategoryName} </div> ; catList.innerHTML += <div onclick="scrollCat('${cat.CategoryID}')"> ${cat.CategoryName} </div> ; items .filter(i => i.RestaurantID === rest.id && i.CategoryID === cat.CategoryID && i.IsAvailable ) .forEach(it => { const q = cart[it.ItemName] || 0; menuItems.innerHTML += <div class="item"> <div> <div class="item-name">${it.ItemName}</div> ${it.ItemDescription ? <div class="item-desc">${it.ItemDescription}</div> : ""} <div class="small">₹${it.Price}</div> </div> <div class="qty"> <button onclick="upd('${it.ItemName}', 0, -1)">−</button> <span>${q}</span> <button onclick="upd('${it.ItemName}', 0, 1)">+</button> </div> </div> ; }); });
-  updateBar();
-}
-  /* ================= ITEM SEARCH (MENU ONLY) ================= */
-function filterMenuItems(q){
-  q = q.toLowerCase();
-  document.querySelectorAll("#menuItems .item").forEach(it=>{
-    it.style.display = it.innerText.toLowerCase().includes(q) ? "" : "none";
+function renderMenu(){
+  menuItems.innerHTML = "";
+  catList.innerHTML = "";
+
+  const rest = restaurants.find(r => r.name === currentRestaurant);
+  if (!rest) return;
+
+  const restCats = categories
+    .filter(c => c.RestaurantID === rest.id && c.IsActive)
+    .sort((a,b) => (a.SortOrder||0) - (b.SortOrder||0));
+
+  restCats.forEach(cat => {
+    menuItems.innerHTML += `
+      <div class="category" id="cat-${cat.CategoryID}">
+        ${cat.CategoryName}
+      </div>
+    `;
+
+    catList.innerHTML += `
+      <div onclick="scrollCat('${cat.CategoryID}')">
+        ${cat.CategoryName}
+      </div>
+    `;
+
+    items
+      .filter(i =>
+        i.RestaurantID === rest.id &&
+        i.CategoryID === cat.CategoryID &&
+        i.IsAvailable
+      )
+      .forEach(it => {
+        const q = cart[it.ItemName] || 0;
+
+        menuItems.innerHTML += `
+          <div class="item">
+            <div>
+              <div class="item-name">${it.ItemName}</div>
+              ${it.ItemDescription ? <div class="item-desc">${it.ItemDescription}</div> : ""}
+              <div class="small">₹${it.Price}</div>
+            </div>
+            <div class="qty">
+              <button onclick="upd('${it.ItemName}', 0, -1)">−</button>
+              <span>${q}</span>
+              <button onclick="upd('${it.ItemName}', 0, 1)">+</button>
+            </div>
+          </div>
+        `;
+      });
   });
+
+  updateBar();
 }
 
 /* ================= CATEGORY ================= */
@@ -526,7 +511,7 @@ function updateBar(){
 
   if (itemCount > 0 && stack.at(-1) === "page-menu"){
     cartBar.style.display = "flex";
-    cartInfo.innerText = `${itemCount} items | ₹${total}`;
+    cartInfo.innerText = ${itemCount} items | ₹${total};
   } else {
     cartBar.style.display = "none";
   }
@@ -561,9 +546,9 @@ function renderSummary(){
   }
 
   const d = delivery(total);
-  itemTotal.innerText = `₹${total}`;
-  deliveryCharge.innerText = `₹${d}`;
-  grandTotal.innerText = `₹${total + d}`;
+  itemTotal.innerText = ₹${total};
+  deliveryCharge.innerText = ₹${d};
+  grandTotal.innerText = ₹${total + d};
 }
 
 /* ================= DELIVERY ================= */
@@ -571,7 +556,7 @@ function delivery(t){if(t<=0)return 0;if(t>=1199)return 1;if(t>=999)return 9;if(
 
 /* ================= ADDRESS ================= */
 function goToAddress(){let t=0;for(const i in cart)t+=cart[i]*price(i);if(t<99){alert("Minimum order ₹99");return}nav("page-address")}
-function captureLocation(){navigator.geolocation.getCurrentPosition(p=>{lat=p.coords.latitude;lng=p.coords.longitude;mapLink=`https://maps.google.com/?q=${lat},${lng}`;locStatus.innerText="Location captured ✓"},()=>alert("Location required"))}
+function captureLocation(){navigator.geolocation.getCurrentPosition(p=>{lat=p.coords.latitude;lng=p.coords.longitude;mapLink=https://maps.google.com/?q=${lat},${lng};locStatus.innerText="Location captured ✓"},()=>alert("Location required"))}
 
 /* ================= PLACE ORDER ================= */
 function placeOrder(){
@@ -619,42 +604,42 @@ function placeOrder(){
 
   /* ===== WHATSAPP MESSAGE (ADMIN FORMAT) ===== */
   let txt =
-`🍽️ *NEW ORDER — 20nagar Food Xpress*
+`🍽️ NEW ORDER — 20nagar Food Xpress
 
-🏪 *Restaurant*
+🏪 Restaurant
 ${currentRestaurant}
 
-📦 *Items Ordered*`;
+📦 Items Ordered`;
 
   for (const i in cart){
-    txt += `\n• ${i} × ${cart[i]}  — ₹${cart[i] * price(i)}`;
+    txt += \n• ${i} × ${cart[i]}  — ₹${cart[i] * price(i)};
   }
 
   txt +=
 `
 
 -------------------------
-💰 *Billing Summary*
+💰 Billing Summary
 Item Total : ₹${itemTotal}
 Delivery   : ₹${d}
 -------------------------
-*Total Payable : ₹${grandTotal}*
+Total Payable : ₹${grandTotal}
 -------------------------
 
-👤 *Customer Details*
+👤 Customer Details
 Name   : ${n}
 Phone  : ${ph}
 
-📍 *Delivery Address*
+📍 Delivery Address
 ${a}
 
-🗺️ *Location*
+🗺️ Location
 ${mapLink}
 
-⚠️ *Delivery will be handled by*
-*20nagar Food Xpress*
+⚠️ Delivery will be handled by
+20nagar Food Xpress
 
-📝 *Action Required*
+📝 Action Required
 Please reply with expected preparation time:
 10 / 20 / 30 minutes`;
 
