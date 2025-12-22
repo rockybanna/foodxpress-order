@@ -479,66 +479,15 @@ function openMenu(name){
   nav("page-menu");
 }
 
-function renderMenu(){
-  menuItems.innerHTML = "";
-  catList.innerHTML = "";
-
-  const rest = restaurants.find(r => r.name === currentRestaurant);
-  if (!rest) return;
-
-  const restCats = categories
-    .filter(c => c.RestaurantID === rest.id && c.IsActive)
-    .sort((a,b) => (a.SortOrder||0) - (b.SortOrder||0));
-
-  restCats.forEach(cat => {
-    menuItems.innerHTML += `
-      <div class="category" id="cat-${cat.CategoryID}">
-        ${cat.CategoryName}
-      </div>
-    `;
-
-    catList.innerHTML += `
-      <div onclick="scrollCat('${cat.CategoryID}')">
-        ${cat.CategoryName}
-      </div>
-    `;
-
-    items
-      .filter(i =>
-        i.RestaurantID === rest.id &&
-        i.CategoryID === cat.CategoryID &&
-        i.IsAvailable
-      )
-      .forEach(it => {
-        const q = cart[it.ItemName] || 0;
-
-        menuItems.innerHTML += `
-          <div class="item">
-            <div>
-              <div class="item-name">${it.ItemName}</div>
-              ${it.ItemDescription ? `<div class="item-desc">${it.ItemDescription}</div>` : ""}
-              <div class="small">₹${it.Price}</div>
-            </div>
-            <div class="qty">
-              <button onclick="upd('${it.ItemName}', 0, -1)">−</button>
-              <span>${q}</span>
-              <button onclick="upd('${it.ItemName}', 0, 1)">+</button>
-            </div>
-          </div>
-        `;
-      });
-  });
+function renderMenu(){ menuItems.innerHTML = ""; catList.innerHTML = ""; const rest = restaurants.find(r => r.name === currentRestaurant); if (!rest) return; const restCats = categories .filter(c => c.RestaurantID === rest.id && c.IsActive) .sort((a,b) => (a.SortOrder||0) - (b.SortOrder||0)); restCats.forEach(cat => { menuItems.innerHTML += <div class="category" id="cat-${cat.CategoryID}"> ${cat.CategoryName} </div> ; catList.innerHTML += <div onclick="scrollCat('${cat.CategoryID}')"> ${cat.CategoryName} </div> ; items .filter(i => i.RestaurantID === rest.id && i.CategoryID === cat.CategoryID && i.IsAvailable ) .forEach(it => { const q = cart[it.ItemName] || 0; menuItems.innerHTML += <div class="item"> <div> <div class="item-name">${it.ItemName}</div> ${it.ItemDescription ? <div class="item-desc">${it.ItemDescription}</div> : ""} <div class="small">₹${it.Price}</div> </div> <div class="qty"> <button onclick="upd('${it.ItemName}', 0, -1)">−</button> <span>${q}</span> <button onclick="upd('${it.ItemName}', 0, 1)">+</button> </div> </div> ; }); });
+  updateBar();
 }
-
+  /* ================= ITEM SEARCH (MENU ONLY) ================= */
 function filterMenuItems(q){
   q = q.toLowerCase();
-  document.querySelectorAll(".item").forEach(it=>{
+  document.querySelectorAll("#menuItems .item").forEach(it=>{
     it.style.display = it.innerText.toLowerCase().includes(q) ? "" : "none";
   });
-}
-
-
-  updateBar();
 }
 
 /* ================= CATEGORY ================= */
