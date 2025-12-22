@@ -52,14 +52,18 @@ body{
   position:sticky;
   top:0;
   background:#fff;
-  padding:10px;
+  padding:0;                 /* remove side gaps */
   border-bottom:1px solid #ddd;
   text-align:center;
   z-index:9;
 }
 
 .header img{
-  height:42px;
+  width:100%;
+  height:auto;
+  max-height:120px;   /* adjust if needed */
+  object-fit:contain;
+  display:block;
 }
 
 /* ===== BACK BUTTON ===== */
