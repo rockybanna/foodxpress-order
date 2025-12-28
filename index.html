@@ -86,8 +86,8 @@ body{
 
 /* ===== CONTENT ===== */
 .content{
-  padding:14px;
-  padding-bottom:90px;
+  padding:16px;
+  padding-bottom:100px;
 }
 
 /* ===== SEARCH ===== */
@@ -97,34 +97,72 @@ body{
   margin:10px 0;
   font-size:16px;
 }
+.search-wrap{
+  position:sticky;
+  top:120px;
+  z-index:8;
+  background:#fafafa;
+  padding-bottom:8px;
+}
+
+.search{
+  width:100%;
+  padding:12px 14px;
+  font-size:16px;
+  border:1px solid #ccc;
+  border-radius:10px;
+  outline:none;
+}
+
+.search:focus{
+  border-color:var(--brand);
+  box-shadow:0 0 0 2px rgba(255,153,51,.2);
+}
 
 /* ===== RESTAURANTS ===== */
 .restaurant{
   display:flex;
   gap:12px;
   align-items:center;
-  padding:12px;
-  margin-bottom:10px;
+  padding:14px;
+  margin-bottom:12px;
   background:#fff;
-  border:1px solid #ddd;
-  border-radius:8px;
+  border-radius:14px;
+  box-shadow:0 4px 10px rgba(0,0,0,.08);
+  transition:transform .1s ease, box-shadow .1s ease;
+}
+
+.restaurant.open:active{
+  transform:scale(.98);
+}
+
+.restaurant.closed{
+  opacity:.55;
 }
 
 .restaurant.open{cursor:pointer}
 .restaurant.closed{opacity:.6}
 
 .restaurant img{
-  width:48px;
-  height:48px;
-  border-radius:6px;
+  width:56px;
+  height:56px;
+  border-radius:12px;
   object-fit:cover;
+  background:#f2f2f2;
 }
 
 .rest-info{flex:1}
 .rest-name{font-weight:600}
 .rest-status{font-size:12px;margin-top:4px}
-.open-text{color:green}
-.closed-text{color:red}
+.open-text{
+  color:#0a8f08;
+  font-weight:600;
+}
+
+.closed-text{
+  color:#c62828;
+  font-weight:600;
+}
 
 /* ===== CATEGORY ===== */
 .category{
@@ -185,16 +223,19 @@ body{
 /* ===== CART BAR ===== */
 .cart-bar{
   position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
+  bottom:12px;
+  left:12px;
+  right:12px;
   background:var(--brand);
   color:#fff;
-  padding:12px;
+  padding:14px 16px;
   display:none;
   justify-content:space-between;
   font-weight:600;
+  border-radius:14px;
+  box-shadow:0 10px 20px rgba(0,0,0,.25);
 }
+
 
 /* ===== BILL ===== */
 .bill div{
@@ -270,7 +311,13 @@ input,textarea{
 <div id="page-restaurants" class="page active">
   <div class="header"><img src="company-logo.png"></div>
   <div class="content">
-    <input class="search" placeholder="Search restaurant..." oninput="filterRestaurants(this.value)">
+<div class="search-wrap">
+  <input
+    class="search"
+    placeholder="Search restaurant or item..."
+    oninput="filterRestaurants(this.value)"
+  >
+</div>
     <div id="restaurantList"></div>
   </div>
 </div>
