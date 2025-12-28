@@ -329,6 +329,7 @@ input,textarea{
 <script>
 /* ================= DATA ================= */
 let restaurants=[],categories=[],items=[];
+let ALL_RESTAURANTS = [];
 let cart={},currentRestaurant="",stack=["page-restaurants"];
 let lat="",lng="",mapLink="";
 
@@ -342,15 +343,19 @@ function toTime(v) {
 
 fetch("https://script.google.com/macros/s/AKfycbw66W91wIe-cAXwIZPgfEGJ1gy4TQ_MQ5WANbm3jQ9g4t_OmKNgqD7K8-pq7njoteWwEg/exec")
 .then(r=>r.json()).then(d=>{
- if(!d.success){alert("Failed to load data");return;}
- restaurants=d.restaurants.map(r=>({
-  id:r.RestaurantID,name:r.RestaurantName,
-  logo:r.LogoURL||"restaurant-logo.png",
-  slots:[[r.Slot1_Open,r.Slot1_Close],[r.Slot2_Open,r.Slot2_Close]]
-   .filter(x=>x[0]&&x[1]).map(x=>[toTime(x[0]),toTime(x[1])])
- }));
- categories=d.categories;items=d.items;
- renderRestaurants();
+restaurants=d.restaurants.map(r=>({
+ id:r.RestaurantID,
+ name:r.RestaurantName,
+ logo:r.LogoURL||"restaurant-logo.png",
+ slots:[[r.Slot1_Open,r.Slot1_Close],[r.Slot2_Open,r.Slot2_Close]]
+  .filter(x=>x[0]&&x[1]).map(x=>[toTime(x[0]),toTime(x[1])])
+}));
+
+ALL_RESTAURANTS = [...restaurants];   // 🔒 backup original list
+categories=d.categories;
+items=d.items;
+
+renderRestaurants();
 }).catch(()=>alert("Unable to connect"));
 
 /* ================= TIME ================= */
@@ -380,7 +385,43 @@ function shuffle(arr){
 }
 
 /* ================= RESTAURANTS ================= */
-function renderRestaurants(){
+function filterRestaurants(query){
+  query = query.toLowerCase().trim();
+
+  if(!query){
+    restaurants = [...ALL_RESTAURANTS];
+    renderRestaurants();
+    return;
+  }
+
+  // 1️⃣ Match by restaurant name
+  const byName = ALL_RESTAURANTS.filter(r =>
+    r.name.toLowerCase().includes(query)
+  );
+
+  // 2️⃣ Match by item name → restaurant IDs
+  const matchedRestaurantIds = new Set(
+    items
+      .filter(i => i.ItemName && i.ItemName.toLowerCase().includes(query))
+      .map(i => i.RestaurantID)
+  );
+
+  // 3️⃣ Restaurants that sell matching items
+  const byItems = ALL_RESTAURANTS.filter(r =>
+    matchedRestaurantIds.has(r.id)
+  );
+
+  // 4️⃣ Merge & remove duplicates
+  restaurants = [
+    ...new Map(
+      [...byName, ...byItems].map(r => [r.id, r])
+    ).values()
+  ];
+
+  renderRestaurants();
+}
+
+  function renderRestaurants(){
   restaurantList.innerHTML = "";
 
   const openList = [];
