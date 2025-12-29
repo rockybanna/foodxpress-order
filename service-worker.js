@@ -1,15 +1,19 @@
-const CACHE_NAME = "foodxpress-v2";
+const CACHE_NAME = "foodxpress-v3";
 
-const FILES_TO_CACHE = [
+/* Cache ONLY static files */
+const STATIC_FILES = [
   "./",
   "./index.html",
-  "./manifest.json"
+  "./manifest.json",
+  "./company-logo.png",
+  "./icon-192.png",
+  "./icon-512.png"
 ];
 
 self.addEventListener("install", event => {
   self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(FILES_TO_CACHE))
+    caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_FILES))
   );
 });
 
@@ -26,8 +30,18 @@ self.addEventListener("activate", event => {
   self.clients.claim();
 });
 
+/* VERY IMPORTANT:
+   Do NOT intercept Google Apps Script API calls */
 self.addEventListener("fetch", event => {
+  const url = event.request.url;
+
+  /* Always go to network for Apps Script */
+  if (url.includes("script.google.com")) {
+    return;
+  }
+
+  /* Cache-first for static files only */
   event.respondWith(
-    fetch(event.request).catch(() => caches.match(event.request))
+    caches.match(event.request).then(res => res || fetch(event.request))
   );
 });
