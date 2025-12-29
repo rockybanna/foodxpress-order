@@ -396,6 +396,23 @@ let restaurants=[],categories=[],items=[];
 let ALL_RESTAURANTS = [];
 let cart={},currentRestaurant="",stack=["page-restaurants"];
 let lat="",lng="",mapLink="";
+  
+  /* ================= DOM REFERENCES (PWA SAFE) ================= */
+const restaurantList = document.getElementById("restaurantList");
+const menuItems = document.getElementById("menuItems");
+const catList = document.getElementById("catList");
+const summaryItems = document.getElementById("summaryItems");
+const cartBar = document.getElementById("cartBar");
+const cartInfo = document.getElementById("cartInfo");
+const menuTitle = document.getElementById("menuTitle");
+const menuLogo = document.getElementById("menuLogo");
+const itemTotal = document.getElementById("itemTotal");
+const deliveryCharge = document.getElementById("deliveryCharge");
+const grandTotal = document.getElementById("grandTotal");
+const custName = document.getElementById("custName");
+const custPhone = document.getElementById("custPhone");
+const custAddress = document.getElementById("custAddress");
+const locStatus = document.getElementById("locStatus");
 
 function toTime(v) {
   if (!v) return "";
