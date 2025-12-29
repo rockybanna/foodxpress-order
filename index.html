@@ -7,259 +7,215 @@
 
 <style>
 :root{
-  --brand:#ff9933;
-  --light:#fff3e6;
+  --brand:#7a4b6d;
+  --brand-light:#f4edf1;
+  --bg:#f6f6f6;
+  --card:#ffffff;
+  --text:#1f1f1f;
+  --muted:#777;
+  --border:#e6e6e6;
 }
 
-/* ===== RESET ===== */
-*,*::before,*::after{
-  box-sizing:border-box;
-}
+/* RESET */
+*,*::before,*::after{box-sizing:border-box}
 body{
   margin:0;
-  font-family:Arial,sans-serif;
-  background:#eee;
-  overflow-x:hidden;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
 }
 
-/* ===== PAGE ===== */
+/* PAGE */
 .page{
   display:none;
   min-height:100vh;
   width:100%;
-  background:#fafafa;
 }
+.page.active{display:block}
 
-.page.active{
-  display:block;
-}
-
-/* ===== DESKTOP FRAME ONLY ===== */
+/* DESKTOP FRAME */
 @media (min-width:768px){
   .page{
     max-width:420px;
-    margin:16px auto;
+    margin:14px auto;
     background:#fff;
-    border:2px solid var(--brand);
     border-radius:14px;
-    box-shadow:0 14px 32px rgba(0,0,0,.25);
+    box-shadow:0 18px 40px rgba(0,0,0,.18);
+    overflow:hidden;
   }
 }
 
-/* ===== HEADER ===== */
+/* HEADER */
 .header{
   position:sticky;
   top:0;
-  background:#fff;
-  padding:0;                 /* remove side gaps */
-  border-bottom:1px solid #ddd;
-  text-align:center;
-  z-index:9;
+  z-index:10;
+  background:#000;
 }
-
 .header img{
   width:100%;
-  height:auto;
-  max-height:120px;   /* adjust if needed */
-  object-fit:contain;
-  display:block;
-}
-  /* ===== MENU HEADER ===== */
-.menu-header{
-  position:sticky;
-  top:0;
-  background:#fff;
-  z-index:9;
-  padding-bottom:12px;
-  border-bottom:1px solid #ddd;
-}
-
-.menu-header img{
-  width:100%;
-  max-height:160px;
-  object-fit:contain;
+  max-height:140px;
+  object-fit:cover;
   display:block;
 }
 
-.menu-title{
-  font-size:20px;
-  font-weight:700;
-  padding:8px 16px 0;
-}
-
-
-/* ===== BACK BUTTON ===== */
+/* BACK BUTTON */
 .topbar{
-  position:sticky;
-  top:30px;
-  left:0;
-  display:inline-flex;
-  align-items:center;
+  position:absolute;
+  top:12px;
+  left:12px;
+  background:#fff;
+  border-radius:10px;
   padding:6px 10px;
-  margin:8px;
   font-size:14px;
   font-weight:600;
-  background:#fff;
-  border:1px solid #ddd;
-  border-radius:6px;
+  box-shadow:0 4px 12px rgba(0,0,0,.2);
   cursor:pointer;
-  z-index:10;
+  z-index:20;
 }
 
-/* ===== CONTENT ===== */
+/* CONTENT */
 .content{
-  padding:16px;
-  padding-bottom:100px;
+  padding:14px;
+  padding-bottom:120px;
 }
 
-/* ===== SEARCH ===== */
-.content{
-  padding:16px;
-  padding-bottom:100px;
-}
-
-.menu-content{
-  padding-top:12px;
-}
-
+/* SEARCH */
 .search-wrap{
   position:sticky;
-  top:120px;
-  z-index:8;
-  background:#fafafa;
-  padding-bottom:8px;
+  top:140px;
+  z-index:9;
+  background:var(--bg);
+  padding-bottom:10px;
 }
-
 .search{
   width:100%;
   padding:12px 14px;
-  font-size:16px;
-  border:1px solid #ccc;
-  border-radius:10px;
-  outline:none;
+  border-radius:14px;
+  border:1px solid var(--border);
+  font-size:15px;
 }
-
 .search:focus{
+  outline:none;
   border-color:var(--brand);
-  box-shadow:0 0 0 2px rgba(255,153,51,.2);
+  box-shadow:0 0 0 2px rgba(122,75,109,.2);
 }
 
-/* ===== RESTAURANTS ===== */
+/* RESTAURANT CARD */
 .restaurant{
   display:flex;
   gap:12px;
   align-items:center;
+  background:var(--card);
   padding:14px;
-  margin-bottom:12px;
-  background:#fff;
-  border-radius:14px;
-  box-shadow:0 4px 10px rgba(0,0,0,.08);
-  transition:transform .1s ease, box-shadow .1s ease;
+  border-radius:16px;
+  margin-bottom:14px;
+  box-shadow:0 6px 18px rgba(0,0,0,.08);
+  transition:transform .12s ease;
 }
-
-.restaurant.open:active{
-  transform:scale(.98);
-}
-
-.restaurant.closed{
-  opacity:.55;
-}
-
-.restaurant.open{cursor:pointer}
-.restaurant.closed{opacity:.6}
+.restaurant.open:active{transform:scale(.97)}
+.restaurant.closed{opacity:.55}
 
 .restaurant img{
-  width:56px;
-  height:56px;
-  border-radius:12px;
+  width:60px;
+  height:60px;
+  border-radius:14px;
   object-fit:cover;
-  background:#f2f2f2;
+  background:#eee;
 }
-
 .rest-info{flex:1}
-.rest-name{font-weight:600}
-.rest-status{font-size:12px;margin-top:4px}
-.open-text{
-  color:#0a8f08;
-  font-weight:600;
+.rest-name{
+  font-weight:700;
+  font-size:16px;
+}
+.rest-status{
+  font-size:12px;
+  margin-top:4px;
+}
+.open-text{color:#0a8f08;font-weight:600}
+.closed-text{color:#c62828;font-weight:600}
+
+/* MENU HEADER */
+.menu-header{
+  position:sticky;
+  top:0;
+  background:#fff;
+  z-index:10;
+  border-bottom:1px solid var(--border);
+}
+.menu-header img{
+  width:100%;
+  max-height:180px;
+  object-fit:cover;
+}
+.menu-title{
+  font-size:20px;
+  font-weight:800;
+  padding:10px 16px;
 }
 
-.closed-text{
-  color:#c62828;
-  font-weight:600;
-}
-
-/* ===== CATEGORY ===== */
+/* CATEGORY */
 .category{
-  font-weight:bold;
-  font-size:18px;
-  margin:24px auto 12px;
-  padding:8px 16px;
-  background:var(--light);
-  border:1px solid var(--brand);
-  border-radius:20px;
+  margin:26px auto 14px;
+  padding:8px 18px;
+  background:var(--brand-light);
+  color:var(--brand);
+  font-weight:700;
+  border-radius:30px;
   width:fit-content;
-  text-align:center;
-
-  /* 🔒 IMPORTANT FIX */
-  scroll-margin-top:170px;
+  scroll-margin-top:190px;
 }
 
-/* ===== ITEMS ===== */
+/* ITEM CARD */
 .item,.cart-item{
   display:flex;
   justify-content:space-between;
   align-items:flex-start;
+  gap:12px;
+  background:var(--card);
   padding:14px;
-  margin-bottom:12px;
-  background:#fff;
-  border-radius:14px;
-  box-shadow:0 4px 10px rgba(0,0,0,.06);
+  border-radius:16px;
+  margin-bottom:14px;
+  box-shadow:0 4px 14px rgba(0,0,0,.06);
 }
-
 .item-name{
-  font-weight:600;
   font-size:16px;
+  font-weight:700;
 }
-
 .item-desc{
   font-size:13px;
-  color:#666;
+  color:var(--muted);
   margin-top:4px;
   line-height:1.4;
 }
-
 .small{
-  font-size:14px;
-  color:#000;
-  font-weight:600;
-  margin-top:4px;
+  margin-top:6px;
+  font-weight:700;
 }
 
-/* ===== QTY ===== */
+/* QTY */
 .qty{
   display:flex;
   align-items:center;
   gap:8px;
 }
-
 .qty button{
   width:32px;
   height:32px;
+  border-radius:10px;
   border:none;
   background:var(--brand);
   color:#fff;
   font-size:18px;
-  border-radius:8px;
   cursor:pointer;
 }
 .qty span{
-  min-width:20px;
+  min-width:22px;
   text-align:center;
-  font-weight:600;
+  font-weight:700;
 }
 
-/* ===== CART BAR ===== */
+/* CART BAR */
 .cart-bar{
   position:fixed;
   bottom:12px;
@@ -267,79 +223,76 @@ body{
   right:12px;
   background:var(--brand);
   color:#fff;
-  padding:14px 16px;
+  padding:16px;
+  border-radius:18px;
   display:none;
   justify-content:space-between;
-  font-weight:600;
-  border-radius:14px;
-  box-shadow:0 10px 20px rgba(0,0,0,.25);
+  align-items:center;
+  font-weight:700;
+  box-shadow:0 14px 30px rgba(0,0,0,.3);
 }
 
-
-/* ===== BILL ===== */
+/* BILL */
 .bill div{
   display:flex;
   justify-content:space-between;
-  margin-bottom:6px;
+  margin-bottom:8px;
 }
-
 .bill .total{
-  font-weight:bold;
   font-size:18px;
+  font-weight:800;
 }
 
-/* ===== BUTTONS ===== */
+/* BUTTON */
 button.primary{
   width:100%;
-  padding:12px;
+  padding:14px;
   background:var(--brand);
   color:#fff;
   border:none;
+  border-radius:14px;
   font-size:16px;
-  margin-top:16px;
-  border-radius:6px;
+  font-weight:700;
+  cursor:pointer;
 }
 
-/* ===== CATEGORY POPUP ===== */
+/* CATEGORY POPUP */
 .cat-btn{
   position:fixed;
   right:16px;
-  bottom:80px;
+  bottom:90px;
   background:#333;
   color:#fff;
-  padding:10px 14px;
-  border-radius:20px;
+  padding:12px 16px;
+  border-radius:30px;
   font-size:14px;
-  cursor:pointer;
 }
-
 .cat-popup{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.4);
+  background:rgba(0,0,0,.45);
   display:none;
 }
-
 .cat-box{
   background:#fff;
-  margin:20% auto;
+  margin:22% auto;
   width:80%;
-  border-radius:10px;
-  padding:10px;
+  border-radius:18px;
+  padding:12px;
 }
-
 .cat-box div{
-  padding:10px;
-  border-bottom:1px solid #eee;
-  cursor:pointer;
+  padding:12px;
+  border-bottom:1px solid var(--border);
+  font-weight:600;
 }
 
-/* ===== INPUTS ===== */
+/* INPUTS */
 input,textarea{
   width:100%;
-  padding:10px;
-  margin-top:6px;
-  font-size:16px;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  font-size:15px;
 }
 </style>
 
