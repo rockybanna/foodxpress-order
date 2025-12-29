@@ -1,3 +1,5 @@
+githu okay
+.
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,806 +9,648 @@
 
 <style>
 :root{
-  --brand:#7a4b6d;
-  --brand-soft:#f3ebef;
-  --bg:#f6f6f6;
-  --card:#ffffff;
-  --text:#1e1e1e;
-  --muted:#6f6f6f;
-  --border:#e5e5e5;
-  --success:#0a8f08;
-  --danger:#c62828;
+  --brand:#ff9933;
+  --light:#fff3e6;
 }
 
-/* ================= RESET ================= */
+/* ===== RESET ===== */
 *,*::before,*::after{
   box-sizing:border-box;
 }
-html,body{
-  margin:0;
-  padding:0;
-}
+
 body{
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  -webkit-font-smoothing:antialiased;
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#eee;
+  overflow-x:hidden;
 }
 
-/* ================= PAGE ================= */
+/* ===== PAGE ===== */
 .page{
   display:none;
   min-height:100vh;
   width:100%;
+  background:#fafafa;
 }
+
 .page.active{
   display:block;
 }
 
-/* ================= DESKTOP FRAME ================= */
+/* ===== DESKTOP FRAME ONLY ===== */
 @media (min-width:768px){
   .page{
     max-width:420px;
-    margin:14px auto;
+    margin:16px auto;
     background:#fff;
-    border-radius:16px;
-    box-shadow:0 14px 40px rgba(0,0,0,.18);
-    overflow:hidden;
+    border:2px solid var(--brand);
+    border-radius:14px;
+    box-shadow:0 14px 32px rgba(0,0,0,.25);
   }
 }
 
-/* ================= HEADER ================= */
+/* ===== HEADER ===== */
 .header{
   position:sticky;
   top:0;
-  z-index:20;
-  background:#000;
+  background:#fff;
+  padding:0;                 /* remove side gaps */
+  border-bottom:1px solid #ddd;
+  text-align:center;
+  z-index:9;
 }
+
 .header img{
   width:100%;
-  max-height:150px;
-  object-fit:cover;
+  height:auto;
+  max-height:120px;   /* adjust if needed */
+  object-fit:contain;
   display:block;
 }
 
-/* ================= BACK BUTTON ================= */
+/* ===== BACK BUTTON ===== */
 .topbar{
-  position:absolute;
-  top:12px;
-  left:12px;
-  padding:6px 12px;
-  background:#fff;
-  border-radius:12px;
+  position:sticky;
+  top:30px;
+  left:0;
+  display:inline-flex;
+  align-items:center;
+  padding:6px 10px;
+  margin:8px;
   font-size:14px;
-  font-weight:700;
+  font-weight:600;
+  background:#fff;
+  border:1px solid #ddd;
+  border-radius:6px;
   cursor:pointer;
-  box-shadow:0 4px 10px rgba(0,0,0,.25);
-  z-index:30;
+  z-index:10;
 }
 
-/* ================= CONTENT ================= */
+/* ===== CONTENT ===== */
 .content{
   padding:14px;
-  padding-bottom:130px;
+  padding-bottom:90px;
 }
 
-/* ================= SEARCH ================= */
-.search-wrap{
-  position:sticky;
-  top:150px;
-  z-index:15;
-  background:var(--bg);
-  padding-bottom:10px;
-}
+/* ===== SEARCH ===== */
 .search{
   width:100%;
-  padding:13px 15px;
-  border-radius:16px;
-  border:1px solid var(--border);
-  font-size:15px;
-  outline:none;
-}
-.search:focus{
-  border-color:var(--brand);
-}
-
-/* ================= RESTAURANT CARD ================= */
-.restaurant{
-  display:flex;
-  gap:14px;
-  align-items:center;
-  background:var(--card);
-  padding:16px;
-  border-radius:18px;
-  margin-bottom:14px;
-  box-shadow:0 4px 12px rgba(0,0,0,.07);
-}
-.restaurant.open{cursor:pointer}
-.restaurant.closed{opacity:.55}
-.restaurant img{
-  width:62px;
-  height:62px;
-  border-radius:16px;
-  object-fit:cover;
-  background:#eee;
-}
-.rest-info{flex:1}
-.rest-name{
-  font-weight:800;
+  padding:10px;
+  margin:10px 0;
   font-size:16px;
 }
-.rest-status{
-  font-size:13px;
-  margin-top:4px;
-}
-.open-text{
-  color:var(--success);
-  font-weight:700;
-}
-.closed-text{
-  color:var(--danger);
-  font-weight:700;
-}
 
-/* ================= MENU HEADER ================= */
-.menu-header{
-  position:sticky;
-  top:0;
-  z-index:20;
-  background:#fff;
-  border-bottom:1px solid var(--border);
-}
-.menu-header img{
-  width:100%;
-  max-height:190px;
-  object-fit:cover;
-  display:block;
-}
-.menu-title{
-  font-size:20px;
-  font-weight:800;
-  padding:10px 16px;
-}
-
-/* ================= CATEGORY CHIPS ================= */
-.cat-chips{
-  position:sticky;
-  top:190px;
-  z-index:18;
-  display:flex;
-  gap:10px;
-  padding:10px 14px;
-  background:#fff;
-  overflow-x:auto;
-}
-.cat-chip{
-  padding:8px 16px;
-  border-radius:30px;
-  background:var(--brand-soft);
-  color:var(--brand);
-  font-weight:700;
-  white-space:nowrap;
-  cursor:pointer;
-}
-
-/* ================= CATEGORY LABEL ================= */
-.category{
-  margin:30px auto 14px;
-  padding:9px 20px;
-  background:var(--brand-soft);
-  color:var(--brand);
-  font-weight:800;
-  border-radius:40px;
-  width:fit-content;
-  scroll-margin-top:240px;
-}
-
-/* ================= ITEM CARD ================= */
-.item,.cart-item{
+/* ===== RESTAURANTS ===== */
+.restaurant{
   display:flex;
   gap:12px;
-  justify-content:space-between;
-  align-items:flex-start;
+  align-items:center;
+  padding:12px;
+  margin-bottom:10px;
   background:#fff;
-  padding:16px;
-  border-radius:18px;
-  margin-bottom:14px;
-  box-shadow:0 3px 10px rgba(0,0,0,.06);
-}
-.item img{
-  width:72px;
-  height:72px;
-  border-radius:14px;
-  object-fit:cover;
-  flex-shrink:0;
-  background:#eee;
-}
-.item-name{
-  font-weight:800;
-  font-size:15px;
-}
-.item-desc{
-  font-size:13px;
-  color:var(--muted);
-  margin-top:4px;
-}
-.small{
-  font-weight:800;
-  margin-top:6px;
+  border:1px solid #ddd;
+  border-radius:8px;
 }
 
-/* ================= QTY ================= */
+.restaurant.open{cursor:pointer}
+.restaurant.closed{opacity:.6}
+
+.restaurant img{
+  width:48px;
+  height:48px;
+  border-radius:6px;
+  object-fit:cover;
+}
+
+.rest-info{flex:1}
+.rest-name{font-weight:600}
+.rest-status{font-size:12px;margin-top:4px}
+.open-text{color:green}
+.closed-text{color:red}
+
+/* ===== CATEGORY ===== */
+.category{
+  font-weight:bold;
+  font-size:18px;
+  margin:24px auto 12px;
+  padding:8px 16px;
+  background:var(--light);
+  border:1px solid var(--brand);
+  border-radius:20px;
+  width:fit-content;
+  text-align:center;
+}
+
+/* ===== ITEMS ===== */
+.item,.cart-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  padding:12px;
+  margin-bottom:8px;
+  background:#fff;
+  border-radius:8px;
+}
+
+.item-name{font-weight:600}
+
+.item-desc{
+  font-size:13px;
+  color:#777;
+  margin-top:2px;
+}
+
+.small{
+  font-size:14px;
+  color:#000;
+  font-weight:600;
+  margin-top:4px;
+}
+
+/* ===== QTY ===== */
 .qty{
   display:flex;
   align-items:center;
-  gap:10px;
+  gap:8px;
 }
+
 .qty button{
-  width:34px;
-  height:34px;
+  width:28px;
+  height:28px;
   border:none;
-  border-radius:12px;
   background:var(--brand);
   color:#fff;
   font-size:18px;
-  cursor:pointer;
-}
-.qty span{
-  min-width:18px;
-  text-align:center;
-  font-weight:800;
+  border-radius:4px;
 }
 
-/* ================= CART BAR ================= */
+/* ===== CART BAR ===== */
 .cart-bar{
   position:fixed;
-  bottom:12px;
-  left:12px;
-  right:12px;
+  bottom:0;
+  left:0;
+  right:0;
   background:var(--brand);
   color:#fff;
-  padding:18px;
-  border-radius:20px;
+  padding:12px;
   display:none;
   justify-content:space-between;
-  font-weight:800;
-  z-index:50;
+  font-weight:600;
 }
 
-/* ================= BILL ================= */
+/* ===== BILL ===== */
 .bill div{
   display:flex;
   justify-content:space-between;
   margin-bottom:6px;
 }
+
 .bill .total{
+  font-weight:bold;
   font-size:18px;
-  font-weight:800;
 }
 
-/* ================= BUTTON ================= */
+/* ===== BUTTONS ===== */
 button.primary{
   width:100%;
-  padding:15px;
+  padding:12px;
   background:var(--brand);
   color:#fff;
   border:none;
-  border-radius:16px;
   font-size:16px;
-  font-weight:800;
+  margin-top:16px;
+  border-radius:6px;
+}
+
+/* ===== CATEGORY POPUP ===== */
+.cat-btn{
+  position:fixed;
+  right:16px;
+  bottom:80px;
+  background:#333;
+  color:#fff;
+  padding:10px 14px;
+  border-radius:20px;
+  font-size:14px;
   cursor:pointer;
 }
 
-/* ================= INPUTS ================= */
-input,textarea{
-  width:100%;
-  padding:13px;
-  margin-top:6px;
-  border-radius:14px;
-  border:1px solid var(--border);
-  font-size:15px;
-}
-
-/* ================= CATEGORY POPUP ================= */
 .cat-popup{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.45);
+  background:rgba(0,0,0,.4);
   display:none;
-  z-index:100;
 }
+
 .cat-box{
   background:#fff;
   margin:20% auto;
   width:80%;
-  border-radius:18px;
+  border-radius:10px;
   padding:10px;
 }
+
 .cat-box div{
-  padding:12px;
-  border-bottom:1px solid var(--border);
-  font-weight:700;
+  padding:10px;
+  border-bottom:1px solid #eee;
   cursor:pointer;
 }
 
-/* ================= EMPTY STATE ================= */
-.empty{
-  text-align:center;
-  padding:60px 20px;
-  color:var(--muted);
+/* ===== INPUTS ===== */
+input,textarea{
+  width:100%;
+  padding:10px;
+  margin-top:6px;
+  font-size:16px;
 }
-  
-  /* ================= CATEGORY BUTTON ================= */
-.cat-btn{
-  position:fixed;
-  right:14px;
-  bottom:90px;
-  background:#111;
-  color:#fff;
-  padding:10px 14px;
-  border-radius:22px;
-  font-size:14px;
-  font-weight:700;
-  cursor:pointer;
-  z-index:60;
-}
-
-/* ================= SUCCESS PAGE ================= */
-#page-success .content{
-  text-align:center;
-  padding-top:120px;
-}
-#page-success h2{
-  font-size:22px;
-  margin-bottom:10px;
-}
-
 </style>
+
 
   <body>
 
-<!-- ================= PAGE 1: RESTAURANTS ================= -->
+<!-- PAGE 1: RESTAURANTS -->
 <div id="page-restaurants" class="page active">
-  <div class="header">
-    <img src="company-logo.png">
-  </div>
-
+  <div class="header"><img src="company-logo.png"></div>
   <div class="content">
-    <div class="search-wrap">
-      <input
-        class="search"
-        placeholder="Search restaurant or item..."
-        oninput="filterRestaurants(this.value)"
-      >
-    </div>
-
+    <input class="search" placeholder="Search restaurant..." oninput="filterRestaurants(this.value)">
     <div id="restaurantList"></div>
   </div>
 </div>
 
-<!-- ================= PAGE 2: MENU ================= -->
+<!-- PAGE 2: MENU -->
 <div id="page-menu" class="page">
-  <div class="menu-header">
-    <div class="topbar" onclick="backToRestaurants()">← Back</div>
-    <img id="menuLogo" src="company-logo.png">
-    <div id="menuTitle" class="menu-title"></div>
-  </div>
-
-  <!-- CATEGORY CHIPS -->
-  <div id="catChips" class="cat-chips"></div>
-
-  <div class="content menu-content">
+  <div class="topbar" onclick="backToRestaurants()">← Back</div>
+  <div class="header"><img src="company-logo.png"></div>
+  <div class="content">
+    <h2 id="menuTitle"></h2>
     <div id="menuItems"></div>
   </div>
-
   <div class="cat-btn" onclick="openCats()">☰ Categories</div>
 </div>
 
-<!-- ================= CATEGORY POPUP ================= -->
 <div id="catPopup" class="cat-popup" onclick="closeCats()">
   <div class="cat-box" onclick="event.stopPropagation()" id="catList"></div>
 </div>
 
-<!-- ================= PAGE 3: ORDER SUMMARY ================= -->
+<!-- PAGE 3: ORDER SUMMARY -->
 <div id="page-summary" class="page">
   <div class="topbar" onclick="goBack()">← Back</div>
-
-  <div class="header">
-    <img src="company-logo.png">
-  </div>
-
+  <div class="header"><img src="company-logo.png"></div>
   <div class="content">
     <h2>Order Summary</h2>
-
     <div id="summaryItems"></div>
-
     <div class="bill">
-      <div>
-        <span>Item Total</span>
-        <span id="itemTotal">₹0</span>
-      </div>
-      <div>
-        <span>Delivery Charge</span>
-        <span id="deliveryCharge">₹0</span>
-      </div>
-      <div class="total">
-        <span>Total Payable</span>
-        <span id="grandTotal">₹0</span>
-      </div>
+      <div><span>Item Total</span><span id="itemTotal">₹0</span></div>
+      <div><span>Delivery Charge</span><span id="deliveryCharge">₹0</span></div>
+      <div class="total"><span>Total Payable</span><span id="grandTotal">₹0</span></div>
     </div>
-
-    <div class="note">
-      Delivery charges apply up to 2.5 km. May vary for longer distances.
-    </div>
-
-    <button class="primary" onclick="goToAddress()">
-      Continue → Address
-    </button>
+    <div class="note">Delivery charges apply up to 2.5 km. May vary for longer distances.</div>
+    <button class="primary" onclick="goToAddress()">Continue → Address</button>
   </div>
 </div>
 
-<!-- ================= PAGE 4: ADDRESS ================= -->
+<!-- PAGE 4: ADDRESS -->
 <div id="page-address" class="page">
   <div class="topbar" onclick="goBack()">← Back</div>
-
-  <div class="header">
-    <img src="company-logo.png">
-  </div>
-
+  <div class="header"><img src="company-logo.png"></div>
   <div class="content">
     <h2>Delivery Details</h2>
-
-    <label>Name</label>
-    <input id="custName">
-
-    <label>Phone</label>
-    <input id="custPhone">
-
-    <label>Address</label>
-    <textarea id="custAddress"></textarea>
-
-    <button class="primary" onclick="captureLocation()">
-      Use my current location
-    </button>
-
+    <label>Name</label><input id="custName">
+    <label>Phone</label><input id="custPhone">
+    <label>Address</label><textarea id="custAddress"></textarea>
+    <button class="primary" onclick="captureLocation()">Use my current location</button>
     <p id="locStatus" class="small"></p>
-
-    <button class="primary" onclick="placeOrder()">
-      Place Order
-    </button>
+    <button class="primary" onclick="placeOrder()">Place Order</button>
   </div>
 </div>
 
-<!-- ================= CART BAR ================= -->
 <div id="cartBar" class="cart-bar" onclick="openSummary()">
-  <span id="cartInfo"></span>
-  <span>View Order →</span>
-</div>
-
-<!-- ================= PAGE 5: SUCCESS ================= -->
-<div id="page-success" class="page">
-  <div class="content">
-    <h2>Order Sent 🎉</h2>
-    <p>Your order has been shared with us on WhatsApp.</p>
-    <button class="primary" onclick="backToRestaurants()">
-      Order Again
-    </button>
-  </div>
+  <span id="cartInfo"></span><span>View Order →</span>
 </div>
 
 <script>
-/* ================= GLOBAL STATE ================= */
-let restaurants = [], categories = [], items = [];
+/* ================= DATA ================= */
+let restaurants=[],categories=[],items=[];
 let ALL_RESTAURANTS = [];
-let cart = {}, currentRestaurant = "";
-let stack = ["page-restaurants"];
-let lat = "", lng = "", mapLink = "";
+let cart={},currentRestaurant="",stack=["page-restaurants"];
+let lat="",lng="",mapLink="";
 
-/* ================= TIME HELPERS ================= */
-function toTime(v){
-  if(!v) return "";
+function toTime(v) {
+  if (!v) return "";
   const d = new Date(v);
-  return d.getHours().toString().padStart(2,"0") + ":" +
-         d.getMinutes().toString().padStart(2,"0");
+  const h = d.getHours().toString().padStart(2, "0");
+  const m = d.getMinutes().toString().padStart(2, "0");
+  return `${h}:${m}`;
 }
-function toMin(t){ const [a,b]=t.split(":").map(Number); return a*60+b }
-function nowMin(){ const d=new Date(); return d.getHours()*60+d.getMinutes() }
+
+fetch("https://script.google.com/macros/s/AKfycbw66W91wIe-cAXwIZPgfEGJ1gy4TQ_MQ5WANbm3jQ9g4t_OmKNgqD7K8-pq7njoteWwEg/exec")
+.then(r=>r.json()).then(d=>{
+ if(!d.success){alert("Failed to load data");return;}
+ restaurants=d.restaurants.map(r=>({
+  id:r.RestaurantID,name:r.RestaurantName,
+  logo:r.LogoURL||"restaurant-logo.png",
+  slots:[[r.Slot1_Open,r.Slot1_Close],[r.Slot2_Open,r.Slot2_Close]]
+   .filter(x=>x[0]&&x[1]).map(x=>[toTime(x[0]),toTime(x[1])])
+ }));
+ categories=d.categories;items=d.items;
+ renderRestaurants();
+}).catch(()=>alert("Unable to connect"));
+
+/* ================= TIME ================= */
+function toMin(t){const[a,b]=t.split(":").map(Number);return a*60+b}
+function nowMin(){const d=new Date();return d.getHours()*60+d.getMinutes()}
 function status(r){
-  const n = nowMin();
-  for(const s of r.slots){
-    if(n >= toMin(s[0]) && n <= toMin(s[1])) return {open:true, closes:s[1]};
-    if(n < toMin(s[0])) return {open:false, opens:s[0]};
-  }
-  return {open:false, opens:r.slots[0][0]};
+ const n=nowMin();
+ for(const s of r.slots){
+  if(n>=toMin(s[0])&&n<=toMin(s[1]))return{open:true,closes:s[1]};
+  if(n<toMin(s[0]))return{open:false,opens:s[0]};
+ }
+ return{open:false,opens:r.slots[0][0]};
 }
-
-/* ================= FETCH DATA ================= */
-function loadData(retry = 0) {
-  fetch("https://script.google.com/macros/s/AKfycbw66W91wIe-cAXwIZPgfEGJ1gy4TQ_MQ5WANbm3jQ9g4t_OmKNgqD7K8-pq7njoteWwEg/exec", {
-    redirect: "follow"
-  })
-  .then(r => r.text())
-  .then(t => {
-    let d;
-    try {
-      d = JSON.parse(t);
-    } catch {
-      throw new Error("Not JSON yet");
-    }
-
-    if (!d.success) throw new Error("Server not ready");
-
-    restaurants = d.restaurants.map(r => ({
-      id: r.RestaurantID,
-      name: r.RestaurantName,
-      logo: r.LogoURL || "restaurant-logo.png",
-      slots: [
-        [r.Slot1_Open, r.Slot1_Close],
-        [r.Slot2_Open, r.Slot2_Close]
-      ]
-        .filter(x => x[0] && x[1])
-        .map(x => [toTime(x[0]), toTime(x[1])])
-    }));
-
-    ALL_RESTAURANTS = [...restaurants];
-    categories = d.categories;
-    items = d.items;
-
-    renderRestaurants(); // ✅ finally render
-  })
-  .catch(() => {
-    if (retry < 3) {
-      setTimeout(() => loadData(retry + 1), 1500);
-    }
-  });
-}
-
-/* INITIAL LOAD */
-loadData();
-
 
 /* ================= NAV ================= */
-function show(p){
-  document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
-  document.getElementById(p).classList.add("active");
-}
-function nav(p){ stack.push(p); show(p) }
-function goBack(){ stack.pop(); show(stack.at(-1)) }
-function backToRestaurants(){
-  cart = {};
-  updateBar();
-  stack = ["page-restaurants"];
-  show("page-restaurants");
-}
+function show(p){document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));document.getElementById(p).classList.add("active")}
+function nav(p){stack.push(p);show(p)}
+function goBack(){stack.pop();show(stack.at(-1))}
+function backToRestaurants(){cart={};updateBar();stack=["page-restaurants"];show("page-restaurants")}
 
-/* ================= UTIL ================= */
-function shuffle(a){
-  for(let i=a.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [a[i],a[j]]=[a[j],a[i]];
+  /* 🔒 LOGIC LOCK — RESTAURANT SHUFFLE (SAFE) */
+function shuffle(arr){
+  for(let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
   }
-}
-
-/* ================= SEARCH ================= */
-function filterRestaurants(q){
-  q = q.toLowerCase().trim();
-  if(!q){
-    restaurants = [...ALL_RESTAURANTS];
-    renderRestaurants();
-    return;
-  }
-  const byName = ALL_RESTAURANTS.filter(r=>r.name.toLowerCase().includes(q));
-  const ids = new Set(
-    items.filter(i=>i.ItemName?.toLowerCase().includes(q))
-         .map(i=>i.RestaurantID)
-  );
-  const byItems = ALL_RESTAURANTS.filter(r=>ids.has(r.id));
-  restaurants = [...new Map([...byName,...byItems].map(r=>[r.id,r])).values()];
-  renderRestaurants();
 }
 
 /* ================= RESTAURANTS ================= */
 function renderRestaurants(){
-  restaurantList.innerHTML="";
-  const open=[], closed=[];
-  shuffle([...restaurants]).forEach(r=>{
-    const s=status(r);
-    const d=document.createElement("div");
-    d.className="restaurant "+(s.open?"open":"closed");
-    d.innerHTML=`
-      <img data-src="${r.logo}" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=">
+  restaurantList.innerHTML = "";
+
+  const openList = [];
+  const closedList = [];
+
+  // 🔒 shuffle restaurants ONCE per render
+  const shuffled = [...restaurants];
+  shuffle(shuffled);
+
+  shuffled.forEach(r => {
+    const s = status(r);
+    const d = document.createElement("div");
+
+    d.className = "restaurant " + (s.open ? "open" : "closed");
+    d.innerHTML = `
+      <img src="${r.logo}">
       <div class="rest-info">
         <div class="rest-name">${r.name}</div>
-        <div class="rest-status ${s.open?"open-text":"closed-text"}">
-          ${s.open?"Open • Closes "+s.closes:"Closed • Opens "+s.opens}
+        <div class="rest-status ${s.open ? "open-text" : "closed-text"}">
+          ${s.open ? "Open • Closes " + s.closes : "Closed • Opens " + s.opens}
         </div>
-      </div>`;
-    if(s.open) d.onclick=()=>openMenu(r.name);
-    (s.open?open:closed).push(d);
+      </div>
+    `;
+
+    if (s.open) d.onclick = () => openMenu(r.name);
+
+    (s.open ? openList : closedList).push(d);
   });
-  [...open,...closed].forEach(x=>restaurantList.appendChild(x));
-  lazyImages();
+
+  [...openList, ...closedList].forEach(el => restaurantList.appendChild(el));
 }
 
 /* ================= MENU ================= */
 function openMenu(name){
-  cart={};
-  currentRestaurant=name;
-  const r=restaurants.find(x=>x.name===name);
-  if(r){ menuLogo.src=r.logo; menuTitle.innerText=r.name; }
+  cart = {};
+  currentRestaurant = name;
+  menuTitle.innerText = name;
   renderMenu();
   nav("page-menu");
 }
 
 function renderMenu(){
-  menuItems.innerHTML="";
-  catList.innerHTML="";
-  catChips.innerHTML="";
+  menuItems.innerHTML = "";
+  catList.innerHTML = "";
 
-  const r=restaurants.find(x=>x.name===currentRestaurant);
-  if(!r) return;
+  const rest = restaurants.find(r => r.name === currentRestaurant);
+  if (!rest) return;
 
-  const cats = categories
-    .filter(c=>c.RestaurantID===r.id && c.IsActive)
-    .sort((a,b)=>(a.SortOrder||0)-(b.SortOrder||0));
+  const restCats = categories
+    .filter(c => c.RestaurantID === rest.id && c.IsActive)
+    .sort((a,b) => (a.SortOrder||0) - (b.SortOrder||0));
 
-  cats.forEach(c=>{
-    const chip=document.createElement("div");
-    chip.className="cat-chip";
-    chip.innerText=c.CategoryName;
-    chip.onclick=()=>scrollCat(c.CategoryID);
-    catChips.appendChild(chip);
+  restCats.forEach(cat => {
+    menuItems.innerHTML += `
+      <div class="category" id="cat-${cat.CategoryID}">
+        ${cat.CategoryName}
+      </div>
+    `;
 
-    menuItems.innerHTML+=`<div class="category" id="cat-${c.CategoryID}">${c.CategoryName}</div>`;
-    catList.innerHTML+=`<div onclick="scrollCat('${c.CategoryID}')">${c.CategoryName}</div>`;
+    catList.innerHTML += `
+      <div onclick="scrollCat('${cat.CategoryID}')">
+        ${cat.CategoryName}
+      </div>
+    `;
 
-    items.filter(i=>i.RestaurantID===r.id && i.CategoryID===c.CategoryID && i.IsAvailable)
-    .forEach(it=>{
-      const q=cart[it.ItemName]||0;
-      menuItems.innerHTML+=`
-      <div class="item">
-        <div>
-          <div class="item-name">${it.ItemName}</div>
-          ${it.ItemDescription?`<div class="item-desc">${it.ItemDescription}</div>`:""}
-          <div class="small">₹${it.Price}</div>
-        </div>
-        <div class="qty">
-          <button onclick="upd('${it.ItemName}',-1)">−</button>
-          <span>${q}</span>
-          <button onclick="upd('${it.ItemName}',1)">+</button>
-        </div>
-      </div>`;
-    });
+    items
+      .filter(i =>
+        i.RestaurantID === rest.id &&
+        i.CategoryID === cat.CategoryID &&
+        i.IsAvailable
+      )
+      .forEach(it => {
+        const q = cart[it.ItemName] || 0;
+
+        menuItems.innerHTML += `
+          <div class="item">
+            <div>
+              <div class="item-name">${it.ItemName}</div>
+              ${it.ItemDescription ? `<div class="item-desc">${it.ItemDescription}</div>` : ""}
+              <div class="small">₹${it.Price}</div>
+            </div>
+            <div class="qty">
+              <button onclick="upd('${it.ItemName}', 0, -1)">−</button>
+              <span>${q}</span>
+              <button onclick="upd('${it.ItemName}', 0, 1)">+</button>
+            </div>
+          </div>
+        `;
+      });
   });
 
   updateBar();
 }
 
 /* ================= CATEGORY ================= */
-function openCats(){ catPopup.style.display="block" }
-function closeCats(){ catPopup.style.display="none" }
-function scrollCat(c){
-  document.getElementById("cat-"+c)?.scrollIntoView({behavior:"smooth"});
-  closeCats();
-}
+function openCats(){catPopup.style.display="block"}
+function closeCats(){catPopup.style.display="none"}
+function scrollCat(c){document.getElementById("cat-"+c)?.scrollIntoView({behavior:"smooth"});closeCats()}
 
 /* ================= CART ================= */
-function upd(i,d){
-  cart[i]=(cart[i]||0)+d;
-  if(cart[i]<=0) delete cart[i];
-  if(stack.at(-1)==="page-menu") renderMenu();
-  if(stack.at(-1)==="page-summary") renderSummary();
+function upd(itemName, priceIgnored, delta){
+  cart[itemName] = (cart[itemName] || 0) + delta;
+  if (cart[itemName] <= 0) delete cart[itemName];
+
+  if (stack.at(-1) === "page-menu") renderMenu();
+  if (stack.at(-1) === "page-summary") renderSummary();
   updateBar();
 }
-function price(i){
-  const r=restaurants.find(x=>x.name===currentRestaurant);
-  const it=items.find(x=>x.RestaurantID===r.id && x.ItemName===i);
-  return it?Number(it.Price):0;
-}
-function updateBar(){
-  let c=0,t=0;
-  for(const i in cart){ c+=cart[i]; t+=cart[i]*price(i); }
-  if(c && stack.at(-1)==="page-menu"){
-    cartBar.style.display="flex";
-    cartInfo.innerText=`${c} items | ₹${t}`;
-  } else cartBar.style.display="none";
+
+function price(itemName){
+  const rest = restaurants.find(r => r.name === currentRestaurant);
+  if (!rest) return 0;
+
+  const it = items.find(
+    i => i.RestaurantID === rest.id && i.ItemName === itemName
+  );
+
+  return it ? Number(it.Price) : 0;
 }
 
-/* ================= SUMMARY ================= */
-function openSummary(){ renderSummary(); nav("page-summary") }
-function renderSummary(){
-  summaryItems.innerHTML="";
-  let t=0;
-  for(const i in cart){
-    const p=price(i); t+=cart[i]*p;
-    summaryItems.innerHTML+=`
-    <div class="cart-item">
-      <div>${i}<div class="small">₹${p}</div></div>
-      <div class="qty">
-        <button onclick="upd('${i}',-1)">−</button>
-        <span>${cart[i]}</span>
-        <button onclick="upd('${i}',1)">+</button>
-      </div>
-    </div>`;
+function updateBar(){
+  let itemCount = 0, total = 0;
+
+  for (const i in cart){
+    itemCount += cart[i];
+    total += cart[i] * price(i);
   }
-  const d=delivery(t);
-  itemTotal.innerText=`₹${t}`;
-  deliveryCharge.innerText=`₹${d}`;
-  grandTotal.innerText=`₹${t+d}`;
+
+  if (itemCount > 0 && stack.at(-1) === "page-menu"){
+    cartBar.style.display = "flex";
+    cartInfo.innerText = `${itemCount} items | ₹${total}`;
+  } else {
+    cartBar.style.display = "none";
+  }
+}
+
+function openSummary(){
+  renderSummary();
+  nav("page-summary");
+}
+
+function renderSummary(){
+  summaryItems.innerHTML = "";
+  let total = 0;
+
+  for (const i in cart){
+    const p = price(i);
+    total += cart[i] * p;
+
+    summaryItems.innerHTML += `
+      <div class="cart-item">
+        <div>
+          ${i}
+          <div class="small">₹${p}</div>
+        </div>
+        <div class="qty">
+          <button onclick="upd('${i}', ${p}, -1)">−</button>
+          <span>${cart[i]}</span>
+          <button onclick="upd('${i}', ${p}, 1)">+</button>
+        </div>
+      </div>
+    `;
+  }
+
+  const d = delivery(total);
+  itemTotal.innerText = `₹${total}`;
+  deliveryCharge.innerText = `₹${d}`;
+  grandTotal.innerText = `₹${total + d}`;
 }
 
 /* ================= DELIVERY ================= */
-function delivery(t){
-  if(t<=0) return 0;
-  if(t>=1199) return 1;
-  if(t>=999) return 9;
-  if(t>=799) return 19;
-  if(t>=599) return 29;
-  if(t>=399) return 39;
-  return 49;
-}
+function delivery(t){if(t<=0)return 0;if(t>=1199)return 1;if(t>=999)return 9;if(t>=799)return 19;if(t>=599)return 29;if(t>=399)return 39;return 49}
 
 /* ================= ADDRESS ================= */
-function goToAddress(){
-  let t=0; for(const i in cart) t+=cart[i]*price(i);
-  if(t<99){ alert("Minimum order ₹99"); return; }
-  nav("page-address");
-}
-function captureLocation(){
-  navigator.geolocation.getCurrentPosition(p=>{
-    lat=p.coords.latitude;
-    lng=p.coords.longitude;
-    mapLink=`https://maps.google.com/?q=${lat},${lng}`;
-    locStatus.innerText="Location captured ✓";
-  },()=>alert("Location required"));
-}
+function goToAddress(){let t=0;for(const i in cart)t+=cart[i]*price(i);if(t<99){alert("Minimum order ₹99");return}nav("page-address")}
+function captureLocation(){navigator.geolocation.getCurrentPosition(p=>{lat=p.coords.latitude;lng=p.coords.longitude;mapLink=`https://maps.google.com/?q=${lat},${lng}`;locStatus.innerText="Location captured ✓"},()=>alert("Location required"))}
 
 /* ================= PLACE ORDER ================= */
 function placeOrder(){
-  let t=0; for(const i in cart) t+=cart[i]*price(i);
-  if(t<99) return alert("Minimum order ₹99");
 
-  const n=custName.value.trim();
-  const p=custPhone.value.trim();
-  const a=custAddress.value.trim();
+  /* -------- CALCULATE TOTAL -------- */
+  let itemTotal = 0;
+  let totalQty = 0;
 
-  if(!/^[A-Za-z ]{5,25}$/.test(n)) return alert("Invalid name");
-  if(!/^[0-9]{10}$/.test(p)) return alert("Invalid phone");
-  if(a.length<15) return alert("Invalid address");
-  if(!mapLink) return alert("Location required");
+  for(const i in cart){
+    itemTotal += cart[i] * price(i);
+    totalQty += cart[i];
+  }
 
-  let msg=`🍽️ ORDER — 20nagar Food Xpress\n\nRestaurant: ${currentRestaurant}\n\nItems:\n`;
-  for(const i in cart) msg+=`• ${i} × ${cart[i]} — ₹${cart[i]*price(i)}\n`;
-  msg+=`\n---------------------\nItem Total: ₹${t}\nDelivery Charge: ₹${delivery(t)}\nTotal Payable: ₹${t+delivery(t)}\n\nName: ${n}\nPhone: ${p}\nAddress:\n${a}\n\n📍 ${mapLink}`;
+  if(itemTotal < 99){
+    alert("Minimum order ₹99");
+    return;
+  }
 
-  navigator.clipboard.writeText(msg);
-  setTimeout(()=>location.href="https://wa.me/919484818194?text="+encodeURIComponent(msg),200);
-  setTimeout(()=>show("page-success"),500);
-}
+  /* -------- VALIDATIONS -------- */
+  const name = custName.value.trim();
+  if(!/^[A-Za-z ]{5,25}$/.test(name)){
+    alert("Please enter a valid full name");
+    return;
+  }
 
-/* ================= LAZY IMAGES ================= */
-const io = "IntersectionObserver" in window
-  ? new IntersectionObserver(e=>e.forEach(x=>{
-      if(x.isIntersecting){
-        x.target.src=x.target.dataset.src;
-        io.unobserve(x.target);
-      }
-    }))
-  : null;
+  const phone = custPhone.value.trim();
+  if(!/^[0-9]{10}$/.test(phone)){
+    alert("Please enter a valid 10-digit mobile number");
+    return;
+  }
 
-function lazyImages(){
-  document.querySelectorAll("img[data-src]").forEach(i=>{
-    if(io) io.observe(i);
-    else i.src=i.dataset.src;
-  });
-}
+  const address = custAddress.value.trim();
+  if(address.length < 15){
+    alert("Please enter a complete delivery address");
+    return;
+  }
 
-/* ================= PWA (OPTIONAL) ================= */
-let deferredPrompt;
-window.addEventListener("beforeinstallprompt",e=>{
-  e.preventDefault();
-  deferredPrompt=e;
-});
+  if(!mapLink){
+    alert("Delivery location is required");
+    return;
+  }
+
+  const deliveryCharge = delivery(itemTotal);
+  const grandTotal = itemTotal + deliveryCharge;
+
+  /* ================= CUSTOMER MESSAGE ================= */
+  let customerMsg =
+`🍽️ ORDER — 20nagar Food Xpress
+
+Restaurant: ${currentRestaurant}
+
+Items:
+`;
+
+  for(const i in cart){
+    customerMsg += `• ${i} × ${cart[i]}  — ₹${cart[i] * price(i)}\n`;
+  }
+
+  customerMsg +=
+`
+---------------------
+Item Total: ₹${itemTotal}
+Delivery Charge: ₹${deliveryCharge}
+---------------------
+Total Payable: ₹${grandTotal}
+---------------------
+
+Customer Details:
+Name: ${name}
+Phone: ${phone}
+
+Delivery Address:
+${address}
+
+📍 Location:
+${mapLink}
+
+⚠️ Please wait for order confirmation.
+Payment as instructed by 20nagar Food Xpress.
+`;
+
+  /* COPY FOR ADMIN */
+  navigator.clipboard.writeText(customerMsg);
+
+  /* SEND TO ADMIN WHATSAPP */
+  setTimeout(() => {
+    window.location.href =
+      "https://wa.me/919484818194?text=" + encodeURIComponent(customerMsg);
+  }, 200);
+}  
+  
 </script>
 </body>
 </html>
