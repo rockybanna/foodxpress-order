@@ -397,22 +397,29 @@ let ALL_RESTAURANTS = [];
 let cart={},currentRestaurant="",stack=["page-restaurants"];
 let lat="",lng="",mapLink="";
   
-  /* ================= DOM REFERENCES (PWA SAFE) ================= */
-const restaurantList = document.getElementById("restaurantList");
-const menuItems = document.getElementById("menuItems");
-const catList = document.getElementById("catList");
-const summaryItems = document.getElementById("summaryItems");
-const cartBar = document.getElementById("cartBar");
-const cartInfo = document.getElementById("cartInfo");
-const menuTitle = document.getElementById("menuTitle");
-const menuLogo = document.getElementById("menuLogo");
-const itemTotal = document.getElementById("itemTotal");
-const deliveryCharge = document.getElementById("deliveryCharge");
-const grandTotal = document.getElementById("grandTotal");
-const custName = document.getElementById("custName");
-const custPhone = document.getElementById("custPhone");
-const custAddress = document.getElementById("custAddress");
-const locStatus = document.getElementById("locStatus");
+/* ================= DOM READY (PWA SAFE) ================= */
+let restaurantList, menuItems, catList, summaryItems,
+    cartBar, cartInfo, menuTitle, menuLogo,
+    itemTotal, deliveryCharge, grandTotal,
+    custName, custPhone, custAddress, locStatus;
+
+document.addEventListener("DOMContentLoaded", () => {
+  restaurantList = document.getElementById("restaurantList");
+  menuItems = document.getElementById("menuItems");
+  catList = document.getElementById("catList");
+  summaryItems = document.getElementById("summaryItems");
+  cartBar = document.getElementById("cartBar");
+  cartInfo = document.getElementById("cartInfo");
+  menuTitle = document.getElementById("menuTitle");
+  menuLogo = document.getElementById("menuLogo");
+  itemTotal = document.getElementById("itemTotal");
+  deliveryCharge = document.getElementById("deliveryCharge");
+  grandTotal = document.getElementById("grandTotal");
+  custName = document.getElementById("custName");
+  custPhone = document.getElementById("custPhone");
+  custAddress = document.getElementById("custAddress");
+  locStatus = document.getElementById("locStatus");
+});
 
 function toTime(v) {
   if (!v) return "";
