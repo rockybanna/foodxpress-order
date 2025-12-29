@@ -521,12 +521,21 @@ function status(r){
 }
 
 /* ================= FETCH DATA ================= */
-fetch("https://script.google.com/macros/s/AKfycbw66W91wIe-cAXwIZPgfEGJ1gy4TQ_MQ5WANbm3jQ9g4t_OmKNgqD7K8-pq7njoteWwEg/exec")
-.then(r => r.json())
-.then(d => {
+fetch("https://script.google.com/macros/s/AKfycbw66W91wIe-cAXwIZPgfEGJ1gy4TQ_MQ5WANbm3jQ9g4t_OmKNgqD7K8-pq7njoteWwEg/exec", {
+  redirect: "follow"
+})
+.then(r => r.text())
+.then(t => {
+  let d;
+  try {
+    d = JSON.parse(t);
+  } catch (e) {
+    console.error("RAW RESPONSE:", t);
+    throw new Error("Invalid JSON");
+  }
+
   if (!d.success) {
-    alert("Server error: " + (d.message || "Unknown"));
-    return;
+    throw new Error(d.message || "Server error");
   }
 
   restaurants = d.restaurants.map(r => ({
@@ -548,8 +557,8 @@ fetch("https://script.google.com/macros/s/AKfycbw66W91wIe-cAXwIZPgfEGJ1gy4TQ_MQ5
   renderRestaurants();
 })
 .catch(err => {
-  console.error(err);
-  alert("Unable to connect. Please refresh.");
+  console.error("FETCH ERROR:", err);
+  alert("Server waking up. Please refresh once.");
 });
 
 /* ================= NAV ================= */
