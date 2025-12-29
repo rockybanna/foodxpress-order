@@ -376,6 +376,11 @@ input,textarea{
 
   <div class="cat-btn" onclick="openCats()">☰ Categories</div>
 </div>
+    <!-- CATEGORY POPUP (REQUIRED) -->
+<div id="catPopup" class="cat-popup" onclick="closeCats()">
+  <div class="cat-box" onclick="event.stopPropagation()" id="catList"></div>
+</div>
+
 
 <!-- PAGE 3: ORDER SUMMARY -->
 <div id="page-summary" class="page">
