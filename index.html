@@ -6,261 +6,296 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-:root{
-  --brand:#ff9933;
-  --light:#fff3e6;
+  :root{
+  --brand:#7a4b6d;
+  --brand-soft:#f3ebef;
+  --bg:#f7f7f7;
+  --card:#ffffff;
+  --text:#1e1e1e;
+  --muted:#6f6f6f;
+  --border:#e4e4e4;
 }
 
-/* ===== RESET ===== */
-*,*::before,*::after{
-  box-sizing:border-box;
-}
-
+/* RESET */
+*,*::before,*::after{box-sizing:border-box}
 body{
   margin:0;
-  font-family:Arial,sans-serif;
-  background:#eee;
-  overflow-x:hidden;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
 }
 
-/* ===== PAGE ===== */
+/* PAGE */
 .page{
   display:none;
   min-height:100vh;
   width:100%;
-  background:#fafafa;
 }
+.page.active{display:block}
 
-.page.active{
-  display:block;
-}
-
-/* ===== DESKTOP FRAME ONLY ===== */
+/* DESKTOP FRAME */
 @media (min-width:768px){
   .page{
     max-width:420px;
-    margin:16px auto;
+    margin:14px auto;
     background:#fff;
-    border:2px solid var(--brand);
-    border-radius:14px;
-    box-shadow:0 14px 32px rgba(0,0,0,.25);
+    border-radius:16px;
+    box-shadow:0 16px 40px rgba(0,0,0,.18);
+    overflow:hidden;
   }
 }
 
-/* ===== HEADER ===== */
+/* HEADER (HOME) */
 .header{
   position:sticky;
   top:0;
-  background:#fff;
-  padding:0;                 /* remove side gaps */
-  border-bottom:1px solid #ddd;
-  text-align:center;
-  z-index:9;
+  z-index:10;
+  background:#000;
 }
-
 .header img{
   width:100%;
-  height:auto;
-  max-height:120px;   /* adjust if needed */
-  object-fit:contain;
+  max-height:150px;
+  object-fit:cover;
   display:block;
 }
 
-/* ===== BACK BUTTON ===== */
+/* BACK BUTTON */
 .topbar{
-  position:sticky;
-  top:30px;
-  left:0;
-  display:inline-flex;
-  align-items:center;
-  padding:6px 10px;
-  margin:8px;
-  font-size:14px;
-  font-weight:600;
+  position:absolute;
+  top:12px;
+  left:12px;
   background:#fff;
-  border:1px solid #ddd;
-  border-radius:6px;
+  border-radius:12px;
+  padding:6px 12px;
+  font-size:14px;
+  font-weight:700;
+  box-shadow:0 4px 10px rgba(0,0,0,.2);
   cursor:pointer;
-  z-index:10;
+  z-index:20;
 }
 
-/* ===== CONTENT ===== */
+/* CONTENT */
 .content{
   padding:14px;
-  padding-bottom:90px;
+  padding-bottom:130px;
 }
 
-/* ===== SEARCH ===== */
+/* SEARCH */
+.search-wrap{
+  position:sticky;
+  top:150px;
+  z-index:9;
+  background:var(--bg);
+  padding-bottom:10px;
+}
 .search{
   width:100%;
-  padding:10px;
-  margin:10px 0;
-  font-size:16px;
+  padding:13px 15px;
+  border-radius:16px;
+  border:1px solid var(--border);
+  font-size:15px;
+}
+.search:focus{
+  outline:none;
+  border-color:var(--brand);
+  box-shadow:0 0 0 2px rgba(122,75,109,.18);
 }
 
-/* ===== RESTAURANTS ===== */
+/* RESTAURANT CARD */
 .restaurant{
   display:flex;
-  gap:12px;
+  gap:14px;
   align-items:center;
-  padding:12px;
-  margin-bottom:10px;
-  background:#fff;
-  border:1px solid #ddd;
-  border-radius:8px;
+  background:var(--card);
+  padding:16px;
+  border-radius:18px;
+  margin-bottom:14px;
+  box-shadow:0 4px 12px rgba(0,0,0,.07);
+  transition:transform .12s ease;
 }
-
-.restaurant.open{cursor:pointer}
-.restaurant.closed{opacity:.6}
+.restaurant.open:active{transform:scale(.97)}
+.restaurant.closed{opacity:.55}
 
 .restaurant img{
-  width:48px;
-  height:48px;
-  border-radius:6px;
+  width:62px;
+  height:62px;
+  border-radius:16px;
+  object-fit:cover;
+  background:#eee;
+}
+.rest-info{flex:1}
+.rest-name{
+  font-weight:800;
+  font-size:16px;
+}
+.rest-status{
+  font-size:12px;
+  margin-top:4px;
+}
+.open-text{color:#0a8f08;font-weight:700}
+.closed-text{color:#c62828;font-weight:700}
+
+/* MENU HEADER */
+.menu-header{
+  position:sticky;
+  top:0;
+  background:#fff;
+  z-index:10;
+  border-bottom:1px solid var(--border);
+}
+.menu-header img{
+  width:100%;
+  max-height:190px;
   object-fit:cover;
 }
-
-.rest-info{flex:1}
-.rest-name{font-weight:600}
-.rest-status{font-size:12px;margin-top:4px}
-.open-text{color:green}
-.closed-text{color:red}
-
-/* ===== CATEGORY ===== */
-.category{
-  font-weight:bold;
-  font-size:18px;
-  margin:24px auto 12px;
-  padding:8px 16px;
-  background:var(--light);
-  border:1px solid var(--brand);
-  border-radius:20px;
-  width:fit-content;
-  text-align:center;
+.menu-title{
+  font-size:20px;
+  font-weight:800;
+  padding:10px 16px 12px;
 }
 
-/* ===== ITEMS ===== */
+/* CATEGORY */
+.category{
+  margin:28px auto 14px;
+  padding:9px 20px;
+  background:var(--brand-soft);
+  color:var(--brand);
+  font-weight:800;
+  border-radius:40px;
+  width:fit-content;
+  scroll-margin-top:200px;
+}
+
+/* ITEM CARD */
 .item,.cart-item{
   display:flex;
   justify-content:space-between;
   align-items:flex-start;
-  padding:12px;
-  margin-bottom:8px;
-  background:#fff;
-  border-radius:8px;
+  gap:12px;
+  background:var(--card);
+  padding:16px;
+  border-radius:18px;
+  margin-bottom:14px;
+  box-shadow:0 3px 10px rgba(0,0,0,.06);
 }
-
-.item-name{font-weight:600}
-
+.item-name{
+  font-size:16px;
+  font-weight:800;
+}
 .item-desc{
   font-size:13px;
-  color:#777;
-  margin-top:2px;
-}
-
-.small{
-  font-size:14px;
-  color:#000;
-  font-weight:600;
+  color:var(--muted);
   margin-top:4px;
+  line-height:1.45;
+}
+.small{
+  margin-top:6px;
+  font-weight:800;
 }
 
-/* ===== QTY ===== */
+/* QTY */
 .qty{
   display:flex;
   align-items:center;
-  gap:8px;
+  gap:10px;
 }
-
 .qty button{
-  width:28px;
-  height:28px;
+  width:34px;
+  height:34px;
+  border-radius:12px;
   border:none;
   background:var(--brand);
   color:#fff;
   font-size:18px;
-  border-radius:4px;
+  cursor:pointer;
+}
+.qty span{
+  min-width:24px;
+  text-align:center;
+  font-weight:800;
 }
 
-/* ===== CART BAR ===== */
+/* CART BAR */
 .cart-bar{
   position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
+  bottom:12px;
+  left:12px;
+  right:12px;
   background:var(--brand);
   color:#fff;
-  padding:12px;
+  padding:18px;
+  border-radius:20px;
   display:none;
   justify-content:space-between;
-  font-weight:600;
+  align-items:center;
+  font-weight:800;
+  box-shadow:0 14px 28px rgba(0,0,0,.3);
 }
 
-/* ===== BILL ===== */
+/* BILL */
 .bill div{
   display:flex;
   justify-content:space-between;
-  margin-bottom:6px;
+  margin-bottom:8px;
 }
-
 .bill .total{
-  font-weight:bold;
-  font-size:18px;
+  font-size:19px;
+  font-weight:900;
 }
 
-/* ===== BUTTONS ===== */
+/* BUTTON */
 button.primary{
   width:100%;
-  padding:12px;
+  padding:15px;
   background:var(--brand);
   color:#fff;
   border:none;
+  border-radius:16px;
   font-size:16px;
-  margin-top:16px;
-  border-radius:6px;
+  font-weight:800;
+  cursor:pointer;
 }
 
-/* ===== CATEGORY POPUP ===== */
+/* CATEGORY POPUP */
 .cat-btn{
   position:fixed;
   right:16px;
-  bottom:80px;
-  background:#333;
+  bottom:95px;
+  background:#2f2f2f;
   color:#fff;
-  padding:10px 14px;
-  border-radius:20px;
+  padding:12px 18px;
+  border-radius:40px;
   font-size:14px;
-  cursor:pointer;
+  font-weight:700;
 }
-
 .cat-popup{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.4);
+  background:rgba(0,0,0,.45);
   display:none;
 }
-
 .cat-box{
   background:#fff;
-  margin:20% auto;
-  width:80%;
-  border-radius:10px;
-  padding:10px;
+  margin:22% auto;
+  width:82%;
+  border-radius:20px;
+  padding:14px;
 }
-
 .cat-box div{
-  padding:10px;
-  border-bottom:1px solid #eee;
-  cursor:pointer;
+  padding:14px;
+  border-bottom:1px solid var(--border);
+  font-weight:700;
 }
 
-/* ===== INPUTS ===== */
+/* INPUTS */
 input,textarea{
   width:100%;
-  padding:10px;
-  margin-top:6px;
-  font-size:16px;
+  padding:13px;
+  border-radius:14px;
+  border:1px solid var(--border);
+  font-size:15px;
 }
+
 </style>
 
 
@@ -270,25 +305,36 @@ input,textarea{
 <div id="page-restaurants" class="page active">
   <div class="header"><img src="company-logo.png"></div>
   <div class="content">
-    <input class="search" placeholder="Search restaurant..." oninput="filterRestaurants(this.value)">
+<div class="search-wrap">
+  <input
+    class="search"
+    placeholder="Search restaurant or item..."
+    oninput="filterRestaurants(this.value)"
+  >
+</div>
     <div id="restaurantList"></div>
   </div>
 </div>
 
 <!-- PAGE 2: MENU -->
 <div id="page-menu" class="page">
-  <div class="topbar" onclick="backToRestaurants()">← Back</div>
-  <div class="header"><img src="company-logo.png"></div>
-  <div class="content">
-    <h2 id="menuTitle"></h2>
+  <div class="menu-header">
+    <div class="topbar" onclick="backToRestaurants()">← Back</div>
+    <img id="menuLogo" src="company-logo.png">
+    <div id="menuTitle" class="menu-title"></div>
+  </div>
+
+  <div class="content menu-content">
     <div id="menuItems"></div>
   </div>
+
   <div class="cat-btn" onclick="openCats()">☰ Categories</div>
 </div>
-
+    <!-- CATEGORY POPUP (REQUIRED) -->
 <div id="catPopup" class="cat-popup" onclick="closeCats()">
   <div class="cat-box" onclick="event.stopPropagation()" id="catList"></div>
 </div>
+
 
 <!-- PAGE 3: ORDER SUMMARY -->
 <div id="page-summary" class="page">
@@ -343,15 +389,19 @@ function toTime(v) {
 
 fetch("https://script.google.com/macros/s/AKfycbw66W91wIe-cAXwIZPgfEGJ1gy4TQ_MQ5WANbm3jQ9g4t_OmKNgqD7K8-pq7njoteWwEg/exec")
 .then(r=>r.json()).then(d=>{
- if(!d.success){alert("Failed to load data");return;}
- restaurants=d.restaurants.map(r=>({
-  id:r.RestaurantID,name:r.RestaurantName,
-  logo:r.LogoURL||"restaurant-logo.png",
-  slots:[[r.Slot1_Open,r.Slot1_Close],[r.Slot2_Open,r.Slot2_Close]]
-   .filter(x=>x[0]&&x[1]).map(x=>[toTime(x[0]),toTime(x[1])])
- }));
- categories=d.categories;items=d.items;
- renderRestaurants();
+restaurants=d.restaurants.map(r=>({
+ id:r.RestaurantID,
+ name:r.RestaurantName,
+ logo:r.LogoURL||"restaurant-logo.png",
+ slots:[[r.Slot1_Open,r.Slot1_Close],[r.Slot2_Open,r.Slot2_Close]]
+  .filter(x=>x[0]&&x[1]).map(x=>[toTime(x[0]),toTime(x[1])])
+}));
+
+ALL_RESTAURANTS = [...restaurants];   // 🔒 backup original list
+categories=d.categories;
+items=d.items;
+
+renderRestaurants();
 }).catch(()=>alert("Unable to connect"));
 
 /* ================= TIME ================= */
@@ -381,7 +431,43 @@ function shuffle(arr){
 }
 
 /* ================= RESTAURANTS ================= */
-function renderRestaurants(){
+function filterRestaurants(query){
+  query = query.toLowerCase().trim();
+
+  if(!query){
+    restaurants = [...ALL_RESTAURANTS];
+    renderRestaurants();
+    return;
+  }
+
+  // 1️⃣ Match by restaurant name
+  const byName = ALL_RESTAURANTS.filter(r =>
+    r.name.toLowerCase().includes(query)
+  );
+
+  // 2️⃣ Match by item name → restaurant IDs
+  const matchedRestaurantIds = new Set(
+    items
+      .filter(i => i.ItemName && i.ItemName.toLowerCase().includes(query))
+      .map(i => i.RestaurantID)
+  );
+
+  // 3️⃣ Restaurants that sell matching items
+  const byItems = ALL_RESTAURANTS.filter(r =>
+    matchedRestaurantIds.has(r.id)
+  );
+
+  // 4️⃣ Merge & remove duplicates
+  restaurants = [
+    ...new Map(
+      [...byName, ...byItems].map(r => [r.id, r])
+    ).values()
+  ];
+
+  renderRestaurants();
+}
+
+  function renderRestaurants(){
   restaurantList.innerHTML = "";
 
   const openList = [];
@@ -418,7 +504,13 @@ function renderRestaurants(){
 function openMenu(name){
   cart = {};
   currentRestaurant = name;
-  menuTitle.innerText = name;
+
+  const rest = restaurants.find(r => r.name === name);
+  if(rest){
+    menuLogo.src = rest.logo;
+    menuTitle.innerText = rest.name;
+  }
+
   renderMenu();
   nav("page-menu");
 }
