@@ -65,6 +65,29 @@ body{
   object-fit:contain;
   display:block;
 }
+  /* ===== MENU HEADER ===== */
+.menu-header{
+  position:sticky;
+  top:0;
+  background:#fff;
+  z-index:9;
+  padding-bottom:12px;
+  border-bottom:1px solid #ddd;
+}
+
+.menu-header img{
+  width:100%;
+  max-height:160px;
+  object-fit:contain;
+  display:block;
+}
+
+.menu-title{
+  font-size:20px;
+  font-weight:700;
+  padding:8px 16px 0;
+}
+
 
 /* ===== BACK BUTTON ===== */
 .topbar{
@@ -91,12 +114,15 @@ body{
 }
 
 /* ===== SEARCH ===== */
-.search{
-  width:100%;
-  padding:10px;
-  margin:10px 0;
-  font-size:16px;
+.content{
+  padding:16px;
+  padding-bottom:100px;
 }
+
+.menu-content{
+  padding-top:12px;
+}
+
 .search-wrap{
   position:sticky;
   top:120px;
@@ -338,17 +364,17 @@ input,textarea{
 
 <!-- PAGE 2: MENU -->
 <div id="page-menu" class="page">
-  <div class="topbar" onclick="backToRestaurants()">← Back</div>
-  <div class="header"><img src="company-logo.png"></div>
-  <div class="content">
-    <h2 id="menuTitle"></h2>
+  <div class="menu-header">
+    <div class="topbar" onclick="backToRestaurants()">← Back</div>
+    <img id="menuLogo" src="company-logo.png">
+    <div id="menuTitle" class="menu-title"></div>
+  </div>
+
+  <div class="content menu-content">
     <div id="menuItems"></div>
   </div>
-  <div class="cat-btn" onclick="openCats()">☰ Categories</div>
-</div>
 
-<div id="catPopup" class="cat-popup" onclick="closeCats()">
-  <div class="cat-box" onclick="event.stopPropagation()" id="catList"></div>
+  <div class="cat-btn" onclick="openCats()">☰ Categories</div>
 </div>
 
 <!-- PAGE 3: ORDER SUMMARY -->
@@ -519,7 +545,13 @@ function filterRestaurants(query){
 function openMenu(name){
   cart = {};
   currentRestaurant = name;
-  menuTitle.innerText = name;
+
+  const rest = restaurants.find(r => r.name === name);
+  if(rest){
+    menuLogo.src = rest.logo;
+    menuTitle.innerText = rest.name;
+  }
+
   renderMenu();
   nav("page-menu");
 }
