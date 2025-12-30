@@ -404,6 +404,8 @@ let restaurantList, menuItems, catList, summaryItems,
     custName, custPhone, custAddress, locStatus;
 
 document.addEventListener("DOMContentLoaded", () => {
+
+  /* ---------- DOM REFERENCES ---------- */
   restaurantList = document.getElementById("restaurantList");
   menuItems = document.getElementById("menuItems");
   catList = document.getElementById("catList");
@@ -419,8 +421,34 @@ document.addEventListener("DOMContentLoaded", () => {
   custPhone = document.getElementById("custPhone");
   custAddress = document.getElementById("custAddress");
   locStatus = document.getElementById("locStatus");
+
+  /* ---------- FETCH DATA AFTER DOM READY ---------- */
+  fetch("https://script.google.com/macros/s/AKfycbw66W91wIe-cAXwIZPgfEGJ1gy4TQ_MQ5WANbm3jQ9g4t_OmKNgqD7K8-pq7njoteWwEg/exec")
+    .then(r => r.json())
+    .then(d => {
+
+      restaurants = d.restaurants.map(r => ({
+        id: r.RestaurantID,
+        name: r.RestaurantName,
+        logo: r.LogoURL || "restaurant-logo.png",
+        slots: [
+          [r.Slot1_Open, r.Slot1_Close],
+          [r.Slot2_Open, r.Slot2_Close]
+        ]
+        .filter(x => x[0] && x[1])
+        .map(x => [toTime(x[0]), toTime(x[1])])
+      }));
+
+      ALL_RESTAURANTS = [...restaurants];
+      categories = d.categories || [];
+      items = d.items || [];
+
+      renderRestaurants();
+    })
+    .catch(() => alert("Unable to connect"));
 });
 
+/* ---------- TIME FORMATTER ---------- */
 function toTime(v) {
   if (!v) return "";
   const d = new Date(v);
@@ -428,23 +456,6 @@ function toTime(v) {
   const m = d.getMinutes().toString().padStart(2, "0");
   return `${h}:${m}`;
 }
-
-fetch("https://script.google.com/macros/s/AKfycbw66W91wIe-cAXwIZPgfEGJ1gy4TQ_MQ5WANbm3jQ9g4t_OmKNgqD7K8-pq7njoteWwEg/exec")
-.then(r=>r.json()).then(d=>{
-restaurants=d.restaurants.map(r=>({
- id:r.RestaurantID,
- name:r.RestaurantName,
- logo:r.LogoURL||"restaurant-logo.png",
- slots:[[r.Slot1_Open,r.Slot1_Close],[r.Slot2_Open,r.Slot2_Close]]
-  .filter(x=>x[0]&&x[1]).map(x=>[toTime(x[0]),toTime(x[1])])
-}));
-
-ALL_RESTAURANTS = [...restaurants];   // 🔒 backup original list
-categories=d.categories;
-items=d.items;
-
-renderRestaurants();
-}).catch(()=>alert("Unable to connect"));
 
 /* ================= TIME ================= */
 function toMin(t){const[a,b]=t.split(":").map(Number);return a*60+b}
@@ -698,11 +709,9 @@ function placeOrder(){
 
   /* -------- CALCULATE TOTAL -------- */
   let itemTotal = 0;
-  let totalQty = 0;
 
   for(const i in cart){
     itemTotal += cart[i] * price(i);
-    totalQty += cart[i];
   }
 
   if(itemTotal < 99){
@@ -747,7 +756,7 @@ Items:
 `;
 
   for(const i in cart){
-    customerMsg += `• ${i} × ${cart[i]}  — ₹${cart[i] * price(i)}\n`;
+    customerMsg += `• ${i} × ${cart[i]} — ₹${cart[i] * price(i)}\n`;
   }
 
   customerMsg +=
@@ -773,16 +782,15 @@ ${mapLink}
 Payment as instructed by 20nagar Food Xpress.
 `;
 
-  /* COPY FOR ADMIN */
   navigator.clipboard.writeText(customerMsg);
 
-  /* SEND TO ADMIN WHATSAPP */
   setTimeout(() => {
     window.location.href =
       "https://wa.me/919484818194?text=" + encodeURIComponent(customerMsg);
   }, 200);
-}  
-  
+}
+</script>
+
 <script>
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
