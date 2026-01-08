@@ -430,10 +430,9 @@ document.addEventListener("DOMContentLoaded", () => {
 restaurants = d.restaurants.map(r => ({
   id: r.RestaurantID,
   name: r.RestaurantName,
-
-  // 🔒 GitHub-hosted restaurant image (FINAL)
   logo: `images/restaurants/${r.RestaurantID}.jpg`,
-
+  lat: Number(r.Latitude),
+  lng: Number(r.Longitude),
   slots: [
     [r.Slot1_Open, r.Slot1_Close],
     [r.Slot2_Open, r.Slot2_Close]
@@ -458,6 +457,22 @@ function toTime(v) {
   const h = d.getHours().toString().padStart(2, "0");
   const m = d.getMinutes().toString().padStart(2, "0");
   return `${h}:${m}`;
+}
+
+  /* ================= DISTANCE (HAVERSINE) ================= */
+function haversineKm(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Earth radius in KM
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) *
+    Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return +(R * c).toFixed(2);
 }
 
 /* ================= TIME ================= */
@@ -707,7 +722,21 @@ function delivery(t){if(t<=0)return 0;if(t>=1199)return 1;if(t>=999)return 9;if(
 
 /* ================= ADDRESS ================= */
 function goToAddress(){let t=0;for(const i in cart)t+=cart[i]*price(i);if(t<99){alert("Minimum order ₹99");return}nav("page-address")}
-function captureLocation(){navigator.geolocation.getCurrentPosition(p=>{lat=p.coords.latitude;lng=p.coords.longitude;mapLink=`https://maps.google.com/?q=${lat},${lng}`;locStatus.innerText="Location captured ✓"},()=>alert("Location required"))}
+function captureLocation(){
+  navigator.geolocation.getCurrentPosition(p=>{
+    lat = p.coords.latitude;
+    lng = p.coords.longitude;
+    mapLink = `https://maps.google.com/?q=${lat},${lng}`;
+
+    const rest = restaurants.find(r => r.name === currentRestaurant);
+    if(rest && rest.lat && rest.lng){
+      const dist = haversineKm(rest.lat, rest.lng, lat, lng);
+      locStatus.innerText = `Location captured ✓ Distance: ${dist} km`;
+    } else {
+      locStatus.innerText = "Location captured ✓";
+    }
+  },()=>alert("Location required"))
+}
 
 /* ================= PLACE ORDER ================= */
 function placeOrder(){
