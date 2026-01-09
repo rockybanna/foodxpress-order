@@ -485,6 +485,21 @@ function normalizeDistanceForPricing(km){
   return km; // above 6.5 km stays as-is for now
 }
 
+  /* ================= BASE DELIVERY (NO DISCOUNT) ================= */
+function baseDeliveryFromDistance(km){
+  if(km > 15){
+    return { blocked: true, charge: 0 };
+  }
+
+  // Rule 1: up to 6.5 km
+  if(km <= 6.5){
+    return { blocked: false, charge: 20 + (10 * km) };
+  }
+
+  // Rule 2: above 6.5 km
+  return { blocked: false, charge: 30 + (10 * km) };
+}
+
 /* ================= TIME ================= */
 function toMin(t){const[a,b]=t.split(":").map(Number);return a*60+b}
 function nowMin(){const d=new Date();return d.getHours()*60+d.getMinutes()}
@@ -743,7 +758,14 @@ function captureLocation(){
 const rawDist = haversineKm(rest.lat, rest.lng, lat, lng);
 const dist = +(rawDist * 1.5).toFixed(2);
 const pricedDist = normalizeDistanceForPricing(dist);
-locStatus.innerText = `Location captured ✓ Distance: ${pricedDist} km`;
+const baseDelivery = baseDeliveryFromDistance(pricedDist);
+
+if(baseDelivery.blocked){
+  locStatus.innerText = `Service not available beyond 15 km`;
+} else {
+  locStatus.innerText =
+    `Distance: ${pricedDist} km | Base delivery: ₹${baseDelivery.charge}`;
+}
     } else {
       locStatus.innerText = "Location captured ✓";
     }
