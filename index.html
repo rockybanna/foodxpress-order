@@ -475,6 +475,16 @@ function haversineKm(lat1, lon1, lat2, lon2) {
   return +(R * c).toFixed(2);
 }
 
+  /* ================= DISTANCE NORMALIZATION ================= */
+function normalizeDistanceForPricing(km){
+  if(km <= 2.5) return 2.5;
+  if(km <= 3.5) return 3.5;
+  if(km <= 4.5) return 4.5;
+  if(km <= 5.5) return 5.5;
+  if(km <= 6.5) return 6.5;
+  return km; // above 6.5 km stays as-is for now
+}
+
 /* ================= TIME ================= */
 function toMin(t){const[a,b]=t.split(":").map(Number);return a*60+b}
 function nowMin(){const d=new Date();return d.getHours()*60+d.getMinutes()}
@@ -730,9 +740,10 @@ function captureLocation(){
 
     const rest = restaurants.find(r => r.name === currentRestaurant);
     if(rest && rest.lat && rest.lng){
-      const rawDist = haversineKm(rest.lat, rest.lng, lat, lng);
+const rawDist = haversineKm(rest.lat, rest.lng, lat, lng);
 const dist = +(rawDist * 1.5).toFixed(2);
-locStatus.innerText = `Location captured ✓ Distance: ${dist} km`;
+const pricedDist = normalizeDistanceForPricing(dist);
+locStatus.innerText = `Location captured ✓ Distance: ${pricedDist} km`;
     } else {
       locStatus.innerText = "Location captured ✓";
     }
