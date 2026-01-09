@@ -733,10 +733,6 @@ function updateBar(){
 }
 
 function openSummary(){
-  if(!pricedDistanceKm){
-    alert("Please share delivery location to calculate delivery charges");
-    return;
-  }
   renderSummary();
   nav("page-summary");
 }
@@ -745,6 +741,7 @@ function renderSummary(){
   summaryItems.innerHTML = "";
   let total = 0;
 
+  // ---------- ITEMS ----------
   for (const i in cart){
     const p = price(i);
     total += cart[i] * p;
@@ -764,24 +761,33 @@ function renderSummary(){
     `;
   }
 
-const del = finalDeliveryCharge(pricedDistanceKm, total);
+  // ---------- ITEM TOTAL ----------
+  itemTotal.innerText = `₹${total}`;
 
-if(del.blocked){
-  alert("Service not available beyond 15 km");
-  backToRestaurants();
-  return;
+  // ---------- NO LOCATION YET ----------
+  if(!pricedDistanceKm){
+    deliveryCharge.innerHTML =
+      `—<br><small>Delivery charge will be calculated after location</small>`;
+    grandTotal.innerText = `₹${total}`;
+    return;
+  }
+
+  // ---------- DELIVERY CALCULATION ----------
+  const del = finalDeliveryCharge(pricedDistanceKm, total);
+
+  if(del.blocked){
+    alert("Service not available beyond 15 km");
+    backToRestaurants();
+    return;
+  }
+
+  deliveryCharge.innerHTML =
+    `₹${del.charge}<br><small>Delivery based on approx. distance: ${pricedDistanceKm} km</small>`;
+
+  grandTotal.innerText = `₹${total + del.charge}`;
 }
 
-itemTotal.innerText = `₹${total}`;
-
-  document.getElementById("deliveryCharge").innerHTML =
-  `₹${del.charge}<br><small>Delivery based on approx. distance: ${pricedDistanceKm} km</small>`;
-
-grandTotal.innerText = `₹${total + del.charge}`;
-}
-
-
-/* ================= ADDRESS ================= */
+  /* ================= ADDRESS ================= */
 function goToAddress(){let t=0;for(const i in cart)t+=cart[i]*price(i);if(t<99){alert("Minimum order ₹99");return}nav("page-address")}
 function captureLocation(){
   navigator.geolocation.getCurrentPosition(p=>{
