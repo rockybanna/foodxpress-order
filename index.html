@@ -396,6 +396,7 @@ let restaurants=[],categories=[],items=[];
 let ALL_RESTAURANTS = [];
 let cart={},currentRestaurant="",stack=["page-restaurants"];
 let lat="",lng="",mapLink="";
+let pricedDistanceKm = 0;
   
 /* ================= DOM READY (PWA SAFE) ================= */
 let restaurantList, menuItems, catList, summaryItems,
@@ -498,6 +499,27 @@ function baseDeliveryFromDistance(km){
 
   // Rule 2: above 6.5 km
   return { blocked: false, charge: 30 + (10 * km) };
+}
+/* ================= DELIVERY DISCOUNT ================= */
+function deliveryDiscount(itemTotal){
+  return Math.floor(itemTotal / 200) * 10;
+}
+
+/* ================= FINAL DELIVERY ================= */
+function finalDeliveryCharge(pricedKm, itemTotal){
+  const base = baseDeliveryFromDistance(pricedKm);
+
+  if(base.blocked){
+    return { blocked: true, charge: 0 };
+  }
+
+  const discount = deliveryDiscount(itemTotal);
+  const finalCharge = Math.max(base.charge - discount, 1);
+
+  return {
+    blocked: false,
+    charge: Math.round(finalCharge)
+  };
 }
 
 /* ================= TIME ================= */
@@ -736,14 +758,19 @@ function renderSummary(){
     `;
   }
 
-  const d = delivery(total);
-  itemTotal.innerText = `₹${total}`;
-  deliveryCharge.innerText = `₹${d}`;
-  grandTotal.innerText = `₹${total + d}`;
+const del = finalDeliveryCharge(pricedDistanceKm, total);
+
+if(del.blocked){
+  alert("Service not available beyond 15 km");
+  backToRestaurants();
+  return;
 }
 
-/* ================= DELIVERY ================= */
-function delivery(t){if(t<=0)return 0;if(t>=1199)return 1;if(t>=999)return 9;if(t>=799)return 19;if(t>=599)return 29;if(t>=399)return 39;return 49}
+itemTotal.innerText = `₹${total}`;
+deliveryCharge.innerText = `₹${del.charge}`;
+grandTotal.innerText = `₹${total + del.charge}`;
+}
+
 
 /* ================= ADDRESS ================= */
 function goToAddress(){let t=0;for(const i in cart)t+=cart[i]*price(i);if(t<99){alert("Minimum order ₹99");return}nav("page-address")}
@@ -758,14 +785,9 @@ function captureLocation(){
 const rawDist = haversineKm(rest.lat, rest.lng, lat, lng);
 const dist = +(rawDist * 1.5).toFixed(2);
 const pricedDist = normalizeDistanceForPricing(dist);
-const baseDelivery = baseDeliveryFromDistance(pricedDist);
+pricedDistanceKm = pricedDist;
 
-if(baseDelivery.blocked){
-  locStatus.innerText = `Service not available beyond 15 km`;
-} else {
-  locStatus.innerText =
-    `Distance: ${pricedDist} km | Base delivery: ₹${baseDelivery.charge}`;
-}
+locStatus.innerText = `Location captured ✓ Distance: ${pricedDist} km`;
     } else {
       locStatus.innerText = "Location captured ✓";
     }
@@ -811,8 +833,15 @@ function placeOrder(){
     return;
   }
 
-  const deliveryCharge = delivery(itemTotal);
-  const grandTotal = itemTotal + deliveryCharge;
+const del = finalDeliveryCharge(pricedDistanceKm, itemTotal);
+
+if(del.blocked){
+  alert("Service not available beyond 15 km");
+  return;
+}
+
+const deliveryCharge = del.charge;
+const grandTotal = itemTotal + deliveryCharge;
 
   /* ================= CUSTOMER MESSAGE ================= */
   let customerMsg =
