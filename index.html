@@ -366,7 +366,9 @@ input,textarea{
       <div><span>Delivery Charge</span><span id="deliveryCharge">₹0</span></div>
       <div class="total"><span>Total Payable</span><span id="grandTotal">₹0</span></div>
     </div>
-    <div class="note">Delivery charges apply up to 2.5 km. May vary for longer distances.</div>
+  <div class="note">
+Delivery charges depend on distance. Higher order value reduces delivery charges.
+</div>
     <button class="primary" onclick="goToAddress()">Continue → Address</button>
   </div>
 </div>
@@ -731,6 +733,10 @@ function updateBar(){
 }
 
 function openSummary(){
+  if(!pricedDistanceKm){
+    alert("Please share delivery location to calculate delivery charges");
+    return;
+  }
   renderSummary();
   nav("page-summary");
 }
@@ -767,7 +773,10 @@ if(del.blocked){
 }
 
 itemTotal.innerText = `₹${total}`;
-deliveryCharge.innerText = `₹${del.charge}`;
+
+  document.getElementById("deliveryCharge").innerHTML =
+  `₹${del.charge}<br><small>Delivery based on approx. distance: ${pricedDistanceKm} km</small>`;
+
 grandTotal.innerText = `₹${total + del.charge}`;
 }
 
@@ -861,6 +870,7 @@ Items:
 ---------------------
 Item Total: ₹${itemTotal}
 Delivery Charge: ₹${deliveryCharge}
+Approx Distance: ${pricedDistanceKm} km
 ---------------------
 Total Payable: ₹${grandTotal}
 ---------------------
