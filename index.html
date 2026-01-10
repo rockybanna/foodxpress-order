@@ -819,23 +819,74 @@ function renderSummary(){
   /* ================= ADDRESS ================= */
 function goToAddress(){let t=0;for(const i in cart)t+=cart[i]*price(i);if(t<99){alert("Minimum order ₹99");return}nav("page-address")}
 function captureLocation(){
-  navigator.geolocation.getCurrentPosition(p=>{
-    lat = p.coords.latitude;
-    lng = p.coords.longitude;
+
+  /* 1️⃣ If location already captured for this order, reuse it */
+  const savedLat = localStorage.getItem("fx_lat");
+  const savedLng = localStorage.getItem("fx_lng");
+  const savedKm  = localStorage.getItem("fx_priced_km");
+
+  if(savedLat && savedLng && savedKm){
+    lat = Number(savedLat);
+    lng = Number(savedLng);
+    pricedDistanceKm = Number(savedKm);
     mapLink = `https://maps.google.com/?q=${lat},${lng}`;
 
-    const rest = restaurants.find(r => r.name === currentRestaurant);
-    if(rest && rest.lat && rest.lng){
-const rawDist = haversineKm(rest.lat, rest.lng, lat, lng);
-const dist = +(rawDist * 1.5).toFixed(2);
-const pricedDist = normalizeDistanceForPricing(dist);
-pricedDistanceKm = pricedDist;
+    locStatus.innerText =
+      `Location already captured ✓ Distance: ${pricedDistanceKm} km`;
+    return;
+  }
 
-locStatus.innerText = `Location captured ✓ Distance: ${pricedDist} km`;
-    } else {
-      locStatus.innerText = "Location captured ✓";
+  /* 2️⃣ Force HIGH ACCURACY GPS */
+  navigator.geolocation.getCurrentPosition(
+
+    p => {
+
+      /* 3️⃣ Reject bad accuracy (IP / network location) */
+      if(p.coords.accuracy > 100){
+        alert("Location not accurate. Please turn ON GPS and disable VPN.");
+        return;
+      }
+
+      lat = p.coords.latitude;
+      lng = p.coords.longitude;
+      mapLink = `https://maps.google.com/?q=${lat},${lng}`;
+
+      const rest = restaurants.find(r => r.name === currentRestaurant);
+      if(rest && rest.lat && rest.lng){
+
+        const rawDist = haversineKm(rest.lat, rest.lng, lat, lng);
+        const dist = +(rawDist * 1.5).toFixed(2);
+        const pricedDist = normalizeDistanceForPricing(dist);
+
+        /* 4️⃣ Reject impossible distance */
+        if(pricedDist > 20){
+          alert("Location seems incorrect. Please try again.");
+          return;
+        }
+
+        pricedDistanceKm = pricedDist;
+
+        /* 5️⃣ SAVE location for this order */
+        localStorage.setItem("fx_lat", lat);
+        localStorage.setItem("fx_lng", lng);
+        localStorage.setItem("fx_priced_km", pricedDistanceKm);
+
+        locStatus.innerText =
+          `Location captured ✓ Distance: ${pricedDistanceKm} km`;
+      } else {
+        locStatus.innerText = "Location captured ✓";
+      }
+    },
+
+    () => alert("Location required"),
+
+    {
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 0
     }
-  },()=>alert("Location required"))
+
+  );
 }
 
 /* ================= PLACE ORDER ================= */
@@ -935,6 +986,9 @@ Payment as instructed by 20nagar Food Xpress.
   // ✅ clear Order ID so next order gets a new one
 localStorage.removeItem("fx_order_id");
 orderId = "";
+  localStorage.removeItem("fx_lat");
+localStorage.removeItem("fx_lng");
+localStorage.removeItem("fx_priced_km");
 
 }
 </script>
