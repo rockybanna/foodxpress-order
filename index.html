@@ -399,6 +399,7 @@ let ALL_RESTAURANTS = [];
 let cart={},currentRestaurant="",stack=["page-restaurants"];
 let lat="",lng="",mapLink="";
 let pricedDistanceKm = 0;
+let orderId = "";
   
 /* ================= DOM READY (PWA SAFE) ================= */
 let restaurantList, menuItems, catList, summaryItems,
@@ -451,7 +452,35 @@ restaurants = d.restaurants.map(r => ({
       renderRestaurants();
     })
     .catch(() => alert("Unable to connect"));
+  orderId = getOrderId();
+
 });
+
+  /* ================= ORDER ID ================= */
+function getOrderId(){
+  let id = localStorage.getItem("fx_order_id");
+
+  if(!id){
+    const d = new Date();
+    const rand = Math.floor(100 + Math.random() * 900);
+
+    id =
+      "FX-" +
+      d.getFullYear() +
+      String(d.getMonth() + 1).padStart(2, "0") +
+      String(d.getDate()).padStart(2, "0") +
+      "-" +
+      String(d.getHours()).padStart(2, "0") +
+      String(d.getMinutes()).padStart(2, "0") +
+      String(d.getSeconds()).padStart(2, "0") +
+      "-" +
+      rand;
+
+    localStorage.setItem("fx_order_id", id);
+  }
+
+  return id;
+}
 
 /* ---------- TIME FORMATTER ---------- */
 function toTime(v) {
@@ -859,8 +888,10 @@ const deliveryCharge = del.charge;
 const grandTotal = itemTotal + deliveryCharge;
 
   /* ================= CUSTOMER MESSAGE ================= */
-  let customerMsg =
+let customerMsg =
 `🍽️ ORDER — 20nagar Food Xpress
+
+Order ID: ${orderId}
 
 Restaurant: ${currentRestaurant}
 
@@ -901,6 +932,10 @@ Payment as instructed by 20nagar Food Xpress.
     window.location.href =
       "https://wa.me/919484818194?text=" + encodeURIComponent(customerMsg);
   }, 200);
+  // ✅ clear Order ID so next order gets a new one
+localStorage.removeItem("fx_order_id");
+orderId = "";
+
 }
 </script>
 
