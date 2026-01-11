@@ -290,15 +290,19 @@ button.primary{
   inset:0;
   background:rgba(0,0,0,.45);
   display:none;
+  z-index:9999;   /* 🔒 force above header */
 }
 .cat-box{
   background:#fff;
-  margin:12% auto;
+  margin:0 auto;
   width:82%;
-  max-height:65vh;
+  max-height:70vh;
   overflow-y:auto;
   border-radius:20px;
   padding:14px;
+
+  position:relative;
+  top:90px;   /* 🔑 pushes popup below header */
 }
 .cat-box div{
   padding:14px;
