@@ -574,7 +574,23 @@ function status(r){
 function show(p){document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));document.getElementById(p).classList.add("active")}
 function nav(p){stack.push(p);show(p)}
 function goBack(){stack.pop();show(stack.at(-1))}
-function backToRestaurants(){cart={};updateBar();stack=["page-restaurants"];show("page-restaurants")}
+function backToRestaurants(){
+  cart = {};
+  updateBar();
+
+  // 🔒 CLEAR PREVIOUS ORDER LOCATION & DISTANCE
+  localStorage.removeItem("fx_lat");
+  localStorage.removeItem("fx_lng");
+  localStorage.removeItem("fx_priced_km");
+
+  lat = "";
+  lng = "";
+  pricedDistanceKm = 0;
+  mapLink = "";
+
+  stack = ["page-restaurants"];
+  show("page-restaurants");
+}
 
   /* 🔒 LOGIC LOCK — RESTAURANT SHUFFLE (SAFE) */
 function shuffle(arr){
