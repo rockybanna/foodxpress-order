@@ -327,7 +327,31 @@ input,textarea{
 <!-- PAGE 1: RESTAURANTS -->
 <div id="page-restaurants" class="page active">
   <div class="header"><img src="company-logo.png"></div>
-  <div class="content">
+ <div class="content">
+
+<!-- 🔥 OFFER BANNER -->
+<div style="
+background:#7a4b6d;
+color:#fff;
+padding:12px;
+border-radius:14px;
+margin-bottom:12px;
+font-weight:800;
+text-align:center;
+">
+🔥 ₹20 OFF above ₹149 • Fast Delivery in 30 mins
+</div>
+
+<!-- ⚡ TRUST LINE -->
+<div style="
+font-size:13px;
+color:#666;
+margin-bottom:10px;
+text-align:center;
+">
+50+ happy customers • Fast local delivery 🚀
+</div>
+
 <div class="search-wrap">
   <input
     class="search"
@@ -335,7 +359,21 @@ input,textarea{
     oninput="filterRestaurants(this.value)"
   >
 </div>
-    <div id="restaurantList"></div>
+ <!-- 🔁 REORDER BUTTON -->
+<button onclick="reorderLast()" style="
+width:100%;
+padding:12px;
+border-radius:14px;
+border:none;
+background:#000;
+color:#fff;
+font-weight:700;
+margin-bottom:12px;
+">
+🔁 Order Again
+</button>
+
+<div id="restaurantList"></div></div>
   </div>
 </div>
 
@@ -997,6 +1035,10 @@ ${mapLink}
 ⚠️ Please wait for order confirmation.
 Payment as instructed by 20nagar Food Xpress.
 `;
+localStorage.setItem("last_order", JSON.stringify({
+  restaurant: currentRestaurant,
+  items: cart
+}));
   setTimeout(() => {
     window.location.href =
       "https://wa.me/919484818194?text=" + encodeURIComponent(customerMsg);
@@ -1017,7 +1059,38 @@ if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("service-worker.js");
   });
 }
+/* ================= REORDER SYSTEM ================= */
+function reorderLast(){
+  const last = localStorage.getItem("last_order");
+  if(!last){
+    alert("No previous order found");
+    return;
+  }
+
+  const data = JSON.parse(last);
+  currentRestaurant = data.restaurant;
+  cart = data.items;
+
+  openMenu(currentRestaurant);
+}
+
 </script>
+
+<!-- 💬 WHATSAPP FLOAT BUTTON -->
+<a href="https://wa.me/919484818194" style="
+position:fixed;
+bottom:80px;
+right:16px;
+background:#25D366;
+color:#fff;
+padding:14px;
+border-radius:50%;
+font-size:20px;
+text-decoration:none;
+z-index:999;
+">
+💬
+</a>
 
 </body>
 </html>
