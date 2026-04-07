@@ -726,14 +726,33 @@ function status(r){
 }
 
 /* ================= NAV ================= */
-function show(p){document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));document.getElementById(p).classList.add("active")}
-function nav(p){stack.push(p);show(p)}
-function goBack(){stack.pop();show(stack.at(-1))}
+function show(p){
+  const pages = document.querySelectorAll(".page");
+  pages.forEach(x => x.classList.remove("active"));
+
+  const target = document.getElementById(p);
+  if(!target){
+    alert("PAGE NOT FOUND: " + p);
+    return;
+  }
+
+  target.classList.add("active");
+}
+
+function nav(p){
+  stack.push(p);
+  show(p);
+}
+
+function goBack(){
+  stack.pop();
+  show(stack.at(-1));
+}
+
 function backToRestaurants(){
   cart = {};
   updateBar();
 
-  // 🔒 CLEAR PREVIOUS ORDER LOCATION & DISTANCE
   localStorage.removeItem("fx_lat");
   localStorage.removeItem("fx_lng");
   localStorage.removeItem("fx_priced_km");
@@ -770,18 +789,19 @@ function filterRestaurants(query){
   );
 
   const matchedRestaurantIds = new Set(
-    items
+    (items || [])
       .filter(i => i.ItemName && i.ItemName.toLowerCase().includes(query))
-      .map(i => i.RestaurantID)
+      .map(i => String(i.RestaurantID))
   );
 
   const byItems = ALL_RESTAURANTS.filter(r =>
-    matchedRestaurantIds.has(r.id)
+    matchedRestaurantIds.has(String(r.id))
   );
 
+  // merge + remove duplicates
   restaurants = [
     ...new Map(
-      [...byName, ...byItems].map(r => [r.id, r])
+      [...byName, ...byItems].map(r => [String(r.id), r])
     ).values()
   ];
 
@@ -794,14 +814,19 @@ function renderRestaurants(){
   const openList = [];
   const closedList = [];
 
-  const shuffled = [...restaurants];
+  // shuffle safely
+  const shuffled = [...(restaurants || [])];
   shuffle(shuffled);
 
   shuffled.forEach(r => {
+
+    if(!r) return;
+
     const s = status(r);
     const d = document.createElement("div");
 
     d.className = "restaurant " + (s.open ? "open" : "closed");
+
     d.innerHTML = `
       <img src="${r.logo}" onerror="this.src='company-logo.png'">
       <div class="rest-info">
@@ -812,10 +837,8 @@ function renderRestaurants(){
       </div>
     `;
 
-    d.onclick = () => {
-  alert("clicked");
-  openMenu(r.id);
-};
+    // ✅ FINAL CLICK FIX (ID based)
+    d.onclick = () => openMenu(r.id);
 
     (s.open ? openList : closedList).push(d);
   });
@@ -823,29 +846,22 @@ function renderRestaurants(){
   [...openList, ...closedList].forEach(el => restaurantList.appendChild(el));
 }
 
+
 /* ================= MENU ================= */
 function openMenu(id){
-  alert("openMenu running");
 
   cart = {};
   currentRestaurant = id;
 
   const rest = restaurants.find(r => String(r.id) === String(id));
-  if(!rest){
-    alert("restaurant not found");
-    return;
-  }
+  if(!rest) return;
 
   menuLogo.src = rest.logo;
   menuTitle.innerText = rest.name;
 
   renderMenu();
 
-  alert("before nav");
-
   nav("page-menu");
-
-  alert("after nav");
 }
 
 function renderMenu(){
@@ -853,30 +869,17 @@ function renderMenu(){
   catList.innerHTML = "";
 
   const rest = restaurants.find(r => String(r.id) === String(currentRestaurant));
-
-if(!rest){
-  alert("renderMenu rest not found");
-  return;
-}
-
-if(!categories){
-  alert("categories missing");
-  return;
-}
-
-if(!items){
-  alert("items missing");
-  return;
-}
+  if(!rest) return;
 
   const restCats = (categories || [])
-  .filter(c => String(c.RestaurantID) === String(rest.id) && (c.IsActive === true || c.IsActive === "TRUE"))
+    .filter(c =>
+      String(c.RestaurantID) === String(rest.id) &&
+      (c.IsActive === true || c.IsActive === "TRUE")
+    )
     .sort((a,b) => (a.SortOrder||0) - (b.SortOrder||0));
 
-  if(!restCats.length){
-  alert("No categories found");
-}
-restCats.forEach(cat => {
+  restCats.forEach(cat => {
+
     menuItems.innerHTML += `
       <div class="category" id="cat-${cat.CategoryID}">
         ${cat.CategoryName}
@@ -890,12 +893,13 @@ restCats.forEach(cat => {
     `;
 
     (items || [])
-  .filter(i =>
+      .filter(i =>
         String(i.RestaurantID) === String(rest.id) &&
         String(i.CategoryID) === String(cat.CategoryID) &&
         i.IsAvailable
       )
       .forEach(it => {
+
         const q = cart[it.ItemName] || 0;
 
         menuItems.innerHTML += `
@@ -913,6 +917,7 @@ restCats.forEach(cat => {
           </div>
         `;
       });
+
   });
 
   updateBar();
