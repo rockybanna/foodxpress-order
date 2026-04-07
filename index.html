@@ -389,6 +389,19 @@ margin-bottom:12px;
   </div>
 
   <div class="content menu-content">
+<!-- 🔥 SAVING HINT (MENU) -->
+<div id="savingHintMenu" style="
+background:#fff3e0;
+color:#e65100;
+padding:10px;
+border-radius:10px;
+font-size:13px;
+font-weight:700;
+margin-bottom:10px;
+text-align:center;
+display:none;
+"></div>
+
     <div id="menuItems"></div>
   </div>
 
@@ -407,6 +420,18 @@ margin-bottom:12px;
   <div class="content">
     <h2>Order Summary</h2>
     <div id="summaryItems"></div>
+<!-- 🔥 SAVING HINT (SUMMARY) -->
+<div id="savingHintSummary" style="
+background:#e8f5e9;
+color:#1b5e20;
+padding:10px;
+border-radius:10px;
+font-size:13px;
+font-weight:700;
+margin-bottom:10px;
+text-align:center;
+display:none;
+"></div>
 
     <div class="bill">
       <div><span>Item Total</span><span id="itemTotal">₹0</span></div>
@@ -456,7 +481,8 @@ let platformFee = 5;
 let restaurantList, menuItems, catList, summaryItems,
     cartBar, cartInfo, menuTitle, menuLogo,
     itemTotal, deliveryCharge, platformFeeEl, grandTotal,
-    custName, custPhone, custAddress, locStatus;
+    custName, custPhone, custAddress, locStatus,
+    savingHintMenu, savingHintSummary;
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -478,6 +504,9 @@ grandTotal = document.getElementById("grandTotal");
   custPhone = document.getElementById("custPhone");
   custAddress = document.getElementById("custAddress");
   locStatus = document.getElementById("locStatus");
+savingHintMenu = document.getElementById("savingHintMenu");
+savingHintSummary = document.getElementById("savingHintSummary");
+
 
   /* ---------- FETCH DATA AFTER DOM READY ---------- */
   fetch("https://script.google.com/macros/s/AKfycbw66W91wIe-cAXwIZPgfEGJ1gy4TQ_MQ5WANbm3jQ9g4t_OmKNgqD7K8-pq7njoteWwEg/exec")
@@ -801,7 +830,9 @@ function upd(itemName, priceIgnored, delta){
 
   if (stack.at(-1) === "page-menu") renderMenu();
   if (stack.at(-1) === "page-summary") renderSummary();
+
   updateBar();
+updateSavingHint();
 }
 
 function price(itemName){
@@ -862,6 +893,8 @@ function renderSummary(){
 
   // ---------- ITEM TOTAL ----------
   itemTotal.innerText = `₹${total}`;
+
+updateSavingHint();
 
   // ---------- NO LOCATION YET ----------
   if(!pricedDistanceKm){
