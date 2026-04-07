@@ -853,13 +853,30 @@ function renderMenu(){
   catList.innerHTML = "";
 
   const rest = restaurants.find(r => String(r.id) === String(currentRestaurant));
-  if(!rest) return;
+
+if(!rest){
+  alert("renderMenu rest not found");
+  return;
+}
+
+if(!categories){
+  alert("categories missing");
+  return;
+}
+
+if(!items){
+  alert("items missing");
+  return;
+}
 
   const restCats = categories
-    .filter(c => String(c.RestaurantID) === String(rest.id) && c.IsActive)
+  .filter(c => String(c.RestaurantID) === String(rest.id) && (c.IsActive === true || c.IsActive === "TRUE"))
     .sort((a,b) => (a.SortOrder||0) - (b.SortOrder||0));
 
-  restCats.forEach(cat => {
+  if(!restCats.length){
+  alert("No categories found");
+}
+restCats.forEach(cat => {
     menuItems.innerHTML += `
       <div class="category" id="cat-${cat.CategoryID}">
         ${cat.CategoryName}
