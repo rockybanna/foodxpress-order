@@ -838,7 +838,10 @@ function renderRestaurants(){
     `;
 
     // ✅ FINAL CLICK FIX (ID based)
-    d.onclick = () => openMenu(r.id);
+    d.addEventListener("click", function(e){
+  e.stopPropagation();
+  openMenu(r.id);
+});
 
     (s.open ? openList : closedList).push(d);
   });
