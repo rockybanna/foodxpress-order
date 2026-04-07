@@ -812,7 +812,10 @@ function renderRestaurants(){
       </div>
     `;
 
-    d.onclick = () => openMenu(r.id);
+    d.onclick = () => {
+  alert("clicked");
+  openMenu(r.id);
+};
 
     (s.open ? openList : closedList).push(d);
   });
