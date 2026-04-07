@@ -389,19 +389,19 @@ margin-bottom:12px;
     <div id="menuTitle" class="menu-title"></div>
   </div>
 
-  <!-- 🔥 SAVING HINT (FIXED) -->
   <div id="savingHintMenu" style="
-  position:sticky;
-  top:60px;
-  z-index:9;
-  background:#fff3e0;
-  color:#e65100;
-  padding:10px;
-  font-size:13px;
-  font-weight:700;
-  text-align:center;
-  display:none;
-  "></div>
+position:sticky;
+top:70px;
+z-index:1000;
+background:#fff3e0;
+color:#e65100;
+padding:10px;
+font-size:13px;
+font-weight:700;
+text-align:center;
+display:none;
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
+"></div>
 
   <div class="content menu-content">
     <div id="menuItems"></div>
@@ -421,19 +421,19 @@ margin-bottom:12px;
   <div class="topbar" onclick="goBack()">← Back</div>
   <div class="header"><img src="company-logo.png"></div>
 
-  <!-- 🔥 SAVING HINT (FIXED) -->
   <div id="savingHintSummary" style="
-  position:sticky;
-  top:60px;
-  z-index:9;
-  background:#e8f5e9;
-  color:#1b5e20;
-  padding:10px;
-  font-size:13px;
-  font-weight:700;
-  text-align:center;
-  display:none;
-  "></div>
+position:sticky;
+top:70px;
+z-index:1000;
+background:#e8f5e9;
+color:#1b5e20;
+padding:10px;
+font-size:13px;
+font-weight:700;
+text-align:center;
+display:none;
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
+"></div>
 
   <div class="content">
 
@@ -864,9 +864,16 @@ function updateBar(){
     total += cart[i] * price(i);
   }
 
+  // ✅ CALCULATE SAVINGS
+  const saved = Math.floor(total / 200) * 10;
+
   if (itemCount > 0 && stack.at(-1) === "page-menu"){
     cartBar.style.display = "flex";
-    cartInfo.innerText = `${itemCount} items | ₹${total}`;
+
+    // ✅ UPDATED TEXT WITH SAVINGS
+    cartInfo.innerText =
+      `${itemCount} items | ₹${total} • Saved ₹${saved}`;
+      
   } else {
     cartBar.style.display = "none";
   }
@@ -1180,17 +1187,19 @@ function reorderLast(){
 <!-- 💬 WHATSAPP FLOAT BUTTON -->
 <a href="https://wa.me/919484818194" style="
 position:fixed;
-bottom:80px;
+top:80px;
 right:16px;
 background:#25D366;
 color:#fff;
-padding:14px;
-border-radius:50%;
-font-size:20px;
+padding:10px 14px;
+border-radius:20px;
+font-size:14px;
+font-weight:700;
 text-decoration:none;
-z-index:999;
+z-index:1001;
+box-shadow:0 4px 10px rgba(0,0,0,.2);
 ">
-💬
+💬 Chat
 </a>
 
 </body>
