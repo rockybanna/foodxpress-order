@@ -1080,17 +1080,25 @@ function updateSavingHint(){
     return;
   }
 
-  const discount = Math.floor(total / 200) * 10;
   const remainder = total % 200;
 
-  let message = "";
+// ✅ MAX DISCOUNT LIMIT (delivery can't go below ₹1)
+const maxSavingReached = pricedDistanceKm && finalDeliveryCharge(pricedDistanceKm, total).charge <= 1;
 
-  if(remainder === 0){
-    message = `🎉 You saved ₹${discount}`;
-  } else {
-    const remaining = 200 - remainder;
-    message = `Add ₹${remaining} more → save ₹${discount + 10}`;
-  }
+let message = "";
+
+if(maxSavingReached){
+  message = `🎉 Maximum delivery discount applied`;
+}
+else if(remainder === 0){
+  const discount = Math.floor(total / 200) * 10;
+  message = `🎉 You saved ₹${discount}`;
+}
+else{
+  const remaining = 200 - remainder;
+  const nextSave = Math.floor(total / 200) * 10 + 10;
+  message = `Add ₹${remaining} more → save ₹${nextSave}`;
+}
 
   if(savingHintMenu){
     savingHintMenu.innerText = message;
@@ -1111,12 +1119,19 @@ function updateSavingHint(){
   const progressWrap = document.getElementById("progressBarWrap");
   const progressFill = document.getElementById("progressBarFill");
 
-  if(progressWrap && progressFill){
-    progressWrap.style.display = "block";
+if(progressWrap && progressFill){
+  progressWrap.style.display = "block";
 
-    const progress = remainder === 0 ? 100 : (remainder / 200) * 100;
-    progressFill.style.width = progress + "%";
+  let progress;
+
+  if(maxSavingReached){
+    progress = 100;
+  } else {
+    progress = remainder === 0 ? 100 : (remainder / 200) * 100;
   }
+
+  progressFill.style.width = progress + "%";
+}
 }
 
 
