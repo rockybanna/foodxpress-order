@@ -869,7 +869,7 @@ if(!items){
   return;
 }
 
-  const restCats = categories
+  const restCats = (categories || [])
   .filter(c => String(c.RestaurantID) === String(rest.id) && (c.IsActive === true || c.IsActive === "TRUE"))
     .sort((a,b) => (a.SortOrder||0) - (b.SortOrder||0));
 
@@ -889,8 +889,8 @@ restCats.forEach(cat => {
       </div>
     `;
 
-    items
-      .filter(i =>
+    (items || [])
+  .filter(i =>
         String(i.RestaurantID) === String(rest.id) &&
         String(i.CategoryID) === String(cat.CategoryID) &&
         i.IsAvailable
