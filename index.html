@@ -448,25 +448,30 @@ z-index:999;
 <div id="page-summary" class="page">
 
   <div class="topbar" onclick="goBack()">← Back</div>
-  <div class="header"><img src="company-logo.png"></div>
 
+  <div class="header">
+    <img src="company-logo.png">
+  </div>
+
+  <!-- 🔥 SAVING HINT (FIXED) -->
   <div id="savingHintSummary" style="
-position:sticky;
-top:70px;
-z-index:1000;
-background:#e8f5e9;
-color:#1b5e20;
-padding:10px;
-font-size:13px;
-font-weight:700;
-text-align:center;
-display:none;
-box-shadow:0 2px 6px rgba(0,0,0,0.1);
-"></div>
+  position:sticky;
+  top:75px;
+  z-index:1000;
+  background:#e8f5e9;
+  color:#1b5e20;
+  padding:10px;
+  font-size:13px;
+  font-weight:700;
+  text-align:center;
+  display:none;
+  box-shadow:0 2px 6px rgba(0,0,0,0.1);
+  margin-bottom:6px;
+  "></div>
 
   <div class="content">
 
-    <h2>Order Summary</h2>
+    <h2 style="margin-top:6px;">Order Summary</h2>
 
     <div id="summaryItems"></div>
 
@@ -477,32 +482,66 @@ box-shadow:0 2px 6px rgba(0,0,0,0.1);
       <div class="total"><span>Total Payable</span><span id="grandTotal">₹0</span></div>
     </div>
 
-    <div class="note">
+    <div class="note" style="margin-top:10px;">
       Delivery charges depend on distance. Higher order value reduces delivery charges.
     </div>
 
-    <button class="primary" onclick="goToAddress()">Continue → Address</button>
+    <button class="primary" style="margin-top:12px;" onclick="goToAddress()">
+      Continue → Address
+    </button>
 
   </div>
 </div>
 
 <!-- PAGE 4: ADDRESS -->
 <div id="page-address" class="page">
-  <div class="topbar" onclick="goBack()">← Back</div>
-  <div class="header"><img src="company-logo.png"></div>
-  <div class="content">
-    <h2>Delivery Details</h2>
-    <label>Name</label><input id="custName">
-    <label>Phone</label><input id="custPhone">
-    <label>Address</label><textarea id="custAddress"></textarea>
-    <button class="primary" onclick="captureLocation()">Use my current location</button>
-    <p id="locStatus" class="small"></p>
-    <button class="primary" onclick="placeOrder()">Place Order</button>
-  </div>
-</div>
 
-<div id="cartBar" class="cart-bar" onclick="openSummary()">
-  <span id="cartInfo"></span><span>View Order →</span>
+  <div class="topbar" onclick="goBack()">← Back</div>
+
+  <div class="header">
+    <img src="company-logo.png">
+  </div>
+
+  <!-- 🔥 SAVING HINT (CONSISTENCY) -->
+  <div id="savingHintAddress" style="
+  position:sticky;
+  top:75px;
+  z-index:1000;
+  background:#e3f2fd;
+  color:#0d47a1;
+  padding:10px;
+  font-size:13px;
+  font-weight:700;
+  text-align:center;
+  display:none;
+  box-shadow:0 2px 6px rgba(0,0,0,0.1);
+  margin-bottom:6px;
+  "></div>
+
+  <div class="content">
+
+    <h2 style="margin-top:6px;">Delivery Details</h2>
+
+    <label>Name</label>
+    <input id="custName">
+
+    <label>Phone</label>
+    <input id="custPhone">
+
+    <label>Address</label>
+    <textarea id="custAddress"></textarea>
+
+    <button class="primary" style="margin-top:10px;" onclick="captureLocation()">
+      Use my current location
+    </button>
+
+    <p id="locStatus" class="small"></p>
+
+    <button class="primary" style="margin-top:12px;" onclick="placeOrder()">
+      Place Order
+    </button>
+
+  </div>
 </div>
 
 <script>
@@ -988,7 +1027,17 @@ function updateSavingHint(){
   if(total === 0){
     if(savingHintMenu) savingHintMenu.style.display = "none";
     if(savingHintSummary) savingHintSummary.style.display = "none";
-    return;
+
+    const savingHintAddress = document.getElementById("savingHintAddress");
+    if(savingHintAddress) savingHintAddress.style.display = "none";
+
+    const progressWrap = document.getElementById("progressBarWrap");
+const progressFill = document.getElementById("progressBarFill");
+
+if(progressWrap) progressWrap.style.display = "none";
+if(progressFill) progressFill.style.width = "0%";
+
+return;
   }
 
   if(remaining > 0){
@@ -1007,6 +1056,25 @@ function updateSavingHint(){
   if(savingHintSummary){
     savingHintSummary.innerText = message;
     savingHintSummary.style.display = "block";
+  }
+
+  // ADDRESS PAGE
+  const savingHintAddress = document.getElementById("savingHintAddress");
+  if(savingHintAddress){
+    savingHintAddress.innerText = message;
+    savingHintAddress.style.display = "block";
+  }
+
+  // PROGRESS BAR
+  const progressWrap = document.getElementById("progressBarWrap");
+  const progressFill = document.getElementById("progressBarFill");
+
+  if(progressWrap && progressFill){
+    progressWrap.style.display = "block";
+
+    const remainder = total % 200;
+const progress = remainder === 0 && total > 0 ? 100 : (remainder / 200) * 100;
+    progressFill.style.width = progress + "%";
   }
 }
 
