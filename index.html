@@ -383,65 +383,69 @@ margin-bottom:12px;
 </div>
 
 <!-- PAGE 2: MENU -->
-
 <div id="page-menu" class="page">
 
+  <!-- HEADER -->
   <div class="menu-header">
     <div class="topbar" onclick="goBack()">← Back</div>
-
     <img id="menuLogo" src="company-logo.png">
     <div id="menuTitle" class="menu-title"></div>
   </div>
 
+  <!-- SAVING HINT -->
   <div id="savingHintMenu" style="
-position:sticky;
-top:75px;
-margin-bottom:6px;
-z-index:1000;
-background:#fff3e0;
-color:#e65100;
-padding:10px;
-font-size:13px;
-font-weight:700;
-text-align:center;
-display:none;
-box-shadow:0 2px 6px rgba(0,0,0,0.1);
-"></div>
+    position:sticky;
+    top:75px;
+    z-index:1000;
+    background:#fff3e0;
+    color:#e65100;
+    padding:10px;
+    font-size:13px;
+    font-weight:700;
+    text-align:center;
+    display:none;
+  "></div>
 
-<!-- 🔥 PROGRESS BAR -->
-<div id="progressBarWrap" style="
-display:none;
-padding:6px 10px 10px;
-background:#fff;
-position:sticky;
-top:120px;
-z-index:999;
-">
-
-  <div style="
-  height:6px;
-  background:#eee;
-  border-radius:10px;
-  overflow:hidden;
+  <!-- PROGRESS BAR -->
+  <div id="progressBarWrap" style="
+    display:none;
+    padding:6px 10px 10px;
+    background:#fff;
+    position:sticky;
+    top:120px;
+    z-index:999;
   ">
-
-    <div id="progressBarFill" style="
-    height:100%;
-    width:0%;
-    background:#7a4b6d;
-    transition:width 0.3s ease;
-    "></div>
-
+    <div style="
+      height:6px;
+      background:#eee;
+      border-radius:10px;
+      overflow:hidden;
+    ">
+      <div id="progressBarFill" style="
+        height:100%;
+        width:0%;
+        background:#7a4b6d;
+        transition:width 0.3s ease;
+      "></div>
+    </div>
   </div>
 
-</div>
-
+  <!-- MAIN CONTENT -->
   <div class="content menu-content">
     <div id="menuItems"></div>
   </div>
 
+  <!-- CART BAR -->
+  <div id="cartBar" class="cart-bar" onclick="openSummary()">
+    <span id="cartInfo"></span>
+    <span>View Cart →</span>
+  </div>
+
+  <!-- CATEGORY BUTTON -->
   <div class="cat-btn" onclick="openCats()">☰ Categories</div>
+
 </div>
+
 
 <!-- CATEGORY POPUP -->
 <div id="catPopup" class="cat-popup" onclick="closeCats()">
