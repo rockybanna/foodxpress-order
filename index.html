@@ -383,7 +383,8 @@ margin-bottom:12px;
 </div>
 
 <!-- PAGE 2: MENU -->
-<div id="page-menu" class="page active">
+
+<div id="page-menu" class="page">
 
   <div class="menu-header">
     <div class="topbar" onclick="backToRestaurants()">← Back</div>
@@ -729,15 +730,22 @@ function status(r){
 
 /* ================= NAV ================= */
 function show(p){
-  const pages = document.querySelectorAll(".page");
-  pages.forEach(x => x.classList.remove("active"));
 
+  // 🔴 HIDE ALL PAGES FORCEFULLY
+  document.querySelectorAll(".page").forEach(el => {
+    el.style.display = "none";
+    el.classList.remove("active");
+  });
+
+  // 🟢 SHOW ONLY TARGET PAGE
   const target = document.getElementById(p);
+
   if(!target){
     alert("PAGE NOT FOUND: " + p);
     return;
   }
 
+  target.style.display = "block";
   target.classList.add("active");
 }
 
