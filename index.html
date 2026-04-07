@@ -923,6 +923,47 @@ platformFeeEl.innerText = `₹${platformFee}`;
 grandTotal.innerText = `₹${total + del.charge + platformFee}`;
 }
 
+/* ================= SAVING HINT SYSTEM ================= */
+function updateSavingHint(){
+
+  let total = 0;
+
+  for (const i in cart){
+    total += cart[i] * price(i);
+  }
+
+  const nextTarget = Math.ceil((total + 1) / 200) * 200;
+  const remaining = nextTarget - total;
+
+  const currentDiscount = Math.floor(total / 200) * 10;
+
+  let message = "";
+
+  if(total === 0){
+    if(savingHintMenu) savingHintMenu.style.display = "none";
+    if(savingHintSummary) savingHintSummary.style.display = "none";
+    return;
+  }
+
+  if(remaining > 0){
+    message = `Add ₹${remaining} more → save ₹10 on delivery`;
+  } else {
+    message = `🎉 You saved ₹${currentDiscount} on delivery`;
+  }
+
+  // MENU PAGE
+  if(savingHintMenu){
+    savingHintMenu.innerText = message;
+    savingHintMenu.style.display = "block";
+  }
+
+  // SUMMARY PAGE
+  if(savingHintSummary){
+    savingHintSummary.innerText = message;
+    savingHintSummary.style.display = "block";
+  }
+}
+
 
   /* ================= ADDRESS ================= */
 function goToAddress(){let t=0;for(const i in cart)t+=cart[i]*price(i);if(t<99){alert("Minimum order ₹99");return}nav("page-address")}
