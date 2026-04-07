@@ -872,9 +872,13 @@ function openMenu(id){
   menuLogo.src = rest.logo;
   menuTitle.innerText = rest.name;
 
-  renderMenu();
-
+  // ✅ OPEN PAGE
   nav("page-menu");
+
+  // ✅ WAIT UNTIL DOM IS READY (STRONGER THAN setTimeout)
+  requestAnimationFrame(() => {
+    renderMenu();
+  });
 }
 
 function renderMenu(){
