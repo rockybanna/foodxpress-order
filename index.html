@@ -819,7 +819,7 @@ function filterRestaurants(query){
       </div>
     `;
 
-    d.onclick = () => openMenu(r.name);
+    d.onclick = () => openMenu(r.id);
 
     (s.open ? openList : closedList).push(d);
   });
