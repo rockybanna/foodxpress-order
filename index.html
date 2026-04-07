@@ -952,6 +952,7 @@ function closeCats(){catPopup.style.display="none"}
 function scrollCat(c){document.getElementById("cat-"+c)?.scrollIntoView({behavior:"smooth"});closeCats()}
 
 /* ================= CART ================= */
+
 function upd(itemName, priceIgnored, delta){
   cart[itemName] = (cart[itemName] || 0) + delta;
   if (cart[itemName] <= 0) delete cart[itemName];
@@ -960,7 +961,7 @@ function upd(itemName, priceIgnored, delta){
   if (stack.at(-1) === "page-summary") renderSummary();
 
   updateBar();
-updateSavingHint();
+  updateSavingHint();
 }
 
 function price(itemName){
@@ -983,16 +984,12 @@ function updateBar(){
     total += cart[i] * price(i);
   }
 
-  // ✅ CALCULATE SAVINGS
   const saved = Math.floor(total / 200) * 10;
 
   if (itemCount > 0 && stack.at(-1) === "page-menu"){
     cartBar.style.display = "flex";
-
-    // ✅ UPDATED TEXT WITH SAVINGS
     cartInfo.innerText =
       `${itemCount} items | ₹${total} • Saved ₹${saved}`;
-      
   } else {
     cartBar.style.display = "none";
   }
@@ -1007,7 +1004,6 @@ function renderSummary(){
   summaryItems.innerHTML = "";
   let total = 0;
 
-  // ---------- ITEMS ----------
   for (const i in cart){
     const p = price(i);
     total += cart[i] * p;
@@ -1027,39 +1023,39 @@ function renderSummary(){
     `;
   }
 
-  // ---------- ITEM TOTAL ----------
   itemTotal.innerText = `₹${total}`;
 
-updateSavingHint();
+  // ✅ ALWAYS SHOW PLATFORM FEE
+  platformFeeEl.innerText = `₹${platformFee}`;
 
-  // ---------- NO LOCATION YET ----------
+  updateSavingHint();
+
   if(!pricedDistanceKm){
     deliveryCharge.innerHTML =
       `—<br><small>Delivery charge will be calculated after location</small>`;
-    grandTotal.innerText = `₹${total}`;
+
+    grandTotal.innerText = `₹${total + platformFee}`;
     return;
   }
 
-// ---------- DELIVERY CALCULATION ----------
-const del = finalDeliveryCharge(pricedDistanceKm, total);
+  const del = finalDeliveryCharge(pricedDistanceKm, total);
 
-if(del.blocked){
-  alert("Service not available beyond 15 km");
-  backToRestaurants();
-  return;
+  if(del.blocked){
+    alert("Service not available beyond 15 km");
+    backToRestaurants();
+    return;
+  }
+
+  deliveryCharge.innerHTML =
+    `₹${del.charge}<br><small>Distance: ${pricedDistanceKm} km</small>`;
+
+  grandTotal.innerText =
+    `₹${total + del.charge + platformFee}`;
 }
 
-deliveryCharge.innerHTML =
-  `₹${del.charge}<br><small>Delivery based on approx. distance: ${pricedDistanceKm} km</small>`;
-
-// ✅ PLATFORM FEE
-platformFeeEl.innerText = `₹${platformFee}`;
-
-// ✅ FINAL TOTAL
-grandTotal.innerText = `₹${total + del.charge + platformFee}`;
-}
 
 /* ================= SAVING HINT SYSTEM ================= */
+
 function updateSavingHint(){
 
   let total = 0;
@@ -1067,13 +1063,6 @@ function updateSavingHint(){
   for (const i in cart){
     total += cart[i] * price(i);
   }
-
-  const nextTarget = Math.ceil((total + 1) / 200) * 200;
-  const remaining = nextTarget - total;
-
-  const currentDiscount = Math.floor(total / 200) * 10;
-
-  let message = "";
 
   if(total === 0){
     if(savingHintMenu) savingHintMenu.style.display = "none";
@@ -1083,58 +1072,71 @@ function updateSavingHint(){
     if(savingHintAddress) savingHintAddress.style.display = "none";
 
     const progressWrap = document.getElementById("progressBarWrap");
-const progressFill = document.getElementById("progressBarFill");
+    const progressFill = document.getElementById("progressBarFill");
 
-if(progressWrap) progressWrap.style.display = "none";
-if(progressFill) progressFill.style.width = "0%";
+    if(progressWrap) progressWrap.style.display = "none";
+    if(progressFill) progressFill.style.width = "0%";
 
-return;
+    return;
   }
 
-  if(remaining > 0){
-    message = `Add ₹${remaining} more → save ₹10 on delivery`;
+  const discount = Math.floor(total / 200) * 10;
+  const remainder = total % 200;
+
+  let message = "";
+
+  if(remainder === 0){
+    message = `🎉 You saved ₹${discount}`;
   } else {
-    message = `🎉 You saved ₹${currentDiscount} on delivery`;
+    const remaining = 200 - remainder;
+    message = `Add ₹${remaining} more → save ₹${discount + 10}`;
   }
 
-  // MENU PAGE
   if(savingHintMenu){
     savingHintMenu.innerText = message;
     savingHintMenu.style.display = "block";
   }
 
-  // SUMMARY PAGE
   if(savingHintSummary){
     savingHintSummary.innerText = message;
     savingHintSummary.style.display = "block";
   }
 
-  // ADDRESS PAGE
   const savingHintAddress = document.getElementById("savingHintAddress");
   if(savingHintAddress){
     savingHintAddress.innerText = message;
     savingHintAddress.style.display = "block";
   }
 
-  // PROGRESS BAR
   const progressWrap = document.getElementById("progressBarWrap");
   const progressFill = document.getElementById("progressBarFill");
 
   if(progressWrap && progressFill){
     progressWrap.style.display = "block";
 
-    const remainder = total % 200;
-const progress = remainder === 0 && total > 0 ? 100 : (remainder / 200) * 100;
+    const progress = remainder === 0 ? 100 : (remainder / 200) * 100;
     progressFill.style.width = progress + "%";
   }
 }
 
 
-  /* ================= ADDRESS ================= */
-function goToAddress(){let t=0;for(const i in cart)t+=cart[i]*price(i);if(t<99){alert("Minimum order ₹99");return}nav("page-address")}
+/* ================= ADDRESS ================= */
+
+function goToAddress(){
+  let t = 0;
+  for(const i in cart) t += cart[i] * price(i);
+
+  if(t < 99){
+    alert("Minimum order ₹99");
+    return;
+  }
+
+  nav("page-address");
+}
+
 function captureLocation(){
 
-  /* 1️⃣ If location already captured for this order, reuse it */
+  // 1️⃣ REUSE SAVED LOCATION
   const savedLat = localStorage.getItem("fx_lat");
   const savedLng = localStorage.getItem("fx_lng");
   const savedKm  = localStorage.getItem("fx_priced_km");
@@ -1147,15 +1149,19 @@ function captureLocation(){
 
     locStatus.innerText =
       `Location already captured ✓ Distance: ${pricedDistanceKm} km`;
+
+    // ✅ IMPORTANT FIX
+    renderSummary();
+
     return;
   }
 
-  /* 2️⃣ Force HIGH ACCURACY GPS */
+  // 2️⃣ GET GPS LOCATION
   navigator.geolocation.getCurrentPosition(
 
     p => {
 
-      /* 3️⃣ Reject bad accuracy (IP / network location) */
+      // 3️⃣ ACCURACY CHECK
       if(p.coords.accuracy > 100){
         alert("Location not accurate. Please turn ON GPS and disable VPN.");
         return;
@@ -1166,13 +1172,14 @@ function captureLocation(){
       mapLink = `https://maps.google.com/?q=${lat},${lng}`;
 
       const rest = restaurants.find(r => String(r.id) === String(currentRestaurant));
+
       if(rest && rest.lat && rest.lng){
 
         const rawDist = haversineKm(rest.lat, rest.lng, lat, lng);
         const dist = +(rawDist * 1.5).toFixed(2);
         const pricedDist = normalizeDistanceForPricing(dist);
 
-        /* 4️⃣ Reject impossible distance */
+        // 4️⃣ DISTANCE VALIDATION
         if(pricedDist > 20){
           alert("Location seems incorrect. Please try again.");
           return;
@@ -1180,15 +1187,23 @@ function captureLocation(){
 
         pricedDistanceKm = pricedDist;
 
-        /* 5️⃣ SAVE location for this order */
+        // 5️⃣ SAVE LOCATION
         localStorage.setItem("fx_lat", lat);
         localStorage.setItem("fx_lng", lng);
         localStorage.setItem("fx_priced_km", pricedDistanceKm);
 
         locStatus.innerText =
           `Location captured ✓ Distance: ${pricedDistanceKm} km`;
+
+        // ✅ IMPORTANT FIX
+        renderSummary();
+
       } else {
+
         locStatus.innerText = "Location captured ✓";
+
+        // ✅ STILL UPDATE SUMMARY
+        renderSummary();
       }
     },
 
@@ -1199,9 +1214,9 @@ function captureLocation(){
       timeout: 15000,
       maximumAge: 0
     }
-
   );
 }
+
 
 /* ================= PLACE ORDER ================= */
 function placeOrder(){
