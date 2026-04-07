@@ -825,17 +825,27 @@ function renderRestaurants(){
 
 /* ================= MENU ================= */
 function openMenu(id){
+  alert("openMenu running");
+
   cart = {};
   currentRestaurant = id;
 
   const rest = restaurants.find(r => String(r.id) === String(id));
-  if(!rest) return;
+  if(!rest){
+    alert("restaurant not found");
+    return;
+  }
 
   menuLogo.src = rest.logo;
   menuTitle.innerText = rest.name;
 
   renderMenu();
+
+  alert("before nav");
+
   nav("page-menu");
+
+  alert("after nav");
 }
 
 function renderMenu(){
