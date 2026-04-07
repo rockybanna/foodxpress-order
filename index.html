@@ -765,24 +765,20 @@ function filterRestaurants(query){
     return;
   }
 
-  // 1️⃣ Match by restaurant name
   const byName = ALL_RESTAURANTS.filter(r =>
     r.name.toLowerCase().includes(query)
   );
 
-  // 2️⃣ Match by item name → restaurant IDs
   const matchedRestaurantIds = new Set(
     items
       .filter(i => i.ItemName && i.ItemName.toLowerCase().includes(query))
       .map(i => i.RestaurantID)
   );
 
-  // 3️⃣ Restaurants that sell matching items
   const byItems = ALL_RESTAURANTS.filter(r =>
     matchedRestaurantIds.has(r.id)
   );
 
-  // 4️⃣ Merge & remove duplicates
   restaurants = [
     ...new Map(
       [...byName, ...byItems].map(r => [r.id, r])
@@ -792,13 +788,12 @@ function filterRestaurants(query){
   renderRestaurants();
 }
 
-  function renderRestaurants(){
+function renderRestaurants(){
   restaurantList.innerHTML = "";
 
   const openList = [];
   const closedList = [];
 
-  // 🔒 shuffle restaurants ONCE per render
   const shuffled = [...restaurants];
   shuffle(shuffled);
 
@@ -808,9 +803,7 @@ function filterRestaurants(query){
 
     d.className = "restaurant " + (s.open ? "open" : "closed");
     d.innerHTML = `
-      <img 
-  src="${r.logo}" 
-  onerror="this.src='company-logo.png'">
+      <img src="${r.logo}" onerror="this.src='company-logo.png'">
       <div class="rest-info">
         <div class="rest-name">${r.name}</div>
         <div class="rest-status ${s.open ? "open-text" : "closed-text"}">
@@ -819,7 +812,7 @@ function filterRestaurants(query){
       </div>
     `;
 
-  d.onclick = () => openMenu(r.name);
+    d.onclick = () => openMenu(r.id);
 
     (s.open ? openList : closedList).push(d);
   });
@@ -828,15 +821,15 @@ function filterRestaurants(query){
 }
 
 /* ================= MENU ================= */
-function openMenu(name){
+function openMenu(id){
   cart = {};
-  currentRestaurant = name;
+  currentRestaurant = id;
 
-  const rest = restaurants.find(r => r.name === name);
-  if(rest){
-    menuLogo.src = rest.logo;
-    menuTitle.innerText = rest.name;
-  }
+  const rest = restaurants.find(r => String(r.id) === String(id));
+  if(!rest) return;
+
+  menuLogo.src = rest.logo;
+  menuTitle.innerText = rest.name;
 
   renderMenu();
   nav("page-menu");
@@ -846,11 +839,11 @@ function renderMenu(){
   menuItems.innerHTML = "";
   catList.innerHTML = "";
 
-  const rest = restaurants.find(r => r.name === currentRestaurant);
-  if (!rest) return;
+  const rest = restaurants.find(r => String(r.id) === String(currentRestaurant));
+  if(!rest) return;
 
   const restCats = categories
-    .filter(c => c.RestaurantID === rest.id && c.IsActive)
+    .filter(c => String(c.RestaurantID) === String(rest.id) && c.IsActive)
     .sort((a,b) => (a.SortOrder||0) - (b.SortOrder||0));
 
   restCats.forEach(cat => {
@@ -868,8 +861,8 @@ function renderMenu(){
 
     items
       .filter(i =>
-        i.RestaurantID === rest.id &&
-        i.CategoryID === cat.CategoryID &&
+        String(i.RestaurantID) === String(rest.id) &&
+        String(i.CategoryID) === String(cat.CategoryID) &&
         i.IsAvailable
       )
       .forEach(it => {
@@ -893,7 +886,7 @@ function renderMenu(){
   });
 
   updateBar();
-updateSavingHint();
+  updateSavingHint();
 }
 
 /* ================= CATEGORY ================= */
@@ -914,11 +907,12 @@ updateSavingHint();
 }
 
 function price(itemName){
-  const rest = restaurants.find(r => r.name === currentRestaurant);
+  const rest = restaurants.find(r => String(r.id) === String(currentRestaurant));
   if (!rest) return 0;
 
   const it = items.find(
-    i => i.RestaurantID === rest.id && i.ItemName === itemName
+    i => String(i.RestaurantID) === String(rest.id) &&
+         i.ItemName === itemName
   );
 
   return it ? Number(it.Price) : 0;
@@ -1114,7 +1108,7 @@ function captureLocation(){
       lng = p.coords.longitude;
       mapLink = `https://maps.google.com/?q=${lat},${lng}`;
 
-      const rest = restaurants.find(r => r.name === currentRestaurant);
+      const rest = restaurants.find(r => String(r.id) === String(currentRestaurant));
       if(rest && rest.lat && rest.lng){
 
         const rawDist = haversineKm(rest.lat, rest.lng, lat, lng);
