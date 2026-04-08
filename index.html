@@ -1283,12 +1283,15 @@ const deliveryCharge = del.charge;
 const grandTotal = itemTotal + deliveryCharge + platformFee;
 
   /* ================= CUSTOMER MESSAGE ================= */
+const rest = restaurants.find(r => String(r.id) === String(currentRestaurant));
+const restName = rest ? rest.name : "Unknown Restaurant";
+
 let customerMsg =
 `🍽️ ORDER — 20nagar Food Xpress
 
 Order ID: ${orderId}
 
-Restaurant: ${currentRestaurant}
+Restaurant: ${restName}
 
 Items:
 `;
@@ -1348,18 +1351,28 @@ if ("serviceWorker" in navigator) {
 /* ================= REORDER SYSTEM ================= */
 function reorderLast(){
   const last = localStorage.getItem("last_order");
+
   if(!last){
     alert("No previous order found");
     return;
   }
 
   const data = JSON.parse(last);
-  currentRestaurant = data.restaurant;
+
+  // ✅ FIND RESTAURANT SAFELY
+  const rest = restaurants.find(r => String(r.id) === String(data.restaurant));
+
+  if(!rest){
+    alert("Restaurant not available anymore");
+    return;
+  }
+
+  currentRestaurant = rest.id;
   cart = data.items;
 
   openMenu(currentRestaurant);
 }
-
+  
 </script>
 
 <!-- 💬 WHATSAPP FLOAT BUTTON -->
