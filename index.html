@@ -364,19 +364,6 @@ text-align:center;
     oninput="filterRestaurants(this.value)"
   >
 </div>
- <!-- 🔁 REORDER BUTTON -->
-<button onclick="reorderLast()" style="
-width:100%;
-padding:12px;
-border-radius:14px;
-border:none;
-background:#000;
-color:#fff;
-font-weight:700;
-margin-bottom:12px;
-">
-🔁 Order Again
-</button>
 
 <div id="restaurantList"></div>
   </div>
@@ -1347,30 +1334,6 @@ if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("service-worker.js");
   });
-}
-/* ================= REORDER SYSTEM ================= */
-function reorderLast(){
-  const last = localStorage.getItem("last_order");
-
-  if(!last){
-    alert("No previous order found");
-    return;
-  }
-
-  const data = JSON.parse(last);
-
-  // ✅ FIND RESTAURANT SAFELY
-  const rest = restaurants.find(r => String(r.id) === String(data.restaurant));
-
-  if(!rest){
-    alert("Restaurant not available anymore");
-    return;
-  }
-
-  currentRestaurant = rest.id;
-  cart = data.items;
-
-  openMenu(currentRestaurant);
 }
   
 </script>
