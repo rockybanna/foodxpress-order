@@ -6,14 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#7a4b6d">
+<meta name="theme-color" content="e53935">
 
 
 <style>
   :root{
-  --brand:#7a4b6d;
-  --brand-soft:#f3ebef;
-  --bg:#f7f7f7;
+--brand:#e53935;
+--brand-soft:#fdecea;
+    --bg:#f7f7f7;
   --card:#ffffff;
   --text:#1e1e1e;
   --muted:#6f6f6f;
@@ -125,14 +125,15 @@ body{
   display:flex;
   gap:14px;
   align-items:center;
-  background:var(--card);
+  background:#fff;
   padding:16px;
   border-radius:18px;
   margin-bottom:14px;
-  box-shadow:0 4px 12px rgba(0,0,0,.07);
-  transition:transform .12s ease;
+
+  border:1.5px solid #000;   /* ✅ NEW */
+  box-shadow:0 2px 6px rgba(0,0,0,.08); /* lighter shadow */
 }
-.restaurant.open:active{transform:scale(.97)}
+  .restaurant.open:active{transform:scale(.97)}
 .restaurant.closed{opacity:.55}
 
 .restaurant img{
@@ -174,15 +175,18 @@ body{
 }
 
 /* CATEGORY */
-.category{
-  margin:28px auto 14px;
-  padding:9px 20px;
-  background:var(--brand-soft);
-  color:var(--brand);
-  font-weight:800;
-  border-radius:40px;
-  width:fit-content;
-  scroll-margin-top:260px;
+.item,.cart-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  background:#fff;
+  padding:16px;
+  border-radius:18px;
+  margin-bottom:14px;
+
+  border:1.5px solid #000;   /* ✅ NEW */
+  box-shadow:0 2px 6px rgba(0,0,0,.08);
 }
 
 /* ITEM CARD */
@@ -191,11 +195,13 @@ body{
   justify-content:space-between;
   align-items:flex-start;
   gap:12px;
-  background:var(--card);
+  background:#fff;
   padding:16px;
   border-radius:18px;
   margin-bottom:14px;
-  box-shadow:0 3px 10px rgba(0,0,0,.06);
+
+  border:1.5px solid #000;   /* ✅ NEW */
+  box-shadow:0 2px 6px rgba(0,0,0,.08);
 }
 .item-name{
   font-size:16px;
@@ -321,6 +327,12 @@ input,textarea{
   font-size:15px;
 }
 
+/* 🔴 HOVER EFFECT (ADD THIS EXACTLY HERE) */
+.restaurant:hover,
+.item:hover{
+  border-color:#e53935;
+}
+  
 </style>
 
 
@@ -333,8 +345,8 @@ input,textarea{
 
 <!-- 🔥 OFFER BANNER -->
 <div style="
-background:#7a4b6d;
-color:#fff;
+background
+  color:#fff;
 padding:12px;
 border-radius:14px;
 margin-bottom:12px;
@@ -411,7 +423,7 @@ text-align:center;
       <div id="progressBarFill" style="
         height:100%;
         width:0%;
-        background:#7a4b6d;
+        background:#e53935;
         transition:width 0.3s ease;
       "></div>
     </div>
