@@ -173,6 +173,42 @@ body{
   font-weight:800;
   padding:10px 16px 12px;
 }
+  /* 🔥 HORIZONTAL CATEGORY BAR */
+.cat-scroll-wrap{
+  position:sticky;
+  top:60px;
+  z-index:999;
+  background:#fff;
+  padding:10px 10px 6px;
+  border-bottom:1px solid #eee;
+}
+
+.cat-scroll{
+  display:flex;
+  gap:10px;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+
+.cat-scroll::-webkit-scrollbar{
+  display:none;
+}
+
+.cat-chip{
+  flex:0 0 auto;
+  padding:8px 14px;
+  border-radius:20px;
+  background:#f1f1f1;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+  white-space:nowrap;
+}
+
+.cat-chip.active{
+  background:#e53935;
+  color:#fff;
+}
 .category{
   font-size:14px;
   font-weight:800;
@@ -420,10 +456,15 @@ text-align:center;
   </div>
 
   <!-- MAIN CONTENT -->
-  <div class="content menu-content">
-    <div id="menuItems"></div>
-  </div>
+<!-- 🔥 CATEGORY SCROLL BAR -->
+<div class="cat-scroll-wrap">
+  <div id="catScroll" class="cat-scroll"></div>
+</div>
 
+<div class="content menu-content">
+  <div id="menuItems"></div>
+</div>
+  
   <!-- CART BAR -->
   <div id="cartBar" class="cart-bar" onclick="openSummary()">
     <span id="cartInfo"></span>
@@ -878,6 +919,7 @@ function openMenu(id){
 function renderMenu(){
   menuItems.innerHTML = "";
   catList.innerHTML = "";
+  document.getElementById("catScroll").innerHTML = "";
 
   const rest = restaurants.find(r => String(r.id) === String(currentRestaurant));
   if(!rest) return;
@@ -902,6 +944,12 @@ function renderMenu(){
         ${cat.CategoryName}
       </div>
     `;
+
+    document.getElementById("catScroll").innerHTML += `
+  <div class="cat-chip" onclick="scrollCat('${cat.CategoryID}')">
+    ${cat.CategoryName}
+  </div>
+`;
 
     (items || [])
       .filter(i =>
@@ -933,13 +981,60 @@ function renderMenu(){
 
   updateBar();
   updateSavingHint();
+  setTimeout(()=>{
+  initCategoryScrollSpy();
+}, 300);
 }
 
 /* ================= CATEGORY ================= */
 function openCats(){catPopup.style.display="block"}
 function closeCats(){catPopup.style.display="none"}
-function scrollCat(c){document.getElementById("cat-"+c)?.scrollIntoView({behavior:"smooth"});closeCats()}
+function initCategoryScrollSpy(){
 
+  const sections = document.querySelectorAll(".category");
+  const chips = document.querySelectorAll(".cat-chip");
+
+  if(!sections.length || !chips.length) return;
+
+  const observer = new IntersectionObserver((entries)=>{
+
+    entries.forEach(entry=>{
+
+      if(entry.isIntersecting){
+
+        const id = entry.target.id.replace("cat-","");
+
+        // remove all active
+        chips.forEach(c=>c.classList.remove("active"));
+
+        // find matching chip
+        const activeChip = Array.from(chips).find(chip =>
+          chip.getAttribute("onclick").includes(id)
+        );
+
+        if(activeChip){
+          activeChip.classList.add("active");
+
+          // 🔥 AUTO SCROLL CATEGORY BAR
+          activeChip.scrollIntoView({
+            behavior:"smooth",
+            inline:"center",
+            block:"nearest"
+          });
+        }
+
+      }
+
+    });
+
+  },{
+    rootMargin: "-40% 0px -55% 0px",
+    threshold: 0
+  });
+
+  sections.forEach(sec => observer.observe(sec));
+}
+  
 /* ================= CART ================= */
 
 function upd(itemName, priceIgnored, delta){
