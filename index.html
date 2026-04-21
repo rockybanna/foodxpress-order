@@ -10,111 +10,59 @@
 
 <style>
 body{margin:0;font-family:sans-serif;background:#fff}
-
-/* PAGE */
 .page{display:none}
 .page.active{display:block}
 
-/* HEADER */
-.header{
-position:sticky;top:0;background:#fff;
-display:flex;justify-content:space-between;
-padding:12px;border-bottom:1px solid #ddd;
-font-weight:700;z-index:1000;
-}
+.header{position:sticky;top:0;background:#fff;display:flex;justify-content:space-between;padding:12px;border-bottom:1px solid #ddd;font-weight:700}
 
-/* OFFER */
-.offer{
-background:#e53935;color:#fff;padding:12px;
-margin:10px;border-radius:10px;text-align:center;font-weight:700;
-}
+.offer{background:#e53935;color:#fff;padding:12px;margin:10px;border-radius:10px;text-align:center}
 
-/* SEARCH */
 .search{width:100%;padding:10px;margin:10px;border:1px solid #ddd;border-radius:10px}
 
-/* CATEGORY */
 .cat-wrap{position:sticky;top:60px;background:#fff;padding:8px}
 .cat-scroll{display:flex;gap:8px;overflow-x:auto}
 .cat{padding:6px 12px;background:#eee;border-radius:20px}
 .cat.active{background:#e53935;color:#fff}
 
-/* ITEM */
 .item{display:flex;justify-content:space-between;padding:12px;border:1px solid #ddd;margin:10px;border-radius:10px}
 
-/* CART */
-.cart{
-position:fixed;bottom:10px;left:10px;right:10px;
-background:#e53935;color:#fff;padding:12px;
-border-radius:12px;display:none;justify-content:space-between;
-}
+.cart{position:fixed;bottom:10px;left:10px;right:10px;background:#e53935;color:#fff;padding:12px;border-radius:12px;display:none;justify-content:space-between}
 
-/* SAVING */
-.saving{text-align:center;font-weight:700}
-.bar{height:6px;background:#eee;margin:5px}
-.fill{height:100%;background:#e53935;width:0%}
-
-/* MAP */
 #map{height:100vh}
-.map-btn{
-position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
-background:#e53935;color:#fff;padding:12px;border-radius:10px;
-}
+.map-btn{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#e53935;color:#fff;padding:12px;border-radius:10px}
 </style>
 
 </head>
 
 <body>
 
-<!-- HOME -->
-
 <div id="home" class="page active">
-
-<div class="offer">
-🔥 Delivery starts at ₹1<br>
-📉 Lower charges on higher orders
-</div>
+<div class="offer">🔥 Delivery starts ₹1 | Save more on bigger orders</div>
 
 <div onclick="openMap()" style="padding:10px;border:1px solid #ddd;margin:10px;border-radius:10px">
-📍 <span id="locText">Set location</span>
+📍 <span id="locText">Set delivery location</span>
 </div>
 
-<input class="search" placeholder="Search restaurant..." oninput="searchRest(this.value)">
+<input class="search" placeholder="Search restaurant..." oninput="filterRestaurants(this.value)">
 <div id="restList"></div>
-
 </div>
-
-<!-- MENU -->
 
 <div id="menu" class="page">
-
 <div class="header">
 <div onclick="back()">←</div>
 <div id="restName"></div>
 <div onclick="openCart()">🛒</div>
 </div>
 
-<div class="saving" id="savingText"></div>
-<div class="bar"><div id="barFill" class="fill"></div></div>
-
-<input class="search" placeholder="Search items..." oninput="searchItems(this.value)">
-
-<div class="cat-wrap">
 <div id="cats" class="cat-scroll"></div>
-</div>
-
 <div id="items"></div>
 
 <div id="cart" class="cart" onclick="openCart()">
-<span id="cartText"></span>
-<span>View</span>
+<span id="cartText"></span><span>View</span>
 </div>
-
 </div>
-
-<!-- SUMMARY -->
 
 <div id="summary" class="page">
-
 <div class="header">
 <div onclick="back()">←</div>
 <div>Summary</div>
@@ -122,29 +70,27 @@ background:#e53935;color:#fff;padding:12px;border-radius:10px;
 </div>
 
 <div id="summaryItems"></div>
-
 <p>Delivery: ₹<span id="delivery"></span></p>
+<p>Discount: ₹<span id="discount"></span></p>
 <p>Total: ₹<span id="total"></span></p>
+
+<button onclick="placeOrder()">Place Order</button>
 
 </div>
 
-<!-- MAP -->
-
 <div id="mapPage" class="page">
 <div id="map"></div>
-<div class="map-btn" onclick="confirmLocation()">Confirm Location</div>
+<div class="map-btn" onclick="confirmLocation()">Confirm</div>
 </div>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
 
-/* DATA */
 let restaurants=[],items=[],categories=[];
 let cart={},currentRest="";
 let lat=null,lng=null;
 
-/* LOAD */
 fetch("https://script.google.com/macros/s/AKfycbw66W91wIe-cAXwIZPgfEGJ1gy4TQ_MQ5WANbm3jQ9g4t_OmKNgqD7K8-pq7njoteWwEg/exec")
 .then(r=>r.json())
 .then(d=>{
@@ -168,30 +114,27 @@ restaurants.forEach(r=>{
 restList.innerHTML+=`<div onclick="openMenu('${r.RestaurantID}')" class="item">${r.RestaurantName}</div>`;
 });
 }
+function filterRestaurants(q){
+q=q.toLowerCase();
+renderRestaurants();
+}
 
 /* MENU */
 function openMenu(id){
 currentRest=id;
 show("menu");
-
 let r=restaurants.find(x=>x.RestaurantID==id);
 restName.innerText=r.RestaurantName;
-
-renderMenu();
-}
-
-function renderMenu(){
 
 items.innerHTML="";
 cats.innerHTML="";
 
-categories.filter(c=>c.RestaurantID==currentRest).forEach(c=>{
+categories.filter(c=>c.RestaurantID==id).forEach(c=>{
 cats.innerHTML+=`<div class="cat" onclick="scrollCat('${c.CategoryID}')">${c.CategoryName}</div>`;
 });
 
-items.filter(i=>i.RestaurantID==currentRest).forEach(it=>{
-items.innerHTML+=`
-<div class="item" id="cat-${it.CategoryID}">
+items.filter(i=>i.RestaurantID==id).forEach(it=>{
+items.innerHTML+=`<div class="item" id="cat-${it.CategoryID}">
 ${it.ItemName} ₹${it.Price}
 <button onclick="add('${it.ItemName}')">+</button>
 </div>`;
@@ -204,8 +147,6 @@ initScrollSpy();
 function scrollCat(id){
 document.getElementById("cat-"+id)?.scrollIntoView({behavior:"smooth"});
 }
-
-/* SCROLL SPY */
 function initScrollSpy(){
 let secs=document.querySelectorAll("[id^='cat-']");
 let catsEl=document.querySelectorAll(".cat");
@@ -229,7 +170,6 @@ function add(n){
 cart[n]=(cart[n]||0)+1;
 updateCart();
 }
-
 function updateCart(){
 let c=0,t=0;
 for(let i in cart){
@@ -240,34 +180,11 @@ t+=it.Price*cart[i];
 if(c){
 cart.style.display="flex";
 cartText.innerText=c+" items ₹"+t;
-updateSaving(t);
 }
-}
-
-/* SAVING */
-function updateSaving(total){
-let target=200;
-let remain=target-total;
-
-if(remain>0){
-savingText.innerText="Add ₹"+remain+" more to save";
-}else{
-savingText.innerText="You are saving!";
-}
-
-barFill.style.width=Math.min((total/target)*100,100)+"%";
 }
 
 /* DELIVERY */
-function calcDelivery(){
-if(!lat)return 0;
-
-let r=restaurants.find(x=>x.RestaurantID==currentRest);
-let d=getDistance(lat,lng,Number(r.Latitude),Number(r.Longitude));
-return Math.round(20 + d*10);
-}
-
-function getDistance(lat1,lon1,lat2,lon2){
+function haversine(lat1,lon1,lat2,lon2){
 let R=6371;
 let dLat=(lat2-lat1)*Math.PI/180;
 let dLon=(lon2-lon1)*Math.PI/180;
@@ -275,8 +192,25 @@ let a=Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180
 return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
 
+function calcDelivery(){
+let r=restaurants.find(x=>x.RestaurantID==currentRest);
+let d=haversine(lat,lng,Number(r.Latitude),Number(r.Longitude))*1.5;
+
+if(d>15){
+alert("Out of delivery range");
+return null;
+}
+
+return Math.round(20 + d*10);
+}
+
 /* SUMMARY */
 function openCart(){
+if(!lat){
+alert("Set location first");
+return;
+}
+
 show("summary");
 
 let total=0;
@@ -286,19 +220,24 @@ total+=it.Price*cart[i];
 }
 
 let delivery=calcDelivery();
+if(delivery===null)return;
+
+let discount=Math.floor(total/200)*10;
 
 document.getElementById("delivery").innerText=delivery;
-document.getElementById("total").innerText=total+delivery;
+document.getElementById("discount").innerText=discount;
+document.getElementById("total").innerText=total+delivery-discount;
 }
 
-/* SEARCH */
-function searchItems(q){
-q=q.toLowerCase();
-items.innerHTML="";
-items.filter(i=>i.RestaurantID==currentRest && i.ItemName.toLowerCase().includes(q))
-.forEach(it=>{
-items.innerHTML+=`<div class="item">${it.ItemName} ₹${it.Price}</div>`;
-});
+/* ORDER */
+function placeOrder(){
+let msg="Order:%0A";
+for(let i in cart){
+msg+=i+" x "+cart[i]+"%0A";
+}
+msg+="Location: https://maps.google.com/?q="+lat+","+lng;
+
+window.open("https://wa.me/91XXXXXXXXXX?text="+msg);
 }
 
 /* MAP */
@@ -319,7 +258,7 @@ lng=e.latlng.lng;
 }
 
 function confirmLocation(){
-if(!lat){alert("Tap on map");return;}
+if(!lat){alert("Tap map");return;}
 localStorage.setItem("lat",lat);
 localStorage.setItem("lng",lng);
 locText.innerText="Location ✓";
