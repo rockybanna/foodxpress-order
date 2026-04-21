@@ -6,91 +6,101 @@
 <title>20nagar Food Xpress</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#e53935">
 
 <style>
+:root{
+--brand:#e53935;
+--bg:#ffffff;
+--text:#1e1e1e;
+--muted:#6f6f6f;
+--border:#e4e4e4;
+}
+
+/* RESET */
+*{box-sizing:border-box}
 body{margin:0;font-family:sans-serif;background:#fff}
+
+/* PAGE */
 .page{display:none}
 .page.active{display:block}
 
-.header{position:sticky;top:0;background:#fff;display:flex;justify-content:space-between;padding:12px;border-bottom:1px solid #ddd;font-weight:700}
+/* HEADER */
+.header img{width:100%;max-height:140px;object-fit:cover}
 
-.offer{background:#e53935;color:#fff;padding:12px;margin:10px;border-radius:10px;text-align:center}
+/* SEARCH */
+.search-wrap{position:sticky;top:0;background:#fff;padding:10px}
+.search{width:100%;padding:12px;border-radius:12px;border:1px solid #ddd}
 
-.search{width:100%;padding:10px;margin:10px;border:1px solid #ddd;border-radius:10px}
+/* RESTAURANT */
+.restaurant{padding:14px;border:1px solid #000;margin:10px;border-radius:10px}
 
-.cat-wrap{position:sticky;top:60px;background:#fff;padding:8px}
-.cat-scroll{display:flex;gap:8px;overflow-x:auto}
-.cat{padding:6px 12px;background:#eee;border-radius:20px}
-.cat.active{background:#e53935;color:#fff}
+/* CATEGORY */
+.cat-scroll{display:flex;gap:8px;overflow-x:auto;padding:10px}
+.cat-chip{padding:6px 12px;background:#eee;border-radius:20px}
+.cat-chip.active{background:#e53935;color:#fff}
 
-.item{display:flex;justify-content:space-between;padding:12px;border:1px solid #ddd;margin:10px;border-radius:10px}
+/* ITEM */
+.item{display:flex;justify-content:space-between;padding:14px;border:1px solid #000;margin:10px;border-radius:10px}
 
-.cart{position:fixed;bottom:10px;left:10px;right:10px;background:#e53935;color:#fff;padding:12px;border-radius:12px;display:none;justify-content:space-between}
-
-#map{height:100vh}
-.map-btn{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#e53935;color:#fff;padding:12px;border-radius:10px}
+/* CART */
+.cart-bar{
+position:fixed;bottom:10px;left:10px;right:10px;
+background:#e53935;color:#fff;padding:14px;
+border-radius:12px;display:none;justify-content:space-between;
+}
 </style>
 
 </head>
 
 <body>
 
-<div id="home" class="page active">
-<div class="offer">🔥 Delivery starts ₹1 | Save more on bigger orders</div>
+<!-- HOME -->
 
-<div onclick="openMap()" style="padding:10px;border:1px solid #ddd;margin:10px;border-radius:10px">
-📍 <span id="locText">Set delivery location</span>
-</div>
+<div id="page-restaurants" class="page active">
 
-<input class="search" placeholder="Search restaurant..." oninput="filterRestaurants(this.value)">
-<div id="restList"></div>
-</div>
-
-<div id="menu" class="page">
 <div class="header">
-<div onclick="back()">←</div>
-<div id="restName"></div>
-<div onclick="openCart()">🛒</div>
+<img src="company-logo.png">
 </div>
 
-<div id="cats" class="cat-scroll"></div>
-<div id="items"></div>
-
-<div id="cart" class="cart" onclick="openCart()">
-<span id="cartText"></span><span>View</span>
-</div>
+<div class="search-wrap">
+<input class="search" placeholder="Search..." oninput="filterRestaurants(this.value)">
 </div>
 
-<div id="summary" class="page">
-<div class="header">
-<div onclick="back()">←</div>
-<div>Summary</div>
-<div></div>
-</div>
-
-<div id="summaryItems"></div>
-<p>Delivery: ₹<span id="delivery"></span></p>
-<p>Discount: ₹<span id="discount"></span></p>
-<p>Total: ₹<span id="total"></span></p>
-
-<button onclick="placeOrder()">Place Order</button>
+<div id="restaurantList"></div>
 
 </div>
 
-<div id="mapPage" class="page">
-<div id="map"></div>
-<div class="map-btn" onclick="confirmLocation()">Confirm</div>
+<!-- MENU -->
+
+<div id="page-menu" class="page">
+
+<div style="padding:10px;font-weight:700" onclick="goBack()">← Back</div>
+
+<div id="menuTitle" style="padding:10px;font-weight:800"></div>
+
+<input class="search" placeholder="Search items..." oninput="searchItems(this.value)">
+
+<div id="catScroll" class="cat-scroll"></div>
+
+<div id="menuItems"></div>
+
+<div id="cartBar" class="cart-bar" onclick="openSummary()">
+<span id="cartInfo"></span>
+<span>View Cart</span>
 </div>
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</div>
 
 <script>
 
+/* DATA */
 let restaurants=[],items=[],categories=[];
-let cart={},currentRest="";
-let lat=null,lng=null;
+let cart={},currentRestaurant="";
+let lat="",lng="",pricedDistanceKm=0;
 
+/* FETCH */
 fetch("https://script.google.com/macros/s/AKfycbw66W91wIe-cAXwIZPgfEGJ1gy4TQ_MQ5WANbm3jQ9g4t_OmKNgqD7K8-pq7njoteWwEg/exec")
 .then(r=>r.json())
 .then(d=>{
@@ -105,39 +115,56 @@ function show(p){
 document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
 document.getElementById(p).classList.add("active");
 }
-function back(){show("home")}
+function goBack(){show("page-restaurants")}
 
 /* RESTAURANTS */
 function renderRestaurants(){
-restList.innerHTML="";
+restaurantList.innerHTML="";
 restaurants.forEach(r=>{
-restList.innerHTML+=`<div onclick="openMenu('${r.RestaurantID}')" class="item">${r.RestaurantName}</div>`;
+restaurantList.innerHTML+=`<div class="restaurant" onclick="openMenu('${r.RestaurantID}')">${r.RestaurantName}</div>`;
 });
-}
-function filterRestaurants(q){
-q=q.toLowerCase();
-renderRestaurants();
 }
 
 /* MENU */
 function openMenu(id){
-currentRest=id;
-show("menu");
+currentRestaurant=id;
+show("page-menu");
+
 let r=restaurants.find(x=>x.RestaurantID==id);
-restName.innerText=r.RestaurantName;
+menuTitle.innerText=r.RestaurantName;
 
-items.innerHTML="";
-cats.innerHTML="";
+renderMenu();
+}
 
-categories.filter(c=>c.RestaurantID==id).forEach(c=>{
-cats.innerHTML+=`<div class="cat" onclick="scrollCat('${c.CategoryID}')">${c.CategoryName}</div>`;
+/* MENU RENDER */
+function renderMenu(){
+
+menuItems.innerHTML="";
+catScroll.innerHTML="";
+
+categories.filter(c=>c.RestaurantID==currentRestaurant).forEach(c=>{
+
+catScroll.innerHTML+=`<div class="cat-chip" onclick="scrollCat('${c.CategoryID}')">${c.CategoryName}</div>`;
+
+menuItems.innerHTML+=`<div id="cat-${c.CategoryID}" style="font-weight:800;margin:10px">${c.CategoryName}</div>`;
+
+items.filter(i=>i.RestaurantID==currentRestaurant && i.CategoryID==c.CategoryID).forEach(it=>{
+
+let q=cart[it.ItemName]||0;
+
+menuItems.innerHTML+=`
+<div class="item">
+<div>${it.ItemName} ₹${it.Price}</div>
+<div>
+<button onclick="upd('${it.ItemName}',-1)">-</button>
+${q}
+<button onclick="upd('${it.ItemName}',1)">+</button>
+</div>
+</div>
+`;
+
 });
 
-items.filter(i=>i.RestaurantID==id).forEach(it=>{
-items.innerHTML+=`<div class="item" id="cat-${it.CategoryID}">
-${it.ItemName} ₹${it.Price}
-<button onclick="add('${it.ItemName}')">+</button>
-</div>`;
 });
 
 initScrollSpy();
@@ -145,32 +172,57 @@ initScrollSpy();
 
 /* SCROLL */
 function scrollCat(id){
-document.getElementById("cat-"+id)?.scrollIntoView({behavior:"smooth"});
+document.getElementById("cat-"+id).scrollIntoView({behavior:"smooth"});
 }
+
+/* AUTO HIGHLIGHT */
 function initScrollSpy(){
-let secs=document.querySelectorAll("[id^='cat-']");
-let catsEl=document.querySelectorAll(".cat");
+let sections=document.querySelectorAll("[id^='cat-']");
+let chips=document.querySelectorAll(".cat-chip");
 
 let obs=new IntersectionObserver(entries=>{
 entries.forEach(e=>{
 if(e.isIntersecting){
 let id=e.target.id.replace("cat-","");
-catsEl.forEach(c=>c.classList.remove("active"));
-let el=[...catsEl].find(x=>x.onclick.toString().includes(id));
-if(el)el.classList.add("active");
+chips.forEach(c=>c.classList.remove("active"));
+chips.forEach(c=>{
+if(c.innerText==e.target.innerText) c.classList.add("active");
+});
 }
 });
-},{threshold:0.5});
+},{threshold:0.4});
 
-secs.forEach(s=>obs.observe(s));
+sections.forEach(s=>obs.observe(s));
+}
+
+/* SEARCH */
+function searchItems(q){
+q=q.toLowerCase();
+
+if(!q){
+renderMenu();
+return;
+}
+
+catScroll.style.display="none";
+
+menuItems.innerHTML="";
+
+items.filter(i=>i.RestaurantID==currentRestaurant && i.ItemName.toLowerCase().includes(q))
+.forEach(it=>{
+menuItems.innerHTML+=`<div class="item">${it.ItemName} ₹${it.Price}</div>`;
+});
 }
 
 /* CART */
-function add(n){
-cart[n]=(cart[n]||0)+1;
-updateCart();
+function upd(name,delta){
+cart[name]=(cart[name]||0)+delta;
+if(cart[name]<=0) delete cart[name];
+updateBar();
+renderMenu();
 }
-function updateCart(){
+
+function updateBar(){
 let c=0,t=0;
 for(let i in cart){
 c+=cart[i];
@@ -178,91 +230,11 @@ let it=items.find(x=>x.ItemName==i);
 t+=it.Price*cart[i];
 }
 if(c){
-cart.style.display="flex";
-cartText.innerText=c+" items ₹"+t;
+cartBar.style.display="flex";
+cartInfo.innerText=c+" items ₹"+t;
+}else{
+cartBar.style.display="none";
 }
-}
-
-/* DELIVERY */
-function haversine(lat1,lon1,lat2,lon2){
-let R=6371;
-let dLat=(lat2-lat1)*Math.PI/180;
-let dLon=(lon2-lon1)*Math.PI/180;
-let a=Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
-return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
-}
-
-function calcDelivery(){
-let r=restaurants.find(x=>x.RestaurantID==currentRest);
-let d=haversine(lat,lng,Number(r.Latitude),Number(r.Longitude))*1.5;
-
-if(d>15){
-alert("Out of delivery range");
-return null;
-}
-
-return Math.round(20 + d*10);
-}
-
-/* SUMMARY */
-function openCart(){
-if(!lat){
-alert("Set location first");
-return;
-}
-
-show("summary");
-
-let total=0;
-for(let i in cart){
-let it=items.find(x=>x.ItemName==i);
-total+=it.Price*cart[i];
-}
-
-let delivery=calcDelivery();
-if(delivery===null)return;
-
-let discount=Math.floor(total/200)*10;
-
-document.getElementById("delivery").innerText=delivery;
-document.getElementById("discount").innerText=discount;
-document.getElementById("total").innerText=total+delivery-discount;
-}
-
-/* ORDER */
-function placeOrder(){
-let msg="Order:%0A";
-for(let i in cart){
-msg+=i+" x "+cart[i]+"%0A";
-}
-msg+="Location: https://maps.google.com/?q="+lat+","+lng;
-
-window.open("https://wa.me/91XXXXXXXXXX?text="+msg);
-}
-
-/* MAP */
-let map,marker;
-
-function openMap(){
-show("mapPage");
-
-map=L.map('map').setView([22.3,70.8],13);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-
-map.on('click',e=>{
-if(marker)map.removeLayer(marker);
-marker=L.marker(e.latlng).addTo(map);
-lat=e.latlng.lat;
-lng=e.latlng.lng;
-});
-}
-
-function confirmLocation(){
-if(!lat){alert("Tap map");return;}
-localStorage.setItem("lat",lat);
-localStorage.setItem("lng",lng);
-locText.innerText="Location ✓";
-show("home");
 }
 
 </script>
