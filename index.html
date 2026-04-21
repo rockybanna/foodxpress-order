@@ -11,25 +11,29 @@
 <style>
 body{margin:0;font-family:sans-serif;background:#fff}
 
+/* PAGE */
+.page{display:none}
+.page.active{display:block}
+
 /* HEADER */
 .header{
 position:sticky;top:0;background:#fff;
 display:flex;justify-content:space-between;
 padding:12px;border-bottom:1px solid #ddd;
-z-index:1000;
+font-weight:700;z-index:1000;
 }
 
 /* SEARCH */
 .search{width:100%;padding:10px;margin:10px;border:1px solid #ddd;border-radius:10px}
 
 /* CATEGORY */
-.cat-wrap{position:sticky;top:100px;background:#fff;padding:8px;z-index:999}
+.cat-wrap{position:sticky;top:60px;background:#fff;padding:8px}
 .cat-scroll{display:flex;gap:8px;overflow-x:auto}
-.cat{padding:6px 12px;background:#eee;border-radius:20px;font-size:12px}
+.cat{padding:6px 12px;background:#eee;border-radius:20px}
 .cat.active{background:#e53935;color:#fff}
 
 /* ITEM */
-.item{display:flex;justify-content:space-between;padding:10px;border:1px solid #ddd;margin:10px;border-radius:10px}
+.item{display:flex;justify-content:space-between;padding:12px;border:1px solid #ddd;margin:10px;border-radius:10px}
 
 /* CART */
 .cart{
@@ -39,7 +43,7 @@ border-radius:12px;display:none;justify-content:space-between;
 }
 
 /* SAVING */
-.saving{position:sticky;top:60px;background:#fff;text-align:center;font-weight:bold}
+.saving{text-align:center;font-weight:700}
 .bar{height:6px;background:#eee;margin:5px}
 .fill{height:100%;background:#e53935;width:0%}
 
@@ -57,7 +61,7 @@ background:#e53935;color:#fff;padding:12px;border-radius:10px;
 
 <!-- HOME -->
 
-<div id="home">
+<div id="home" class="page active">
 <div onclick="openMap()" style="padding:10px;border:1px solid #ddd;margin:10px;border-radius:10px">
 📍 <span id="locText">Set location</span>
 </div>
@@ -68,16 +72,15 @@ background:#e53935;color:#fff;padding:12px;border-radius:10px;
 
 <!-- MENU -->
 
-<div id="menu" style="display:none">
-
+<div id="menu" class="page">
 <div class="header">
 <div onclick="back()">←</div>
 <div id="restName"></div>
 <div onclick="openCart()">🛒</div>
 </div>
 
-<div class="saving" id="saving"></div>
-<div class="bar"><div class="fill" id="fill"></div></div>
+<div class="saving" id="savingText"></div>
+<div class="bar"><div id="barFill" class="fill"></div></div>
 
 <input class="search" placeholder="Search items..." oninput="searchItems(this.value)">
 
@@ -91,12 +94,25 @@ background:#e53935;color:#fff;padding:12px;border-radius:10px;
 <span id="cartText"></span>
 <span>View</span>
 </div>
+</div>
 
+<!-- SUMMARY -->
+
+<div id="summary" class="page">
+<div class="header">
+<div onclick="back()">←</div>
+<div>Summary</div>
+<div></div>
+</div>
+
+<div id="summaryItems"></div>
+<p>Delivery: ₹<span id="delivery"></span></p>
+<p>Total: ₹<span id="total"></span></p>
 </div>
 
 <!-- MAP -->
 
-<div id="mapPage" style="display:none">
+<div id="mapPage" class="page">
 <div id="map"></div>
 <div class="map-btn" onclick="confirmLocation()">Confirm Location</div>
 </div>
@@ -107,11 +123,10 @@ background:#e53935;color:#fff;padding:12px;border-radius:10px;
 
 /* DATA */
 let restaurants=[],items=[],categories=[];
-let currentRest="";
-let cart={};
+let cart={},currentRest="";
 let lat=null,lng=null;
 
-/* LOAD */
+/* FETCH */
 fetch("https://script.google.com/macros/s/AKfycbw66W91wIe-cAXwIZPgfEGJ1gy4TQ_MQ5WANbm3jQ9g4t_OmKNgqD7K8-pq7njoteWwEg/exec")
 .then(r=>r.json())
 .then(d=>{
@@ -121,21 +136,25 @@ categories=d.categories;
 renderRestaurants();
 });
 
-/* HOME */
+/* NAV */
+function show(p){
+document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+document.getElementById(p).classList.add("active");
+}
+function back(){show("home")}
+
+/* RESTAURANTS */
 function renderRestaurants(){
 restList.innerHTML="";
 restaurants.forEach(r=>{
-restList.innerHTML+=`<div onclick="openMenu('${r.RestaurantID}')"
-style="padding:10px;border:1px solid #ddd;margin:10px;border-radius:10px">
-${r.RestaurantName}</div>`;
+restList.innerHTML+=`<div onclick="openMenu('${r.RestaurantID}')" class="item">${r.RestaurantName}</div>`;
 });
 }
 
 /* MENU */
 function openMenu(id){
 currentRest=id;
-home.style.display="none";
-menu.style.display="block";
+show("menu");
 
 let r=restaurants.find(x=>x.RestaurantID==id);
 restName.innerText=r.RestaurantName;
@@ -145,7 +164,7 @@ renderMenu();
 
 function renderMenu(){
 
-itemsDiv.innerHTML="";
+items.innerHTML="";
 cats.innerHTML="";
 
 categories.filter(c=>c.RestaurantID==currentRest).forEach(c=>{
@@ -153,7 +172,8 @@ cats.innerHTML+=`<div class="cat" onclick="scrollCat('${c.CategoryID}')">${c.Cat
 });
 
 items.filter(i=>i.RestaurantID==currentRest).forEach(it=>{
-items.innerHTML+=`<div class="item" id="cat-${it.CategoryID}">
+items.innerHTML+=`
+<div class="item" id="cat-${it.CategoryID}">
 ${it.ItemName} ₹${it.Price}
 <button onclick="add('${it.ItemName}')">+</button>
 </div>`;
@@ -162,19 +182,27 @@ ${it.ItemName} ₹${it.Price}
 initScrollSpy();
 }
 
+/* SCROLL */
+function scrollCat(id){
+document.getElementById("cat-"+id)?.scrollIntoView({behavior:"smooth"});
+}
+
 /* SCROLL SPY */
 function initScrollSpy(){
-let secs=document.querySelectorAll(".item");
+let secs=document.querySelectorAll("[id^='cat-']");
+let catsEl=document.querySelectorAll(".cat");
+
 let obs=new IntersectionObserver(entries=>{
 entries.forEach(e=>{
 if(e.isIntersecting){
 let id=e.target.id.replace("cat-","");
-document.querySelectorAll(".cat").forEach(c=>c.classList.remove("active"));
-let el=[...document.querySelectorAll(".cat")].find(x=>x.onclick.toString().includes(id));
+catsEl.forEach(c=>c.classList.remove("active"));
+let el=[...catsEl].find(x=>x.onclick.toString().includes(id));
 if(el)el.classList.add("active");
 }
 });
 },{threshold:0.5});
+
 secs.forEach(s=>obs.observe(s));
 }
 
@@ -194,7 +222,55 @@ t+=it.Price*cart[i];
 if(c){
 cart.style.display="flex";
 cartText.innerText=c+" items ₹"+t;
+updateSaving(t);
 }
+}
+
+/* SAVING */
+function updateSaving(total){
+let target=200;
+let remain=target-total;
+
+if(remain>0){
+savingText.innerText="Add ₹"+remain+" more to save";
+}else{
+savingText.innerText="You are saving!";
+}
+
+barFill.style.width=Math.min((total/target)*100,100)+"%";
+}
+
+/* DELIVERY */
+function calcDelivery(){
+if(!lat)return 0;
+
+let r=restaurants.find(x=>x.RestaurantID==currentRest);
+let d=getDistance(lat,lng,r.Latitude,r.Longitude);
+return Math.round(20 + d*10);
+}
+
+function getDistance(lat1,lon1,lat2,lon2){
+let R=6371;
+let dLat=(lat2-lat1)*Math.PI/180;
+let dLon=(lon2-lon1)*Math.PI/180;
+let a=Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+/* SUMMARY */
+function openCart(){
+show("summary");
+
+let total=0;
+for(let i in cart){
+let it=items.find(x=>x.ItemName==i);
+total+=it.Price*cart[i];
+}
+
+let delivery=calcDelivery();
+
+document.getElementById("delivery").innerText=delivery;
+document.getElementById("total").innerText=total+delivery;
 }
 
 /* SEARCH */
@@ -211,8 +287,7 @@ items.innerHTML+=`<div class="item">${it.ItemName} ₹${it.Price}</div>`;
 let map,marker;
 
 function openMap(){
-home.style.display="none";
-mapPage.style.display="block";
+show("mapPage");
 
 map=L.map('map').setView([22.3,70.8],13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
@@ -228,14 +303,7 @@ lng=e.latlng.lng;
 function confirmLocation(){
 if(!lat){alert("Tap on map");return;}
 locText.innerText="Location ✓";
-mapPage.style.display="none";
-home.style.display="block";
-}
-
-/* NAV */
-function back(){
-menu.style.display="none";
-home.style.display="block";
+show("home");
 }
 
 </script>
