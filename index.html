@@ -600,6 +600,33 @@ display:none;
 
   </div>
 </div>
+
+    <!-- PAGE 6: ORDER CONFIRMATION -->
+<div id="page-confirm" class="page">
+
+  <div class="header">
+    <img src="company-logo.png">
+  </div>
+
+  <div class="content" style="text-align:center; padding-top:40px;">
+
+    <h2>✅ Order Placed</h2>
+
+    <p style="margin-top:10px; font-weight:600;">
+      Order ID: <span id="confirmOrderId"></span>
+    </p>
+
+    <p style="margin-top:10px; color:#666;">
+      Redirecting to WhatsApp...
+    </p>
+
+    <button class="primary" style="margin-top:20px;" onclick="goToWhatsAppNow()">
+      Continue to WhatsApp
+    </button>
+
+  </div>
+</div>
+    
     
 <script>
 /* ================= DATA ================= */
@@ -1447,7 +1474,7 @@ function placeOrder(){
   if(itemTotal < 99){
     alert("Minimum order ₹99");
     return;
-  }
+  }    
 
   /* -------- VALIDATIONS -------- */
   const name = custName.value.trim();
@@ -1529,10 +1556,18 @@ localStorage.setItem("last_order", JSON.stringify({
   restaurant: currentRestaurant,
   items: cart
 }));
-  setTimeout(() => {
-    window.location.href =
-      "https://wa.me/919484818194?text=" + encodeURIComponent(customerMsg);
-  }, 200);
+// ✅ SAVE MESSAGE FOR NEXT STEP
+window.pendingWhatsAppMsg = customerMsg;
+
+// ✅ SHOW CONFIRM PAGE
+document.getElementById("confirmOrderId").innerText = orderId;
+nav("page-confirm");
+
+// ✅ AUTO REDIRECT (2 sec)
+setTimeout(() => {
+  goToWhatsAppNow();
+}, 2000);
+  
   // ✅ clear Order ID so next order gets a new one
 localStorage.removeItem("fx_order_id");
 orderId = "";
@@ -1540,6 +1575,20 @@ orderId = "";
 localStorage.removeItem("fx_lng");
 
 }
+
+  
+function goToWhatsAppNow(){
+
+  if(!window.pendingWhatsAppMsg) return;
+
+  window.location.href =
+    "https://wa.me/919484818194?text=" +
+    encodeURIComponent(window.pendingWhatsAppMsg);
+
+  // cleanup
+  window.pendingWhatsAppMsg = null;
+}
+
 </script>
 
 <script>
