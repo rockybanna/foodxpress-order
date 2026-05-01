@@ -923,7 +923,21 @@ function show(p){
 function nav(p){
   stack.push(p);
   show(p);
+
+  // 🔥 sync with browser history
+  history.pushState({ page: p }, "", "");
 }
+
+  window.onpopstate = function(){
+
+  if(stack.length > 1){
+    stack.pop();
+    show(stack.at(-1));
+  } else {
+    // if already at first page → allow exit
+    history.back();
+  }
+};
   
 function openMapPage(){
   nav("page-map");
@@ -935,10 +949,9 @@ function openMapPage(){
 }
   
 function goBack(){
-  stack.pop();
-  show(stack.at(-1));
+  history.back();  // 🔥 trigger browser back instead
 }
-
+  
 function backToRestaurants(){
   cart = {};
   updateBar();
