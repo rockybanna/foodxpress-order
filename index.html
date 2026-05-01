@@ -1125,24 +1125,38 @@ categoryBar.innerHTML += `
 function scrollToCat(catId){
   const el = document.getElementById("cat-" + catId);
   if(el){
-    const y = el.getBoundingClientRect().top + window.scrollY - 230;
-    window.scrollTo({ top: y, behavior: "smooth" });
+const stickyEl = document.querySelector(".sticky-stack");
+const stickyHeight = stickyEl ? stickyEl.offsetHeight : 0;
+    const y = el.getBoundingClientRect().top + window.scrollY - stickyHeight - 10;
+window.scrollTo({ top: y, behavior: "smooth" });
+
+// 🔥 force immediate highlight update
+setTimeout(handleCategoryHighlight, 100);
   }
 }
 
-  function handleCategoryHighlight(){
+function handleCategoryHighlight(){
 
   const categories = document.querySelectorAll(".category");
   const chips = document.querySelectorAll(".cat-chip");
 
+  if(!categories.length) return;
+
+  // 🔥 dynamic top offset (real height of sticky stack)
+const stickyEl = document.querySelector(".sticky-stack");
+const stickyHeight = stickyEl ? stickyEl.offsetHeight : 0;
+  
   let activeIndex = 0;
 
   categories.forEach((cat, i) => {
+
     const rect = cat.getBoundingClientRect();
 
-    if(rect.top <= 260){
+    // ✅ check when category crosses sticky area
+    if(rect.top - stickyHeight <= 10){
       activeIndex = i;
     }
+
   });
 
   chips.forEach(c => c.classList.remove("active"));
