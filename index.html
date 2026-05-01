@@ -337,18 +337,19 @@ input,textarea{
 <div style="
 background:#e53935;
 color:#fff;
-padding:12px;
-border-radius:14px;
-margin-bottom:12px;
-font-weight:700;
+padding:8px 10px;
+border-radius:12px;
+margin-bottom:10px;
+font-weight:600;
+font-size:13px;
 text-align:center;
-line-height:1.6;
+line-height:1.4;
 ">
-  🔥 Pay as low as ₹1 delivery<br>
-📉 Delivery charges reduce as your order value increases<br>
-💯 Same as restaurant prices — only ₹5 platform fee
+  🔥 Get ₹20 OFF delivery for every ₹200<br>
+  🚀 Delivery can go as low as ₹1<br>
+  💯 Same as restaurant prices
 </div>
-
+   
 <!-- ⚡ TRUST LINE -->
 <div style="
 font-size:13px;
@@ -688,9 +689,33 @@ function baseDeliveryFromDistance(km){
   // Rule 2: above 6.5 km
   return { blocked: false, charge: 30 + (10 * km) };
 }
+
+  function recalculateDistance(){
+
+  if(!lat || !lng || !currentRestaurant){
+    return;
+  }
+
+  const rest = restaurants.find(r => String(r.id) === String(currentRestaurant));
+  if(!rest || !rest.lat || !rest.lng){
+    return;
+  }
+
+  const rawDist = haversineKm(rest.lat, rest.lng, lat, lng);
+  const dist = +(rawDist * 1.5).toFixed(2);
+  const pricedDist = normalizeDistanceForPricing(dist);
+
+  if(pricedDist > 20){
+    pricedDistanceKm = 0;
+    return;
+  }
+
+  pricedDistanceKm = pricedDist;
+}
+  
 /* ================= DELIVERY DISCOUNT ================= */
 function deliveryDiscount(itemTotal){
-  return Math.floor(itemTotal / 200) * 10;
+  return Math.floor(itemTotal / 200) * 20;
 }
 
 /* ================= FINAL DELIVERY ================= */
@@ -709,7 +734,21 @@ function finalDeliveryCharge(pricedKm, itemTotal){
     charge: Math.round(finalCharge)
   };
 }
+  
+  function actualDeliverySaving(pricedKm, itemTotal){
 
+  const base = baseDeliveryFromDistance(pricedKm);
+
+  if(base.blocked){
+    return 0;
+  }
+
+  const final = finalDeliveryCharge(pricedKm, itemTotal);
+
+  return Math.max(base.charge - final.charge, 0);
+}
+
+  
 /* ================= TIME ================= */
 function toMin(t){const[a,b]=t.split(":").map(Number);return a*60+b}
 function nowMin(){const d=new Date();return d.getHours()*60+d.getMinutes()}
@@ -759,7 +798,6 @@ function backToRestaurants(){
 
   localStorage.removeItem("fx_lat");
   localStorage.removeItem("fx_lng");
-  localStorage.removeItem("fx_priced_km");
 
   lat = "";
   lng = "";
@@ -859,6 +897,7 @@ function openMenu(id){
 
   cart = {};
   currentRestaurant = id;
+  recalculateDistance();
 
   const rest = restaurants.find(r => String(r.id) === String(id));
   if(!rest) return;
@@ -973,7 +1012,9 @@ function updateBar(){
     total += cart[i] * price(i);
   }
 
-  const saved = Math.floor(total / 200) * 10;
+  const saved = pricedDistanceKm
+  ? actualDeliverySaving(pricedDistanceKm, total)
+  : Math.floor(total / 200) * 20;
 
   if (itemCount > 0 && stack.at(-1) === "page-menu"){
     cartBar.style.display = "flex";
@@ -990,6 +1031,7 @@ function openSummary(){
 }
 
 function renderSummary(){
+  recalculateDistance();
   summaryItems.innerHTML = "";
   let total = 0;
 
@@ -1077,15 +1119,19 @@ const maxSavingReached = pricedDistanceKm && finalDeliveryCharge(pricedDistanceK
 let message = "";
 
 if(maxSavingReached){
-  message = `🎉 Maximum delivery discount applied`;
+  const saved = actualDeliverySaving(pricedDistanceKm, total);
+message = `🎉 You saved ₹${saved}\n🔥 Maximum savings applied`;
 }
 else if(remainder === 0){
-  const discount = Math.floor(total / 200) * 10;
-  message = `🎉 You saved ₹${discount}`;
+  const saved = pricedDistanceKm
+  ? actualDeliverySaving(pricedDistanceKm, total)
+  : Math.floor(total / 200) * 20;
+
+message = `🎉 You saved ₹${saved}`;
 }
 else{
   const remaining = 200 - remainder;
-  const nextSave = Math.floor(total / 200) * 10 + 10;
+  const nextSave = Math.floor(total / 200) * 20 + 20;
   message = `Add ₹${remaining} more → save ₹${nextSave}`;
 }
 
@@ -1143,13 +1189,13 @@ function captureLocation(){
   // 1️⃣ REUSE SAVED LOCATION
   const savedLat = localStorage.getItem("fx_lat");
   const savedLng = localStorage.getItem("fx_lng");
-  const savedKm  = localStorage.getItem("fx_priced_km");
 
-  if(savedLat && savedLng && savedKm){
+  if(savedLat && savedLng){
     lat = Number(savedLat);
     lng = Number(savedLng);
-    pricedDistanceKm = Number(savedKm);
     mapLink = `https://maps.google.com/?q=${lat},${lng}`;
+
+    recalculateDistance();
 
     locStatus.innerText =
       `Location already captured ✓ Distance: ${pricedDistanceKm} km`;
@@ -1194,8 +1240,7 @@ function captureLocation(){
         // 5️⃣ SAVE LOCATION
         localStorage.setItem("fx_lat", lat);
         localStorage.setItem("fx_lng", lng);
-        localStorage.setItem("fx_priced_km", pricedDistanceKm);
-
+        
         locStatus.innerText =
           `Location captured ✓ Distance: ${pricedDistanceKm} km`;
 
@@ -1326,7 +1371,6 @@ localStorage.removeItem("fx_order_id");
 orderId = "";
   localStorage.removeItem("fx_lat");
 localStorage.removeItem("fx_lng");
-localStorage.removeItem("fx_priced_km");
 
 }
 </script>
