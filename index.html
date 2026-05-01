@@ -328,6 +328,11 @@ button.primary{
   font-weight:700;
 }
 
+  .cat-chip.active{
+  background:#e53935;
+  color:#fff;
+}
+  
 /* INPUTS */
 input,textarea{
   width:100%;
@@ -1052,7 +1057,8 @@ function openMenu(id){
 
   // ✅ OPEN PAGE
   nav("page-menu");
-
+window.onscroll = handleCategoryHighlight;
+  
   // ✅ WAIT UNTIL DOM IS READY (STRONGER THAN setTimeout)
   requestAnimationFrame(() => {
     renderMenu();
@@ -1128,6 +1134,28 @@ function scrollToCat(catId){
   }
 }
 
+  function handleCategoryHighlight(){
+
+  const categories = document.querySelectorAll(".category");
+  const chips = document.querySelectorAll(".cat-chip");
+
+  let activeIndex = 0;
+
+  categories.forEach((cat, i) => {
+    const rect = cat.getBoundingClientRect();
+
+    if(rect.top <= 260){
+      activeIndex = i;
+    }
+  });
+
+  chips.forEach(c => c.classList.remove("active"));
+
+  if(chips[activeIndex]){
+    chips[activeIndex].classList.add("active");
+  }
+}
+  
 /* ================= CART ================= */
 
 function upd(itemName, priceIgnored, delta){
