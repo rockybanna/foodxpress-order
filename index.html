@@ -473,6 +473,17 @@ text-align:center;
 
     <div id="summaryItems"></div>
 
+    <div id="savingBox" style="
+background:#e8f5e9;
+color:#1b5e20;
+padding:10px;
+border-radius:12px;
+margin-bottom:10px;
+font-weight:700;
+text-align:center;
+display:none;
+"></div>
+    
     <div class="bill">
       <div><span>Item Total</span><span id="itemTotal">₹0</span></div>
       <div><span>Delivery Charge</span><span id="deliveryCharge">₹0</span></div>
@@ -1056,6 +1067,34 @@ function renderSummary(){
 
   itemTotal.innerText = `₹${total}`;
 
+  const savingBox = document.getElementById("savingBox");
+
+if(pricedDistanceKm){
+
+  const saved = actualDeliverySaving(pricedDistanceKm, total);
+
+  if(saved > 0){
+    savingBox.style.display = "block";
+
+    const isMax = finalDeliveryCharge(pricedDistanceKm, total).charge <= 1;
+
+    if(isMax){
+      savingBox.innerText =
+  `🎉 You saved ₹${saved} on delivery\n🔥 Maximum savings applied\n🎉 You unlocked ₹1 delivery`;
+    } else {
+      savingBox.innerText =
+        `🎉 You saved ₹${saved} on delivery`;
+    }
+
+  } else {
+    savingBox.style.display = "none";
+  }
+
+} else {
+  savingBox.style.display = "none";
+}
+  
+
   // ✅ ALWAYS SHOW PLATFORM FEE
   platformFeeEl.innerText = `₹${platformFee}`;
 
@@ -1069,17 +1108,35 @@ function renderSummary(){
     return;
   }
 
-  const del = finalDeliveryCharge(pricedDistanceKm, total);
+const del = finalDeliveryCharge(pricedDistanceKm, total);
+const base = baseDeliveryFromDistance(pricedDistanceKm);
 
-  if(del.blocked){
-    alert("Service not available beyond 15 km");
-    backToRestaurants();
-    return;
-  }
+if(del.blocked){
+  alert("Service not available beyond 15 km");
+  backToRestaurants();
+  return;
+}
+
+// ✅ SHOW STRIKE ONLY IF DISCOUNT EXISTS
+if(base.charge > del.charge){
 
   deliveryCharge.innerHTML =
-    `₹${del.charge}<br><small>Distance: ${pricedDistanceKm} km</small>`;
+    `<span style="color:#888;text-decoration:line-through;">
+      ₹${base.charge}
+    </span>
+    <span style="margin-left:6px;font-weight:800;">
+      ₹${del.charge}
+    </span>
+    <br>
+    <small>Distance: ${pricedDistanceKm} km</small>`;
 
+} else {
+
+  deliveryCharge.innerHTML =
+    `₹${del.charge}<br>
+     <small>Distance: ${pricedDistanceKm} km</small>`;
+}
+  
   grandTotal.innerText =
     `₹${total + del.charge + platformFee}`;
 }
