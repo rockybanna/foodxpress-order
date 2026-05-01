@@ -598,6 +598,17 @@ display:none;
 
     <h2 style="margin-top:6px;">Select Delivery Location</h2>
 
+    <div style="
+  margin-top:6px;
+  font-size:13px;
+  color:#666;
+  text-align:center;
+  font-weight:600;
+">
+  📍 Move the map to set your delivery location
+</div>
+    
+
     <!-- MAP AREA -->
 <div style="position:relative;margin-top:10px;">
   
@@ -608,22 +619,47 @@ display:none;
   "></div>
 
   <!-- CENTER MARKER -->
-  <div style="
-    position:absolute;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-100%);
-    font-size:28px;
-    pointer-events:none;
-  ">
-    📍
-  </div>
-
+<div style="
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-100%);
+  font-size:34px;
+  pointer-events:none;
+  text-shadow:0 2px 6px rgba(0,0,0,.3);
+">
+  📍
 </div>
-    
+
+<div style="
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,10px);
+  font-size:12px;
+  font-weight:700;
+  background:#fff;
+  padding:3px 8px;
+  border-radius:10px;
+  box-shadow:0 2px 6px rgba(0,0,0,.2);
+  pointer-events:none;
+">
+  Deliver here
+</div>
+  
     <!-- SAVE BUTTON -->
+  <p id="mapLive" style="
+  margin-top:10px;
+  font-size:13px;
+  text-align:center;
+  color:#444;
+  font-weight:600;
+">
+  Adjust map to select location
+</p>
+  
     <button class="primary" style="margin-top:14px;" onclick="saveMapLocation()">
-      Confirm Location
+      Confirm this location
     </button>
 
   </div>
@@ -795,12 +831,21 @@ function initMap(){
   }).addTo(map);
 
   // ✅ marker
-  marker = L.marker(map.getCenter()).addTo(map);
+  marker = null;
 
-  map.on("moveend", function(){
-    const center = map.getCenter();
-    marker.setLatLng(center);
-  });
+map.on("moveend", function(){
+  const center = map.getCenter();
+if(marker){
+  marker.setLatLng(center);
+}
+  
+  // 🔥 update live text
+  const live = document.getElementById("mapLive");
+  if(live){
+    live.innerText =
+      `Selected: ${center.lat.toFixed(5)}, ${center.lng.toFixed(5)}`;
+  }
+});
 }
   
   /* ================= DISTANCE NORMALIZATION ================= */
