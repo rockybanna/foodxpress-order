@@ -1174,9 +1174,17 @@ const stickyHeight = stickyEl ? stickyEl.offsetHeight : 0;
 
   chips.forEach(c => c.classList.remove("active"));
 
-  if(chips[activeIndex]){
-    chips[activeIndex].classList.add("active");
-  }
+if(chips[activeIndex]){
+  const activeChip = chips[activeIndex];
+  activeChip.classList.add("active");
+
+  // 🔥 AUTO SCROLL CHIP INTO VIEW
+  activeChip.scrollIntoView({
+    behavior: "smooth",
+    inline: "center",
+    block: "nearest"
+  });
+}
 }
   
 /* ================= CART ================= */
