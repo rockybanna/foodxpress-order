@@ -724,11 +724,10 @@ function haversineKm(lat1, lon1, lat2, lon2) {
   return +(R * c).toFixed(2);
 }
 
-  let map;
+  let map, marker;
 
 function initMap(){
 
-  // 🔴 prevent duplicate map
   if(map){
     map.remove();
   }
@@ -741,6 +740,14 @@ function initMap(){
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap'
   }).addTo(map);
+
+  // ✅ marker
+  marker = L.marker(map.getCenter()).addTo(map);
+
+  map.on("moveend", function(){
+    const center = map.getCenter();
+    marker.setLatLng(center);
+  });
 }
   
   /* ================= DISTANCE NORMALIZATION ================= */
