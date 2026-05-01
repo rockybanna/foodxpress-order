@@ -627,13 +627,14 @@ display:none;
   top:50%;
   left:50%;
   transform:translate(-50%,-100%);
-  font-size:34px;
+  font-size:42px;
   pointer-events:none;
-  text-shadow:0 2px 6px rgba(0,0,0,.3);
+  z-index:1000;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,.4));
 ">
   📍
 </div>
-
+  
 <div style="
   position:absolute;
   top:50%;
@@ -850,6 +851,16 @@ if(marker){
   }
 });
 }
+  // 🔥 FORCE FIRST UPDATE
+setTimeout(() => {
+  const center = map.getCenter();
+  const live = document.getElementById("mapLive");
+  if(live){
+    live.innerText =
+      `Selected: ${center.lat.toFixed(5)}, ${center.lng.toFixed(5)}`;
+  }
+}, 300);
+  
   
   /* ================= DISTANCE NORMALIZATION ================= */
 function normalizeDistanceForPricing(km){
