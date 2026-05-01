@@ -92,15 +92,16 @@ body{
   padding-bottom:130px;
 }
 
-  .menu-content{
-  padding-top:200px;
+  .sticky-stack{
+  position: sticky;
+  top: 56px; /* adjust based on header height */
+  z-index: 1000;
+  background: #fff;
 }
+
   
   /* SEARCH BAR – FIXED OVERLAP */
 .search-wrap{
-  position: sticky;
-  top: 115px;
-  z-index: 999;
   background: var(--bg);
   padding: 10px 0;
 }
@@ -406,18 +407,16 @@ text-align:center;
     <div id="menuTitle" class="menu-title"></div>
   </div>
 
+  <div class="sticky-stack">
   <!-- SAVING HINT -->
   <div id="savingHintMenu" style="
-    position:sticky;
-    top:75px;
-    z-index:900;
-    background:#fff3e0;
-    color:#e65100;
-    padding:10px;
-    font-size:13px;
-    font-weight:700;
-    text-align:center;
-    display:none;
+  background:#fff3e0;
+  color:#e65100;
+  padding:10px;
+  font-size:13px;
+  font-weight:700;
+  text-align:center;
+  display:none;
   "></div>
   
   <div class="search-wrap">
@@ -429,9 +428,6 @@ text-align:center;
 </div>
 
     <div id="categoryBar" style="
-  position:sticky;
-  top:165px;
-  z-index:999;
   background:#fff;
   padding:8px 6px;
   overflow-x:auto;
@@ -442,13 +438,10 @@ text-align:center;
 
   <!-- PROGRESS BAR -->
   <div id="progressBarWrap" style="
-    display:none;
-    padding:6px 10px 10px;
-    background:#fff;
-    position:sticky;
-    top:215px;
-    z-index:999;
-  ">
+  display:none;
+  padding:6px 10px 10px;
+  background:#fff;
+">
     <div style="
       height:6px;
       background:#eee;
@@ -463,6 +456,7 @@ text-align:center;
       "></div>
     </div>
   </div>
+</div>
 
   <!-- MAIN CONTENT -->
   <div class="content menu-content">
