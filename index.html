@@ -483,7 +483,7 @@ line-height:1.4;
   <div style="
   position:sticky;
   top:0;
-  z-index:1001;
+  z-index:1002;
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -502,11 +502,11 @@ line-height:1.4;
     <div style="width:60px;"></div>
   </div>
 
-  <!-- SAVING HINT -->
+  <!-- SAVING BAR -->
   <div id="savingHintSummary" style="
   position:sticky;
   top:56px;
-  z-index:1000;
+  z-index:1001;
   background:#e8f5e9;
   color:#1b5e20;
   padding:10px;
@@ -517,16 +517,24 @@ line-height:1.4;
   box-shadow:0 2px 6px rgba(0,0,0,0.08);
   "></div>
 
-  <div class="content" style="padding:12px; padding-bottom:90px;">
+  <!-- 🔥 RESTAURANT STICKY -->
+  <div id="summaryRestName" style="
+  position:sticky;
+  top:96px;
+  z-index:1000;
+  background:#fff;
+  text-align:center;
+  font-size:14px;
+  font-weight:800;
+  padding:8px;
+  color:#333;
+  border-bottom:1px solid #eee;
+  box-shadow:0 2px 6px rgba(0,0,0,0.04);
+  ">
+  </div>
 
-    <!-- RESTAURANT -->
-    <div id="summaryRestName" style="
-    font-size:14px;
-    font-weight:700;
-    text-align:center;
-    margin-top:6px;
-    color:#555;
-    "></div>
+  <!-- CONTENT -->
+  <div class="content" style="padding:12px; padding-bottom:90px;">
 
     <h2 style="
     margin-top:4px;
@@ -608,7 +616,7 @@ line-height:1.4;
   background:#fff;
   padding:10px;
   box-shadow:0 -2px 10px rgba(0,0,0,0.08);
-  z-index:1002;
+  z-index:1003;
   ">
 
     <button class="primary" onclick="goToAddress()" style="
