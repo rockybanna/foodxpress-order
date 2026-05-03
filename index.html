@@ -77,13 +77,12 @@ body{
 
 /* BACK BUTTON */
 .topbar{
-  background:rgba(255,255,255,.2);
+  background:#ffffff22;
   color:#fff;
   border-radius:10px;
   padding:6px 12px;
   font-size:14px;
   font-weight:700;
-  backdrop-filter:blur(6px);
 }
   
 .content{
@@ -480,11 +479,25 @@ line-height:1.4;
 <!-- PAGE 3: ORDER SUMMARY -->
 <div id="page-summary" class="page">
 
+  <div style="
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:10px 12px;
+background:#e53935;
+color:#fff;
+font-weight:800;
+">
+
   <div class="topbar" onclick="goBack()">← Back</div>
 
-  <div class="header">
-    <img src="company-logo.png">
+  <div style="flex:1;text-align:center;">
+    20nagar Food Xpress
   </div>
+
+  <div style="width:60px;"></div>
+
+</div>
 
   <!-- 🔥 SAVING HINT (FIXED) -->
   <div id="savingHintSummary" style="
@@ -504,7 +517,15 @@ line-height:1.4;
 
   <div class="content">
 
-    <h2 style="margin-top:6px;">Order Summary</h2>
+    <div id="summaryRestName" style="
+font-size:15px;
+font-weight:700;
+text-align:center;
+margin-top:6px;
+color:#444;
+"></div>
+
+<h2 style="margin-top:6px;text-align:center;">Order Summary</h2>
 
     <div id="summaryItems"></div>
 
@@ -1312,6 +1333,14 @@ function openSummary(){
 }
 
 function renderSummary(){
+  const rest = restaurants.find(r => String(r.id) === String(currentRestaurant));
+const restName = rest ? rest.name : "";
+
+const restEl = document.getElementById("summaryRestName");
+if(restEl){
+  restEl.innerText = restName;
+}
+  
   recalculateDistance();
   summaryItems.innerHTML = "";
   let total = 0;
