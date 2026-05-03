@@ -1610,8 +1610,8 @@ function goToAddress(){
   let t = 0;
   for(const i in cart) t += cart[i] * price(i);
 
-  if(t < 99){
-    alert("Minimum order ₹99");
+  if(t < 200){
+    alert("Minimum order ₹200. Add more items to continue.");
     return;
   }
 
@@ -1738,8 +1738,8 @@ function placeOrder(){
     itemTotal += cart[i] * price(i);
   }
 
-  if(itemTotal < 99){
-    alert("Minimum order ₹99");
+  if(itemTotal < 200){
+    alert("Minimum order ₹200. Add more items to continue.");
     return;
   }    
 
