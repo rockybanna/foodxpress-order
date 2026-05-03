@@ -477,32 +477,35 @@ line-height:1.4;
   </div>  <!-- ✅ CLOSE page-menu -->
 
 <!-- PAGE 3: ORDER SUMMARY -->
-<div id="page-summary" class="page">
+<div id="page-summary" class="page" style="background:#f6f6f6;">
 
+  <!-- HEADER -->
   <div style="
-display:flex;
-align-items:center;
-justify-content:space-between;
-padding:10px 12px;
-background:#e53935;
-color:#fff;
-font-weight:800;
-">
+  position:sticky;
+  top:0;
+  z-index:1001;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:12px;
+  background:#e53935;
+  color:#fff;
+  font-weight:800;
+  ">
 
-  <div class="topbar" onclick="goBack()">← Back</div>
+    <div onclick="goBack()" style="font-size:14px;">← Back</div>
 
-  <div style="flex:1;text-align:center;">
-    20nagar Food Xpress
+    <div style="flex:1;text-align:center;">
+      20nagar Food Xpress
+    </div>
+
+    <div style="width:60px;"></div>
   </div>
 
-  <div style="width:60px;"></div>
-
-</div>
-
-  <!-- 🔥 SAVING HINT (FIXED) -->
+  <!-- SAVING HINT -->
   <div id="savingHintSummary" style="
   position:sticky;
-  top:75px;
+  top:56px;
   z-index:1000;
   background:#e8f5e9;
   color:#1b5e20;
@@ -511,53 +514,120 @@ font-weight:800;
   font-weight:700;
   text-align:center;
   display:none;
-  box-shadow:0 2px 6px rgba(0,0,0,0.1);
-  margin-bottom:6px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.08);
   "></div>
 
-  <div class="content">
+  <div class="content" style="padding:12px; padding-bottom:90px;">
 
+    <!-- RESTAURANT -->
     <div id="summaryRestName" style="
-font-size:15px;
-font-weight:700;
-text-align:center;
-margin-top:6px;
-color:#444;
-"></div>
+    font-size:14px;
+    font-weight:700;
+    text-align:center;
+    margin-top:6px;
+    color:#555;
+    "></div>
 
-<h2 style="margin-top:6px;text-align:center;">Order Summary</h2>
+    <h2 style="
+    margin-top:4px;
+    text-align:center;
+    font-size:20px;
+    ">Order Summary</h2>
 
-    <div id="summaryItems"></div>
+    <!-- ITEMS -->
+    <div id="summaryItems" style="
+    margin-top:10px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    "></div>
 
+    <!-- SAVING BOX -->
     <div id="savingBox" style="
-background:#e8f5e9;
-color:#1b5e20;
-padding:10px;
-border-radius:12px;
-margin-bottom:10px;
-font-weight:700;
-text-align:center;
-display:none;
-"></div>
-    
-    <div class="bill">
-      <div><span>Item Total</span><span id="itemTotal">₹0</span></div>
-      <div><span>Delivery Charge</span><span id="deliveryCharge">₹0</span></div>
-      <div><span>Platform Fee</span><span id="platformFee">₹0</span></div>
-      <div class="total"><span>Total Payable</span><span id="grandTotal">₹0</span></div>
+    background:#e8f5e9;
+    color:#1b5e20;
+    padding:10px;
+    border-radius:10px;
+    margin-top:10px;
+    font-weight:700;
+    text-align:center;
+    display:none;
+    "></div>
+
+    <!-- BILL -->
+    <div class="bill" style="
+    background:#fff;
+    border-radius:12px;
+    padding:14px;
+    margin-top:12px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.05);
+    font-size:14px;
+    ">
+
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+        <span>Item Total</span>
+        <span id="itemTotal">₹0</span>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+        <span>Delivery</span>
+        <span id="deliveryCharge" style="color:#888;">Shown after address</span>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+        <span>Platform Fee</span>
+        <span id="platformFee">₹0</span>
+      </div>
+
+      <hr style="border:none;border-top:1px solid #eee;margin:10px 0;">
+
+      <div style="display:flex;justify-content:space-between;font-weight:800;font-size:16px;">
+        <span>Total Payable</span>
+        <span id="grandTotal">₹0</span>
+      </div>
     </div>
 
-    <div class="note" style="margin-top:10px;">
-      Delivery charges depend on distance. Higher order value reduces delivery charges.
+    <!-- NOTE -->
+    <div class="note" style="
+    margin-top:10px;
+    font-size:12px;
+    color:#777;
+    text-align:center;
+    ">
+      Delivery charges depend on distance. Higher order value may reduce delivery cost.
     </div>
 
-    <button class="primary" style="margin-top:12px;" onclick="goToAddress()">
+  </div>
+
+  <!-- STICKY CTA -->
+  <div style="
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  background:#fff;
+  padding:10px;
+  box-shadow:0 -2px 10px rgba(0,0,0,0.08);
+  z-index:1002;
+  ">
+
+    <button class="primary" onclick="goToAddress()" style="
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:10px;
+    background:#e53935;
+    color:#fff;
+    font-size:16px;
+    font-weight:700;
+    ">
       Continue → Address
     </button>
 
   </div>
-</div>
 
+</div>
+    
 <!-- PAGE 4: ADDRESS -->
 <div id="page-address" class="page">
 
