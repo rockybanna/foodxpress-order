@@ -940,29 +940,39 @@ function initMap(){
   marker = null;
 
 map.on("moveend", function(){
+
   const center = map.getCenter();
-if(marker){
-  marker.setLatLng(center);
-}
-  
-  // 🔥 update live text
+
+  if(marker){
+    marker.setLatLng(center);
+  }
+
   const live = document.getElementById("mapLive");
+
   if(live){
     live.innerText =
       `Selected: ${center.lat.toFixed(5)}, ${center.lng.toFixed(5)}`;
   }
 });
-}
-  // 🔥 FORCE FIRST UPDATE
+
+
+// 🔥 FORCE FIRST UPDATE
 setTimeout(() => {
+
+  if(!map) return;
+
   const center = map.getCenter();
+
   const live = document.getElementById("mapLive");
+
   if(live){
     live.innerText =
       `Selected: ${center.lat.toFixed(5)}, ${center.lng.toFixed(5)}`;
   }
+
 }, 300);
-  
+
+}
   
   /* ================= DISTANCE NORMALIZATION ================= */
 function normalizeDistanceForPricing(km){
