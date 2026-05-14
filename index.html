@@ -976,6 +976,7 @@ setTimeout(() => {
   
   /* ================= DISTANCE NORMALIZATION ================= */
 function normalizeDistanceForPricing(km){
+  if(km <= 1.5) return 1.5;
   if(km <= 2.5) return 2.5;
   if(km <= 3.5) return 3.5;
   if(km <= 4.5) return 4.5;
