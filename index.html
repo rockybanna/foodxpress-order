@@ -1025,9 +1025,13 @@ function baseDeliveryFromDistance(km){
   
 /* ================= DELIVERY DISCOUNT ================= */
 function deliveryDiscount(itemTotal){
-  return Math.floor(itemTotal / 200) * 20;
-}
 
+  const discount =
+    Math.floor(itemTotal / 200) * 20;
+
+  return Math.min(discount, 60);
+}
+  
 /* ================= FINAL DELIVERY ================= */
 function finalDeliveryCharge(pricedKm, itemTotal){
   const base = baseDeliveryFromDistance(pricedKm);
