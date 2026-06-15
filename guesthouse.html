@@ -801,6 +801,9 @@ line-height:1.4;
   
 /* ================= DATA ================= */
 let restaurants=[],categories=[],items=[],guesthouses=[];
+let selectedGuestHouse=null;
+let guestHouseId="";
+  
 let ALL_RESTAURANTS = [];
 let cart={},currentRestaurant="",stack=["page-restaurants"];
 let lat="",lng="",mapLink="";
@@ -861,7 +864,16 @@ restaurants = d.restaurants.map(r => ({
       items = d.items || [];
       guesthouses = d.guesthouses || [];
 
-      console.log(guesthouses);
+      guestHouseId =
+  new URLSearchParams(window.location.search).get("gh") || "";
+
+selectedGuestHouse =
+  guesthouses.find(
+    g => String(g.GuestHouseID) === String(guestHouseId)
+  ) || null;
+
+console.log("GuestHouse ID:", guestHouseId);
+console.log("Selected GuestHouse:", selectedGuestHouse);
 
       renderRestaurants();
     })
