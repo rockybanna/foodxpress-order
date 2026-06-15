@@ -797,10 +797,10 @@ line-height:1.4;
   </div>
 </div>
     
-    
 <script>
+  
 /* ================= DATA ================= */
-let restaurants=[],categories=[],items=[];
+let restaurants=[],categories=[],items=[],guesthouses=[];
 let ALL_RESTAURANTS = [];
 let cart={},currentRestaurant="",stack=["page-restaurants"];
 let lat="",lng="",mapLink="";
@@ -859,6 +859,9 @@ restaurants = d.restaurants.map(r => ({
       ALL_RESTAURANTS = [...restaurants];
       categories = d.categories || [];
       items = d.items || [];
+      guesthouses = d.guesthouses || [];
+
+      console.log(guesthouses);
 
       renderRestaurants();
     })
