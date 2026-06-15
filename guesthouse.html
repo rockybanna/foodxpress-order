@@ -1,1 +1,1905 @@
-123
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>20nagar Food Xpress</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="e53935">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+
+<style>
+  :root{
+--brand:#e53935;
+--brand-soft:#fdecea;
+    --bg:#ffffff;
+  --card:#ffffff;
+  --text:#1e1e1e;
+  --muted:#6f6f6f;
+  --border:#e4e4e4;
+}
+
+/* RESET */
+*,*::before,*::after{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+/* PAGE */
+.page{
+  display:none;
+  min-height:100vh;
+  width:100%;
+}
+.page.active{
+  display:block !important;
+}
+
+
+/* ================= APP CONTAINER (REAL APP EXPERIENCE) ================= */
+@media (min-width:768px){
+  .page{
+    max-width:420px;
+    margin:16px auto;
+    background:#fff;
+
+    /* Visible rounded rectangle */
+    border-radius:22px;
+    border:2px solid #d6d6d6;
+
+    /* Premium app shadow */
+    box-shadow:
+      0 20px 48px rgba(0,0,0,.25),
+      inset 0 0 0 1px rgba(255,255,255,.6);
+
+    overflow:hidden;
+  }
+}
+
+/* HEADER (HOME) */
+.header{
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:#000;
+}
+.header img{
+  width:100%;
+  max-height:150px;
+  object-fit:cover;
+  display:block;
+}
+
+/* BACK BUTTON */
+.topbar{
+  background:#ffffff22;
+  color:#fff;
+  border-radius:10px;
+  padding:6px 12px;
+  font-size:14px;
+  font-weight:700;
+}
+  
+.content{
+  padding:14px;
+  padding-bottom:130px;
+}
+
+.sticky-stack{
+  position: sticky;
+  top: 56px;
+  z-index: 1000;
+  background: #fff;
+
+  margin-top: -1px; /* 🔥 removes visual gap */
+}
+  
+  /* SEARCH BAR – FIXED OVERLAP */
+.search-wrap{
+  background: var(--bg);
+  padding: 10px 0;
+}
+  
+/* SPACE BELOW SEARCH BAR */
+#restaurantList{
+  margin-top: 8px;
+}
+.search{
+  width:100%;
+  padding:13px 15px;
+  border-radius:16px;
+  border:1px solid var(--border);
+  font-size:15px;
+}
+.search:focus{
+  outline:none;
+  border-color:var(--brand);
+  box-shadow:0 0 0 2px rgba(229,57,53,.18);
+}
+.cat-chip{
+  display:inline-block;
+  padding:10px 16px;
+  margin-right:10px;
+  background:#f1f1f1;
+  border-radius:25px;
+  font-size:14px;
+  font-weight:800;
+  white-space:nowrap;
+  border:1px solid #ddd;
+}
+  
+/* RESTAURANT CARD */
+.restaurant{
+  display:flex;
+  gap:14px;
+  align-items:center;
+  background:#fff;
+  padding:16px;
+  border-radius:12px;
+  margin-bottom:14px;
+
+  border:1.5px solid #000;   /* ✅ NEW */
+  box-shadow:0 2px 4px rgba(0,0,0,.05); /* lighter shadow */
+}
+  .restaurant.open:active{transform:scale(.97)}
+.restaurant.closed{opacity:.55}
+
+.restaurant img{
+  width:62px;
+  height:62px;
+  border-radius:16px;
+  object-fit:cover;
+  background:#eee;
+}
+.rest-info{flex:1}
+.rest-name{
+  font-weight:800;
+  font-size:16px;
+}
+.rest-status{
+  font-size:12px;
+  margin-top:4px;
+}
+.open-text{color:#0a8f08;font-weight:700}
+.closed-text{color:#c62828;font-weight:700}
+
+/* MENU HEADER */
+.menu-header{
+  position:sticky;
+  top:0;
+  z-index:2000;
+  border-bottom:none;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:12px 14px;
+
+  background: linear-gradient(135deg, #e53935, #ff7043);
+  color:#fff;
+
+  box-shadow:0 4px 12px rgba(0,0,0,.15);
+}
+  .menu-title{
+  flex:1;
+  text-align:right;
+  font-size:18px;
+  font-weight:900;
+  letter-spacing:0.3px;
+}
+  .category{
+  font-size:15px;
+  font-weight:800;
+  margin:20px 0 10px;
+  color:#222;
+  text-align:center;
+  background:#f5f5f5;
+  padding:10px;
+  border-radius:10px;
+}
+  /* CATEGORY */
+.item,.cart-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  background:#fff;
+  padding:16px;
+  border-radius:12px;
+  margin-bottom:14px;
+
+  border:1.5px solid #000;   /* ✅ NEW */
+  box-shadow:0 2px 4px rgba(0,0,0,.05);
+}
+.item-name{
+  font-size:16px;
+  font-weight:800;
+}
+.item-desc{
+  font-size:13px;
+  color:var(--muted);
+  margin-top:4px;
+  line-height:1.45;
+}
+.small{
+  margin-top:6px;
+  font-weight:800;
+}
+
+/* QTY */
+.qty{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.qty button{
+  width:34px;
+  height:34px;
+  border-radius:12px;
+  border:none;
+  background:var(--brand);
+  color:#fff;
+  font-size:18px;
+  cursor:pointer;
+}
+.qty span{
+  min-width:24px;
+  text-align:center;
+  font-weight:800;
+}
+
+/* CART BAR */
+.cart-bar{
+  position:fixed;
+  bottom:12px;
+  left:12px;
+  right:12px;
+  background:var(--brand);
+  color:#fff;
+  padding:18px;
+  border-radius:20px;
+  display:none;
+  justify-content:space-between;
+  align-items:center;
+  font-weight:800;
+  box-shadow:0 14px 28px rgba(0,0,0,.3);
+}
+
+/* BILL */
+.bill div{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:8px;
+}
+.bill .total{
+  font-size:19px;
+  font-weight:900;
+}
+
+/* BUTTON */
+button.primary{
+  width:100%;
+  padding:15px;
+  background:var(--brand);
+  color:#fff;
+  border:none;
+  border-radius:16px;
+  font-size:16px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+/* CATEGORY POPUP */
+.cat-btn{
+  position:fixed;
+  right:16px;
+  bottom:95px;
+  background:#2f2f2f;
+  color:#fff;
+  padding:12px 18px;
+  border-radius:40px;
+  font-size:14px;
+  font-weight:700;
+}
+.cat-popup{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  display:none;
+  z-index:9999;   /* 🔒 force above header */
+}
+.cat-box{
+  background:#fff;
+  margin:0 auto;
+  width:82%;
+  max-height:70vh;
+  overflow-y:auto;
+  border-radius:20px;
+  padding:14px;
+
+  position:relative;
+  top:90px;   /* 🔑 pushes popup below header */
+}
+.cat-box div{
+  padding:14px;
+  border-bottom:1px solid var(--border);
+  font-weight:700;
+}
+
+  .cat-chip.active{
+  background:#e53935;
+  color:#fff;
+}
+  
+/* INPUTS */
+input,textarea{
+  width:100%;
+  padding:13px;
+  border-radius:14px;
+  border:1px solid var(--border);
+  font-size:15px;
+}
+
+/* 🔴 HOVER EFFECT (ADD THIS EXACTLY HERE) */
+.restaurant:hover,
+.item:hover{
+  border-color:#e53935;
+}
+  
+</style>
+
+
+  <body>
+
+<!-- PAGE 1: RESTAURANTS -->
+<div id="page-restaurants" class="page active">
+  <div class="header"><img src="company-logo.png"></div>
+ <div class="content">
+
+<!-- 🔥 OFFER BANNER -->
+<div style="
+background:#e53935;
+color:#fff;
+padding:8px 10px;
+border-radius:12px;
+margin-bottom:10px;
+font-weight:600;
+font-size:13px;
+text-align:center;
+line-height:1.4;
+">
+  🔥 Get ₹20 OFF delivery for every ₹200<br>
+  🚀 Delivery can go as low as ₹1<br>
+  💯 Same as restaurant prices
+</div>
+   
+<!-- ⚡ TRUST LINE -->
+<div style="
+font-size:13px;
+color:#666;
+margin-bottom:10px;
+text-align:center;
+font-weight:600;
+line-height:1.4;
+">
+🔥 1500+ orders delivered in Visnagar<br>
+❤️ Trusted by 100+ local customers
+</div>
+   
+<div class="search-wrap">
+  <input
+    class="search"
+    placeholder="Search restaurant or item..."
+    oninput="filterRestaurants(this.value)"
+  >
+</div>
+
+<div id="restaurantList"></div>
+  </div>
+</div>
+
+<!-- PAGE 2: MENU -->
+<div id="page-menu" class="page">
+
+  <!-- HEADER -->
+  <div class="menu-header">
+    <div class="topbar" onclick="goBack()">← Back</div>
+    <div id="menuTitle" class="menu-title"></div>
+  </div>
+
+  <div class="sticky-stack">
+  <!-- SAVING HINT -->
+  <div id="savingHintMenu" style="
+  background:#fff3e0;
+  color:#e65100;
+  padding:10px;
+  font-size:13px;
+  font-weight:700;
+  text-align:center;
+  display:none;
+  "></div>
+  
+  <div class="search-wrap">
+  <input
+    class="search"
+    placeholder="Search item..."
+    oninput="filterMenuItems(this.value)"
+  >
+</div>
+
+    <div id="categoryBar" style="
+  background:#fff;
+  padding:8px 6px;
+  overflow-x:auto;
+  white-space:nowrap;
+  border-bottom:1px solid #eee;
+"></div>
+  
+
+  <!-- PROGRESS BAR -->
+  <div id="progressBarWrap" style="
+  display:none;
+  padding:6px 10px 10px;
+  background:#fff;
+">
+    <div style="
+      height:6px;
+      background:#eee;
+      border-radius:10px;
+      overflow:hidden;
+    ">
+      <div id="progressBarFill" style="
+        height:100%;
+        width:0%;
+        background:#e53935;
+        transition:width 0.3s ease;
+      "></div>
+    </div>
+  </div>
+</div>
+
+  <!-- MAIN CONTENT -->
+  <div class="content menu-content">
+    <div id="menuItems"></div>
+  </div>
+
+  <!-- CART BAR -->
+  <div id="cartBar" class="cart-bar" onclick="openSummary()">
+    <span id="cartInfo"></span>
+    <span>View Cart →</span>
+  </div>
+  
+  </div>  <!-- ✅ CLOSE page-menu -->
+
+<!-- PAGE 3: ORDER SUMMARY -->
+<div id="page-summary" class="page" style="background:#f6f6f6;">
+
+  <!-- HEADER -->
+  <div style="
+  position:sticky;
+  top:0;
+  z-index:1002;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:12px;
+  background:#e53935;
+  color:#fff;
+  font-weight:800;
+  ">
+
+    <div onclick="goBack()" style="font-size:14px;">← Back</div>
+
+    <div style="flex:1;text-align:center;">
+      20nagar Food Xpress
+    </div>
+
+    <div style="width:60px;"></div>
+  </div>
+
+  <!-- SAVING BAR -->
+  <div id="savingHintSummary" style="
+  position:sticky;
+  top:56px;
+  z-index:1001;
+  background:#e8f5e9;
+  color:#1b5e20;
+  padding:10px;
+  font-size:13px;
+  font-weight:700;
+  text-align:center;
+  display:none;
+  box-shadow:0 2px 6px rgba(0,0,0,0.08);
+  "></div>
+
+  <!-- 🔥 RESTAURANT STICKY -->
+  <div id="summaryRestName" style="
+  position:sticky;
+  top:96px;
+  z-index:1000;
+  background:#fff;
+  text-align:center;
+  font-size:14px;
+  font-weight:800;
+  padding:8px;
+  color:#333;
+  border-bottom:1px solid #eee;
+  box-shadow:0 2px 6px rgba(0,0,0,0.04);
+  ">
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content" style="padding:12px; padding-bottom:90px;">
+
+    <h2 style="
+    margin-top:4px;
+    text-align:center;
+    font-size:20px;
+    ">Order Summary</h2>
+
+    <!-- ITEMS -->
+    <div id="summaryItems" style="
+    margin-top:10px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    "></div>
+
+    <!-- SAVING BOX -->
+    <div id="savingBox" style="
+    background:#e8f5e9;
+    color:#1b5e20;
+    padding:10px;
+    border-radius:10px;
+    margin-top:10px;
+    font-weight:700;
+    text-align:center;
+    display:none;
+    "></div>
+
+    <!-- BILL -->
+    <div class="bill" style="
+    background:#fff;
+    border-radius:12px;
+    padding:14px;
+    margin-top:12px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.05);
+    font-size:14px;
+    ">
+
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+        <span>Item Total</span>
+        <span id="itemTotal">₹0</span>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+        <span>Delivery</span>
+        <span id="deliveryCharge" style="color:#888;">Shown after address</span>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+        <span>Platform Fee</span>
+        <span id="platformFee">₹0</span>
+      </div>
+
+      <hr style="border:none;border-top:1px solid #eee;margin:10px 0;">
+
+      <div style="display:flex;justify-content:space-between;font-weight:800;font-size:16px;">
+        <span>Total Payable</span>
+        <span id="grandTotal">₹0</span>
+      </div>
+    </div>
+
+    <!-- NOTE -->
+    <div class="note" style="
+    margin-top:10px;
+    font-size:12px;
+    color:#777;
+    text-align:center;
+    ">
+      Delivery charges depend on distance. Higher order value may reduce delivery cost.
+    </div>
+
+  </div>
+
+  <!-- STICKY CTA -->
+  <div style="
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  background:#fff;
+  padding:10px;
+  box-shadow:0 -2px 10px rgba(0,0,0,0.08);
+  z-index:1003;
+  ">
+
+    <button class="primary" onclick="goToAddress()" style="
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:10px;
+    background:#e53935;
+    color:#fff;
+    font-size:16px;
+    font-weight:700;
+    ">
+      Continue → Address
+    </button>
+
+  </div>
+
+</div>
+    
+<!-- PAGE 4: ADDRESS -->
+<div id="page-address" class="page">
+
+  <div class="topbar" onclick="goBack()">← Back</div>
+
+  <div class="header">
+    <img src="company-logo.png">
+  </div>
+
+  <!-- 🔥 SAVING HINT (CONSISTENCY) -->
+  <div id="savingHintAddress" style="
+  position:sticky;
+  top:75px;
+  z-index:1000;
+  background:#e3f2fd;
+  color:#0d47a1;
+  padding:10px;
+  font-size:13px;
+  font-weight:700;
+  text-align:center;
+  display:none;
+  box-shadow:0 2px 6px rgba(0,0,0,0.1);
+  margin-bottom:6px;
+  "></div>
+
+  <div class="content">
+
+    <h2 style="margin-top:6px;">Delivery Details</h2>
+
+    <label>Name</label>
+    <input id="custName">
+
+    <label>Phone</label>
+    <input id="custPhone">
+
+    <label>Address</label>
+    <textarea id="custAddress"></textarea>
+
+    <button class="primary" style="margin-top:10px;" onclick="captureLocation()">
+      Use my current location
+    </button>
+    <button class="primary" style="margin-top:10px;background:#2f2f2f;" onclick="openMapPage()">
+  Pick location on map
+</button>
+
+    <p id="locStatus" class="small"></p>
+
+    <button class="primary" style="margin-top:12px;" onclick="placeOrder()">
+      Place Order
+    </button>
+
+  </div>
+</div>
+
+    <!-- PAGE 5: MAP PICKER -->
+<div id="page-map" class="page">
+
+  <div class="topbar" onclick="goBack()">← Back</div>
+
+  <div class="header">
+    <img src="company-logo.png">
+  </div>
+
+  <div class="content">
+
+    <h2 style="margin-top:6px;">Select Delivery Location</h2>
+
+    <div style="
+  margin-top:6px;
+  font-size:13px;
+  color:#666;
+  text-align:center;
+  font-weight:600;
+">
+  📍 Move the map to set your delivery location
+</div>
+    
+
+    <!-- MAP AREA -->
+<div style="position:relative;margin-top:10px;">
+  
+  <div id="map" style="
+    width:100%;
+    height:350px;
+    border-radius:12px;
+  "></div>
+
+  <!-- CENTER MARKER -->
+<div style="
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-100%);
+  font-size:42px;
+  pointer-events:none;
+  z-index:1000;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,.4));
+">
+  📍
+</div>
+  
+<div style="
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,10px);
+  font-size:12px;
+  font-weight:700;
+  background:#fff;
+  padding:3px 8px;
+  border-radius:10px;
+  box-shadow:0 2px 6px rgba(0,0,0,.2);
+  pointer-events:none;
+">
+  Deliver here
+</div>
+  
+    <!-- SAVE BUTTON -->
+  <p id="mapLive" style="
+  margin-top:10px;
+  font-size:13px;
+  text-align:center;
+  color:#444;
+  font-weight:600;
+">
+  Adjust map to select location
+</p>
+  
+    <button class="primary" style="margin-top:14px;" onclick="saveMapLocation()">
+      Confirm this location
+    </button>
+
+  </div>
+</div>
+
+    <!-- PAGE 6: ORDER CONFIRMATION -->
+<div id="page-confirm" class="page">
+
+  <div class="header">
+    <img src="company-logo.png">
+  </div>
+
+  <div class="content" style="text-align:center; padding-top:40px;">
+
+    <h2>✅ Order Placed</h2>
+
+    <p style="margin-top:10px; font-weight:600;">
+      Order ID: <span id="confirmOrderId"></span>
+    </p>
+
+    <p style="margin-top:10px; color:#666;">
+      Redirecting to WhatsApp...
+    </p>
+
+    <button class="primary" style="margin-top:20px;" onclick="goToWhatsAppNow()">
+      Continue to WhatsApp
+    </button>
+
+  </div>
+</div>
+    
+    
+<script>
+/* ================= DATA ================= */
+let restaurants=[],categories=[],items=[];
+let ALL_RESTAURANTS = [];
+let cart={},currentRestaurant="",stack=["page-restaurants"];
+let lat="",lng="",mapLink="";
+let pricedDistanceKm = 0;
+let orderId = "";
+let platformFee = 5;
+
+/* ================= DOM READY (PWA SAFE) ================= */
+let restaurantList, menuItems, catList, summaryItems,
+    cartBar, cartInfo, menuTitle, menuLogo,
+    itemTotal, deliveryCharge, platformFeeEl, grandTotal,
+    custName, custPhone, custAddress, locStatus,
+    savingHintMenu, savingHintSummary;
+
+document.addEventListener("DOMContentLoaded", () => {
+
+
+  /* ---------- DOM REFERENCES ---------- */
+  restaurantList = document.getElementById("restaurantList");
+  menuItems = document.getElementById("menuItems");
+  summaryItems = document.getElementById("summaryItems");
+  cartBar = document.getElementById("cartBar");
+  cartInfo = document.getElementById("cartInfo");
+  menuTitle = document.getElementById("menuTitle");
+  itemTotal = document.getElementById("itemTotal");
+  deliveryCharge = document.getElementById("deliveryCharge");
+  platformFeeEl = document.getElementById("platformFee");  //
+grandTotal = document.getElementById("grandTotal");
+  custName = document.getElementById("custName");
+  custPhone = document.getElementById("custPhone");
+  custAddress = document.getElementById("custAddress");
+  locStatus = document.getElementById("locStatus");
+savingHintMenu = document.getElementById("savingHintMenu");
+savingHintSummary = document.getElementById("savingHintSummary");
+
+
+  /* ---------- FETCH DATA AFTER DOM READY ---------- */
+  fetch("https://script.google.com/macros/s/AKfycbw66W91wIe-cAXwIZPgfEGJ1gy4TQ_MQ5WANbm3jQ9g4t_OmKNgqD7K8-pq7njoteWwEg/exec")
+    .then(r => r.json())
+    .then(d => {
+
+restaurants = d.restaurants.map(r => ({
+  id: r.RestaurantID,
+  name: r.RestaurantName,
+  logo: `images/restaurants/${r.RestaurantID}.jpg`,
+  lat: Number(r.Latitude),
+  lng: Number(r.Longitude),
+  slots: [
+    [r.Slot1_Open, r.Slot1_Close],
+    [r.Slot2_Open, r.Slot2_Close]
+  ]
+  .filter(x => x[0] && x[1])
+  .map(x => [toTime(x[0]), toTime(x[1])])
+}));
+
+      ALL_RESTAURANTS = [...restaurants];
+      categories = d.categories || [];
+      items = d.items || [];
+
+      renderRestaurants();
+    })
+    .catch(() => alert("Unable to connect"));
+  orderId = getOrderId();
+
+});
+
+
+  /* ================= ORDER ID ================= */
+function getOrderId(){
+  let id = localStorage.getItem("fx_order_id");
+
+  if(!id){
+    const d = new Date();
+    const rand = Math.floor(100 + Math.random() * 900);
+
+    id =
+      "FX-" +
+      d.getFullYear() +
+      String(d.getMonth() + 1).padStart(2, "0") +
+      String(d.getDate()).padStart(2, "0") +
+      "-" +
+      String(d.getHours()).padStart(2, "0") +
+      String(d.getMinutes()).padStart(2, "0") +
+      String(d.getSeconds()).padStart(2, "0") +
+      "-" +
+      rand;
+
+    localStorage.setItem("fx_order_id", id);
+  }
+
+  return id;
+}
+
+/* ---------- TIME FORMATTER ---------- */
+function toTime(v) {
+  if (!v) return "";
+  const d = new Date(v);
+  const h = d.getHours().toString().padStart(2, "0");
+  const m = d.getMinutes().toString().padStart(2, "0");
+  return `${h}:${m}`;
+}
+
+  /* ================= DISTANCE (HAVERSINE) ================= */
+function haversineKm(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Earth radius in KM
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) *
+    Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return +(R * c).toFixed(2);
+}
+
+  let map, marker;
+
+function initMap(){
+
+  if(map){
+    map.remove();
+  }
+
+  const defaultLat = 23.6980;
+  const defaultLng = 72.5525;
+
+  map = L.map('map').setView([defaultLat, defaultLng], 14);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap'
+  }).addTo(map);
+
+  // ✅ marker
+  marker = null;
+
+map.on("moveend", function(){
+
+  const center = map.getCenter();
+
+  if(marker){
+    marker.setLatLng(center);
+  }
+
+  const live = document.getElementById("mapLive");
+
+  if(live){
+    live.innerText =
+      `Selected: ${center.lat.toFixed(5)}, ${center.lng.toFixed(5)}`;
+  }
+});
+
+
+// 🔥 FORCE FIRST UPDATE
+setTimeout(() => {
+
+  if(!map) return;
+
+  const center = map.getCenter();
+
+  const live = document.getElementById("mapLive");
+
+  if(live){
+    live.innerText =
+      `Selected: ${center.lat.toFixed(5)}, ${center.lng.toFixed(5)}`;
+  }
+
+}, 300);
+
+}
+  
+  /* ================= DISTANCE NORMALIZATION ================= */
+function normalizeDistanceForPricing(km){
+  if(km <= 1.5) return 1.5;
+  if(km <= 2.5) return 2.5;
+  if(km <= 3.5) return 3.5;
+  if(km <= 4.5) return 4.5;
+  if(km <= 5.5) return 5.5;
+  if(km <= 6.5) return 6.5;
+  return km; // above 6.5 km stays as-is for now
+}
+
+  /* ================= BASE DELIVERY (NO DISCOUNT) ================= */
+function baseDeliveryFromDistance(km){
+  if(km > 15){
+    return { blocked: true, charge: 0 };
+  }
+
+  // Rule 1: up to 6.5 km
+  if(km <= 6.5){
+    return { blocked: false, charge: 20 + (10 * km) };
+  }
+
+  // Rule 2: above 6.5 km
+  return { blocked: false, charge: 30 + (10 * km) };
+}
+
+  function recalculateDistance(){
+
+  if(!lat || !lng || !currentRestaurant){
+    return;
+  }
+
+  const rest = restaurants.find(r => String(r.id) === String(currentRestaurant));
+  if(!rest || !rest.lat || !rest.lng){
+    return;
+  }
+
+  const rawDist = haversineKm(rest.lat, rest.lng, lat, lng);
+  const dist = +(rawDist * 1.5).toFixed(2);
+  const pricedDist = normalizeDistanceForPricing(dist);
+
+  if(pricedDist > 20){
+    pricedDistanceKm = 0;
+    return;
+  }
+
+  pricedDistanceKm = pricedDist;
+}
+  
+/* ================= DELIVERY DISCOUNT ================= */
+function deliveryDiscount(itemTotal){
+
+  const discount =
+    Math.floor(itemTotal / 200) * 20;
+
+  return Math.min(discount, 60);
+}
+  
+/* ================= FINAL DELIVERY ================= */
+function finalDeliveryCharge(pricedKm, itemTotal){
+  const base = baseDeliveryFromDistance(pricedKm);
+
+  if(base.blocked){
+    return { blocked: true, charge: 0 };
+  }
+
+  const discount = deliveryDiscount(itemTotal);
+  const finalCharge = Math.max(base.charge - discount, 1);
+
+  return {
+    blocked: false,
+    charge: Math.round(finalCharge)
+  };
+}
+  
+  function actualDeliverySaving(pricedKm, itemTotal){
+
+  const base = baseDeliveryFromDistance(pricedKm);
+
+  if(base.blocked){
+    return 0;
+  }
+
+  const final = finalDeliveryCharge(pricedKm, itemTotal);
+
+  return Math.max(base.charge - final.charge, 0);
+}
+
+  
+/* ================= TIME ================= */
+function toMin(t){const[a,b]=t.split(":").map(Number);return a*60+b}
+function nowMin(){const d=new Date();return d.getHours()*60+d.getMinutes()}
+function status(r){
+ const n=nowMin();
+ for(const s of r.slots){
+  if(n>=toMin(s[0])&&n<=toMin(s[1]))return{open:true,closes:s[1]};
+  if(n<toMin(s[0]))return{open:false,opens:s[0]};
+ }
+ return{open:false,opens:r.slots[0][0]};
+}
+
+/* ================= NAV ================= */
+function show(p){
+
+  // 🔴 HIDE ALL PAGES FORCEFULLY
+  document.querySelectorAll(".page").forEach(el => {
+    el.style.display = "none";
+    el.classList.remove("active");
+  });
+
+  // 🟢 SHOW ONLY TARGET PAGE
+  const target = document.getElementById(p);
+
+  if(!target){
+    alert("PAGE NOT FOUND: " + p);
+    return;
+  }
+
+  target.style.display = "block";
+  target.classList.add("active");
+}
+
+function nav(p){
+  stack.push(p);
+  show(p);
+
+  // 🔥 sync with browser history
+  history.pushState({ page: p }, "", "");
+}
+
+  window.onpopstate = function(){
+
+  if(stack.length > 1){
+    stack.pop();
+    show(stack.at(-1));
+  } else {
+    // if already at first page → allow exit
+    history.back();
+  }
+};
+  
+function openMapPage(){
+  nav("page-map");
+
+  // ⏳ wait for page to render
+  setTimeout(() => {
+    initMap();
+  }, 200);
+}
+  
+function goBack(){
+  history.back();  // 🔥 trigger browser back instead
+}
+  
+function backToRestaurants(){
+  cart = {};
+  updateBar();
+
+  localStorage.removeItem("fx_lat");
+  localStorage.removeItem("fx_lng");
+
+  lat = "";
+  lng = "";
+  pricedDistanceKm = 0;
+  mapLink = "";
+
+  stack = ["page-restaurants"];
+  show("page-restaurants");
+}
+
+  /* 🔒 LOGIC LOCK — RESTAURANT SHUFFLE (SAFE) */
+function shuffle(arr){
+  for(let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+/* ================= RESTAURANTS ================= */
+function filterRestaurants(query){
+  query = query.toLowerCase().trim();
+
+  if(!query){
+    restaurants = [...ALL_RESTAURANTS];
+    renderRestaurants();
+    return;
+  }
+
+  const byName = ALL_RESTAURANTS.filter(r =>
+    r.name.toLowerCase().includes(query)
+  );
+
+  const matchedRestaurantIds = new Set(
+    (items || [])
+      .filter(i => i.ItemName && i.ItemName.toLowerCase().includes(query))
+      .map(i => String(i.RestaurantID))
+  );
+
+  const byItems = ALL_RESTAURANTS.filter(r =>
+    matchedRestaurantIds.has(String(r.id))
+  );
+
+  // merge + remove duplicates
+  restaurants = [
+    ...new Map(
+      [...byName, ...byItems].map(r => [String(r.id), r])
+    ).values()
+  ];
+
+  renderRestaurants();
+}
+
+function renderRestaurants(){
+  restaurantList.innerHTML = "";
+
+  const openList = [];
+  const closedList = [];
+
+  // shuffle safely
+  const shuffled = [...(restaurants || [])];
+  shuffle(shuffled);
+
+  shuffled.forEach(r => {
+
+    if(!r) return;
+
+    const s = status(r);
+    const d = document.createElement("div");
+
+    d.className = "restaurant " + (s.open ? "open" : "closed");
+
+    d.innerHTML = `
+      <img src="${r.logo}" onerror="this.src='company-logo.png'">
+      <div class="rest-info">
+        <div class="rest-name">${r.name}</div>
+        <div class="rest-status ${s.open ? "open-text" : "closed-text"}">
+          ${s.open ? "Open • Closes " + s.closes : "Closed • Opens " + s.opens}
+        </div>
+      </div>
+    `;
+
+    // ✅ FINAL CLICK FIX (ID based)
+    d.addEventListener("click", function(e){
+  e.stopPropagation();
+  openMenu(r.id);
+});
+
+    (s.open ? openList : closedList).push(d);
+  });
+
+  [...openList, ...closedList].forEach(el => restaurantList.appendChild(el));
+}
+
+
+/* ================= MENU ================= */
+function openMenu(id){
+
+  cart = {};
+  currentRestaurant = id;
+  recalculateDistance();
+
+  const rest = restaurants.find(r => String(r.id) === String(id));
+  if(!rest) return;
+
+  menuTitle.innerText = rest.name;
+
+  // ✅ OPEN PAGE
+  nav("page-menu");
+window.onscroll = handleCategoryHighlight;
+  
+  // ✅ WAIT UNTIL DOM IS READY (STRONGER THAN setTimeout)
+  requestAnimationFrame(() => {
+    renderMenu();
+  });
+}
+
+function renderMenu(){
+  menuItems.innerHTML = "";
+  const categoryBar = document.getElementById("categoryBar");
+categoryBar.innerHTML = "";
+
+  const rest = restaurants.find(r => String(r.id) === String(currentRestaurant));
+  if(!rest) return;
+
+  const restCats = (categories || [])
+    .filter(c =>
+      String(c.RestaurantID) === String(rest.id) &&
+      (c.IsActive === true || c.IsActive === "TRUE")
+    )
+    .sort((a,b) => (a.SortOrder||0) - (b.SortOrder||0));
+
+  restCats.forEach(cat => {
+
+categoryBar.innerHTML += `
+  <span class="cat-chip" onclick="scrollToCat('${cat.CategoryID}')">
+    ${cat.CategoryName}
+  </span>
+`;
+    
+    menuItems.innerHTML += `
+      <div class="category" id="cat-${cat.CategoryID}">
+        ${cat.CategoryName}
+      </div>
+    `;
+
+    (items || [])
+      .filter(i =>
+        String(i.RestaurantID) === String(rest.id) &&
+        String(i.CategoryID) === String(cat.CategoryID) &&
+        i.IsAvailable
+      )
+      .forEach(it => {
+
+        const q = cart[it.ItemName] || 0;
+
+        menuItems.innerHTML += `
+          <div class="item">
+            <div>
+              <div class="item-name">${it.ItemName}</div>
+              ${it.ItemDescription ? `<div class="item-desc">${it.ItemDescription}</div>` : ""}
+              <div class="small">₹${it.Price}</div>
+            </div>
+            <div class="qty">
+              <button onclick="upd('${it.ItemName}', 0, -1)">−</button>
+              <span>${q}</span>
+              <button onclick="upd('${it.ItemName}', 0, 1)">+</button>
+            </div>
+          </div>
+        `;
+      });
+
+  });
+
+  updateBar();
+  updateSavingHint();
+}
+
+function scrollToCat(catId){
+  const el = document.getElementById("cat-" + catId);
+  if(el){
+const stickyEl = document.querySelector(".sticky-stack");
+const stickyHeight = stickyEl ? stickyEl.offsetHeight : 0;
+    const y = el.getBoundingClientRect().top + window.scrollY - stickyHeight - 10;
+window.scrollTo({ top: y, behavior: "smooth" });
+
+// 🔥 force immediate highlight update
+setTimeout(handleCategoryHighlight, 100);
+  }
+}
+
+function handleCategoryHighlight(){
+
+  const categories = document.querySelectorAll(".category");
+  const chips = document.querySelectorAll(".cat-chip");
+
+  if(!categories.length) return;
+
+  // 🔥 dynamic top offset (real height of sticky stack)
+const stickyEl = document.querySelector(".sticky-stack");
+const stickyHeight = stickyEl ? stickyEl.offsetHeight : 0;
+  
+  let activeIndex = 0;
+
+  categories.forEach((cat, i) => {
+
+    const rect = cat.getBoundingClientRect();
+
+    // ✅ check when category crosses sticky area
+    if(rect.top - stickyHeight <= 10){
+      activeIndex = i;
+    }
+
+  });
+
+  chips.forEach(c => c.classList.remove("active"));
+
+if(chips[activeIndex]){
+  const activeChip = chips[activeIndex];
+  activeChip.classList.add("active");
+
+  // 🔥 AUTO SCROLL CHIP INTO VIEW
+  activeChip.scrollIntoView({
+    behavior: "smooth",
+    inline: "center",
+    block: "nearest"
+  });
+}
+}
+  
+/* ================= CART ================= */
+
+function upd(itemName, priceIgnored, delta){
+  cart[itemName] = (cart[itemName] || 0) + delta;
+  if (cart[itemName] <= 0) delete cart[itemName];
+
+  if (stack.at(-1) === "page-menu") renderMenu();
+  if (stack.at(-1) === "page-summary") renderSummary();
+
+  updateBar();
+  updateSavingHint();
+}
+
+function price(itemName){
+  const rest = restaurants.find(r => String(r.id) === String(currentRestaurant));
+  if (!rest) return 0;
+
+  const it = items.find(
+    i => String(i.RestaurantID) === String(rest.id) &&
+         i.ItemName === itemName
+  );
+
+  return it ? Number(it.Price) : 0;
+}
+
+function updateBar(){
+  let itemCount = 0, total = 0;
+
+  for (const i in cart){
+    itemCount += cart[i];
+    total += cart[i] * price(i);
+  }
+
+  const saved = pricedDistanceKm
+  ? actualDeliverySaving(pricedDistanceKm, total)
+  : Math.floor(total / 200) * 20;
+
+  if (itemCount > 0 && stack.at(-1) === "page-menu"){
+    cartBar.style.display = "flex";
+    cartInfo.innerText =
+      `${itemCount} items | ₹${total} • Saved ₹${saved}`;
+  } else {
+    cartBar.style.display = "none";
+  }
+}
+
+  function filterMenuItems(query){
+  query = query.toLowerCase().trim();
+
+  const allItems = document.querySelectorAll(".item");
+
+  allItems.forEach(el => {
+    const text = el.innerText.toLowerCase();
+    el.style.display = text.includes(query) ? "flex" : "none";
+  });
+}
+  
+function openSummary(){
+  renderSummary();
+  nav("page-summary");
+}
+
+function renderSummary(){
+  const rest = restaurants.find(r => String(r.id) === String(currentRestaurant));
+const restName = rest ? rest.name : "";
+
+const restEl = document.getElementById("summaryRestName");
+if(restEl){
+  restEl.innerText = restName;
+}
+  
+  recalculateDistance();
+  summaryItems.innerHTML = "";
+  let total = 0;
+
+  for (const i in cart){
+    const p = price(i);
+    total += cart[i] * p;
+
+    summaryItems.innerHTML += `
+      <div class="cart-item">
+        <div>
+          ${i}
+          <div class="small">₹${p}</div>
+        </div>
+        <div class="qty">
+          <button onclick="upd('${i}', ${p}, -1)">−</button>
+          <span>${cart[i]}</span>
+          <button onclick="upd('${i}', ${p}, 1)">+</button>
+        </div>
+      </div>
+    `;
+  }
+
+  itemTotal.innerText = `₹${total}`;
+
+  const savingBox = document.getElementById("savingBox");
+
+if(pricedDistanceKm){
+
+  const saved = actualDeliverySaving(pricedDistanceKm, total);
+
+  if(saved > 0){
+    savingBox.style.display = "block";
+
+    const isMax = finalDeliveryCharge(pricedDistanceKm, total).charge <= 1;
+
+    if(isMax){
+      savingBox.innerText =
+  `🎉 You saved ₹${saved} on delivery\n🔥 Maximum savings applied\n🎉 You unlocked ₹1 delivery`;
+    } else {
+      savingBox.innerText =
+        `🎉 You saved ₹${saved} on delivery`;
+    }
+
+  } else {
+    savingBox.style.display = "none";
+  }
+
+} else {
+  savingBox.style.display = "none";
+}
+  
+
+  // ✅ ALWAYS SHOW PLATFORM FEE
+  platformFeeEl.innerText = `₹${platformFee}`;
+
+  updateSavingHint();
+
+  if(!pricedDistanceKm){
+    deliveryCharge.innerHTML =
+      `—<br><small>Delivery charge will be calculated after location</small>`;
+
+    grandTotal.innerText = `₹${total + platformFee}`;
+    return;
+  }
+
+const del = finalDeliveryCharge(pricedDistanceKm, total);
+const base = baseDeliveryFromDistance(pricedDistanceKm);
+
+if(del.blocked){
+  alert("Service not available beyond 15 km");
+  backToRestaurants();
+  return;
+}
+
+// ✅ SHOW STRIKE ONLY IF DISCOUNT EXISTS
+if(base.charge > del.charge){
+
+  deliveryCharge.innerHTML =
+    `<span style="color:#888;text-decoration:line-through;">
+      ₹${base.charge}
+    </span>
+    <span style="margin-left:6px;font-weight:800;">
+      ₹${del.charge}
+    </span>
+    <br>
+    <small>Distance: ${pricedDistanceKm} km</small>`;
+
+} else {
+
+  deliveryCharge.innerHTML =
+    `₹${del.charge}<br>
+     <small>Distance: ${pricedDistanceKm} km</small>`;
+}
+  
+  grandTotal.innerText =
+    `₹${total + del.charge + platformFee}`;
+}
+
+
+/* ================= SAVING HINT SYSTEM ================= */
+
+function updateSavingHint(){
+
+  let total = 0;
+
+  for (const i in cart){
+    total += cart[i] * price(i);
+  }
+
+  if(total === 0){
+    if(savingHintMenu) savingHintMenu.style.display = "none";
+    if(savingHintSummary) savingHintSummary.style.display = "none";
+
+    const savingHintAddress = document.getElementById("savingHintAddress");
+    if(savingHintAddress) savingHintAddress.style.display = "none";
+
+    const progressWrap = document.getElementById("progressBarWrap");
+    const progressFill = document.getElementById("progressBarFill");
+
+    if(progressWrap) progressWrap.style.display = "none";
+    if(progressFill) progressFill.style.width = "0%";
+
+    return;
+  }
+
+  const remainder = total % 200;
+
+// ✅ MAX DISCOUNT LIMIT (delivery can't go below ₹1)
+const maxSavingReached = pricedDistanceKm && finalDeliveryCharge(pricedDistanceKm, total).charge <= 1;
+
+let message = "";
+
+if(maxSavingReached){
+  const saved = actualDeliverySaving(pricedDistanceKm, total);
+message = `🎉 You saved ₹${saved}\n🔥 Maximum savings applied`;
+}
+else if(remainder === 0){
+  const saved = pricedDistanceKm
+  ? actualDeliverySaving(pricedDistanceKm, total)
+  : Math.floor(total / 200) * 20;
+
+message = `🎉 You saved ₹${saved}`;
+}
+else{
+  const remaining = 200 - remainder;
+  const nextSave = Math.floor(total / 200) * 20 + 20;
+  message = `Add ₹${remaining} more → save ₹${nextSave}`;
+}
+
+  if(savingHintMenu){
+    savingHintMenu.innerText = message;
+    savingHintMenu.style.display = "block";
+  }
+
+  if(savingHintSummary){
+    savingHintSummary.innerText = message;
+    savingHintSummary.style.display = "block";
+  }
+
+  const savingHintAddress = document.getElementById("savingHintAddress");
+  if(savingHintAddress){
+    savingHintAddress.innerText = message;
+    savingHintAddress.style.display = "block";
+  }
+
+  const progressWrap = document.getElementById("progressBarWrap");
+  const progressFill = document.getElementById("progressBarFill");
+
+if(progressWrap && progressFill){
+  progressWrap.style.display = "block";
+
+  let progress;
+
+  if(maxSavingReached){
+    progress = 100;
+  } else {
+    progress = remainder === 0 ? 100 : (remainder / 200) * 100;
+  }
+
+  progressFill.style.width = progress + "%";
+}
+}
+
+
+/* ================= ADDRESS ================= */
+
+function goToAddress(){
+  let t = 0;
+  for(const i in cart) t += cart[i] * price(i);
+
+  if(t < 200){
+    alert("Minimum order ₹200. Add more items to continue.");
+    return;
+  }
+
+  nav("page-address");
+}
+
+function captureLocation(){
+
+  // 1️⃣ REUSE SAVED LOCATION
+  const savedLat = localStorage.getItem("fx_lat");
+  const savedLng = localStorage.getItem("fx_lng");
+
+  if(savedLat && savedLng){
+    lat = Number(savedLat);
+    lng = Number(savedLng);
+    mapLink = `https://maps.google.com/?q=${lat},${lng}`;
+
+    recalculateDistance();
+
+    locStatus.innerText =
+      `Location already captured ✓ Distance: ${pricedDistanceKm} km`;
+
+    // ✅ IMPORTANT FIX
+    renderSummary();
+
+    return;
+  }
+
+  // 2️⃣ GET GPS LOCATION
+  navigator.geolocation.getCurrentPosition(
+
+    p => {
+
+      // 3️⃣ ACCURACY CHECK
+      if(p.coords.accuracy > 100){
+        alert("Location not accurate. Please turn ON GPS and disable VPN.");
+        return;
+      }
+
+      lat = p.coords.latitude;
+      lng = p.coords.longitude;
+      mapLink = `https://maps.google.com/?q=${lat},${lng}`;
+
+      const rest = restaurants.find(r => String(r.id) === String(currentRestaurant));
+
+      if(rest && rest.lat && rest.lng){
+
+        const rawDist = haversineKm(rest.lat, rest.lng, lat, lng);
+        const dist = +(rawDist * 1.5).toFixed(2);
+        const pricedDist = normalizeDistanceForPricing(dist);
+
+        // 4️⃣ DISTANCE VALIDATION
+        if(pricedDist > 20){
+          alert("Location seems incorrect. Please try again.");
+          return;
+        }
+
+        pricedDistanceKm = pricedDist;
+
+        // 5️⃣ SAVE LOCATION
+        localStorage.setItem("fx_lat", lat);
+        localStorage.setItem("fx_lng", lng);
+        
+        locStatus.innerText =
+          `Location captured ✓ Distance: ${pricedDistanceKm} km`;
+
+        // ✅ IMPORTANT FIX
+        renderSummary();
+
+      } else {
+
+        locStatus.innerText = "Location captured ✓";
+
+        // ✅ STILL UPDATE SUMMARY
+        renderSummary();
+      }
+    },
+
+    () => alert("Location required"),
+
+    {
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 0
+    }
+  );
+}
+
+  function saveMapLocation(){
+
+  if(!map) return;
+
+  const center = map.getCenter();
+
+  lat = center.lat;
+  lng = center.lng;
+
+  mapLink = `https://maps.google.com/?q=${lat},${lng}`;
+
+  // SAVE
+  localStorage.setItem("fx_lat", lat);
+  localStorage.setItem("fx_lng", lng);
+
+  recalculateDistance();
+
+  // UPDATE STATUS
+  locStatus.innerText =
+    `Location selected ✓ Distance: ${pricedDistanceKm} km`;
+
+  // GO BACK
+  goBack();
+
+  // IMPORTANT → update summary
+  renderSummary();
+}
+  
+/* ================= PLACE ORDER ================= */
+function placeOrder(){
+
+  /* -------- CALCULATE TOTAL -------- */
+  let itemTotal = 0;
+
+  for(const i in cart){
+    itemTotal += cart[i] * price(i);
+  }
+
+  if(itemTotal < 200){
+    alert("Minimum order ₹200. Add more items to continue.");
+    return;
+  }    
+
+  /* -------- VALIDATIONS -------- */
+  const name = custName.value.trim();
+  if(!/^[A-Za-z ]{5,25}$/.test(name)){
+    alert("Please enter a valid full name");
+    return;
+  }
+
+  const phone = custPhone.value.trim();
+  if(!/^[0-9]{10}$/.test(phone)){
+    alert("Please enter a valid 10-digit mobile number");
+    return;
+  }
+
+  const address = custAddress.value.trim();
+  if(address.length < 15){
+    alert("Please enter a complete delivery address");
+    return;
+  }
+
+  if(!mapLink){
+    alert("Delivery location is required");
+    return;
+  }
+
+const del = finalDeliveryCharge(pricedDistanceKm, itemTotal);
+
+if(del.blocked){
+  alert("Service not available beyond 15 km");
+  return;
+}
+
+const deliveryCharge = del.charge;
+const grandTotal = itemTotal + deliveryCharge + platformFee;
+
+  /* ================= CUSTOMER MESSAGE ================= */
+const rest = restaurants.find(r => String(r.id) === String(currentRestaurant));
+const restName = rest ? rest.name : "Unknown Restaurant";
+
+let customerMsg =
+`🍽️ ORDER — 20nagar Food Xpress
+
+Order ID: ${orderId}
+
+Restaurant: ${restName}
+
+Items:
+`;
+
+  for(const i in cart){
+    customerMsg += `• ${i} × ${cart[i]} — ₹${cart[i] * price(i)}\n`;
+  }
+
+  customerMsg +=
+`
+---------------------
+Item Total: ₹${itemTotal}
+Delivery Charge: ₹${deliveryCharge}
+Platform Fee: ₹${platformFee}
+Approx Distance: ${pricedDistanceKm} km
+---------------------
+Total Payable: ₹${grandTotal}
+---------------------
+
+Customer Details:
+Name: ${name}
+Phone: ${phone}
+
+Delivery Address:
+${address}
+
+📍 Location:
+${mapLink}
+
+⚠️ Please wait for order confirmation.
+Payment as instructed by 20nagar Food Xpress.
+`;
+localStorage.setItem("last_order", JSON.stringify({
+  restaurant: currentRestaurant,
+  items: cart
+}));
+// ✅ SAVE MESSAGE FOR NEXT STEP
+window.pendingWhatsAppMsg = customerMsg;
+
+// ✅ SHOW CONFIRM PAGE
+document.getElementById("confirmOrderId").innerText = orderId;
+nav("page-confirm");
+
+// ✅ AUTO REDIRECT (2 sec)
+setTimeout(() => {
+  goToWhatsAppNow();
+}, 2000);
+  
+  // ✅ clear Order ID so next order gets a new one
+localStorage.removeItem("fx_order_id");
+orderId = "";
+  localStorage.removeItem("fx_lat");
+localStorage.removeItem("fx_lng");
+
+}
+
+  
+function goToWhatsAppNow(){
+
+  if(!window.pendingWhatsAppMsg) return;
+
+  window.location.href =
+    "https://wa.me/919484818194?text=" +
+    encodeURIComponent(window.pendingWhatsAppMsg);
+
+  // cleanup
+  window.pendingWhatsAppMsg = null;
+}
+
+</script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("service-worker.js");
+  });
+}
+  
+</script>
+
+<!-- 💬 WHATSAPP FLOAT BUTTON -->
+<a href="https://wa.me/919484818194" style="
+position:fixed;
+top:80px;
+right:12px;
+background:#25D366;
+color:#fff;
+padding:12px 14px;
+border-radius:30px;
+font-size:14px;
+font-weight:700;
+text-decoration:none;
+z-index:999;
+box-shadow:0 4px 10px rgba(0,0,0,0.2);
+">
+💬 Chat
+</a>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</body>
+</html>
