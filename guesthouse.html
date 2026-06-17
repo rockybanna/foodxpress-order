@@ -429,10 +429,7 @@ line-height:1.4;
   white-space:nowrap;
   border-bottom:1px solid #eee;
 "></div>
-  
-
-<div id="progressBarWrap" style="display:none;"></div>
-    
+      
   <!-- MAIN CONTENT -->
   <div class="content menu-content">
     <div id="menuItems"></div>
@@ -671,11 +668,12 @@ let lat="",lng="",mapLink="";
 let pricedDistanceKm = 0;
 let orderId = "";
 let platformFee = 5;
-
+  
 /* ================= DOM READY (PWA SAFE) ================= */
-let restaurantList, menuItems, catList, summaryItems,
-    cartBar, cartInfo, menuTitle, menuLogo,
-    itemTotal, deliveryCharge, platformFeeEl, grandTotal,
+
+  let restaurantList, menuItems, summaryItems,
+  cartBar, cartInfo, menuTitle,
+itemTotal, deliveryCharge, platformFeeEl, grandTotal,
     custName, custPhone, custAddress,
     savingHintMenu, savingHintSummary;
 
@@ -1375,12 +1373,6 @@ function updateSavingHint(){
     const savingHintAddress = document.getElementById("savingHintAddress");
     if(savingHintAddress) savingHintAddress.style.display = "none";
 
-    const progressWrap = document.getElementById("progressBarWrap");
-    const progressFill = document.getElementById("progressBarFill");
-
-    if(progressWrap) progressWrap.style.display = "none";
-    if(progressFill) progressFill.style.width = "0%";
-
     return;
   }
 
@@ -1423,23 +1415,6 @@ else{
     savingHintAddress.innerText = message;
     savingHintAddress.style.display = "block";
   }
-
-  const progressWrap = document.getElementById("progressBarWrap");
-  const progressFill = document.getElementById("progressBarFill");
-
-if(progressWrap && progressFill){
-  progressWrap.style.display = "block";
-
-  let progress;
-
-  if(maxSavingReached){
-    progress = 100;
-  } else {
-    progress = remainder === 0 ? 100 : (remainder / 200) * 100;
-  }
-
-  progressFill.style.width = progress + "%";
-}
 }
 
 
