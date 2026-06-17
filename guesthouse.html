@@ -7,8 +7,6 @@
 
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="e53935">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-
 
 <style>
   :root{
@@ -623,18 +621,9 @@ line-height:1.4;
     <label>Phone</label>
     <input id="custPhone">
 
-    <label>Address</label>
-    <textarea id="custAddress"></textarea>
-
-    <button class="primary" style="margin-top:10px;" onclick="captureLocation()">
-      Use my current location
-    </button>
-    <button class="primary" style="margin-top:10px;background:#2f2f2f;" onclick="openMapPage()">
-  Pick location on map
-</button>
-
-    <p id="locStatus" class="small"></p>
-
+<label>Room Number</label>
+<input id="custAddress" placeholder="Example: Room 203">
+    
     <button class="primary" style="margin-top:12px;" onclick="placeOrder()">
       Place Order
     </button>
@@ -642,86 +631,6 @@ line-height:1.4;
   </div>
 </div>
 
-    <!-- PAGE 5: MAP PICKER -->
-<div id="page-map" class="page">
-
-  <div class="topbar" onclick="goBack()">← Back</div>
-
-  <div class="header">
-    <img src="company-logo.png">
-  </div>
-
-  <div class="content">
-
-    <h2 style="margin-top:6px;">Select Delivery Location</h2>
-
-    <div style="
-  margin-top:6px;
-  font-size:13px;
-  color:#666;
-  text-align:center;
-  font-weight:600;
-">
-  📍 Move the map to set your delivery location
-</div>
-    
-
-    <!-- MAP AREA -->
-<div style="position:relative;margin-top:10px;">
-  
-  <div id="map" style="
-    width:100%;
-    height:350px;
-    border-radius:12px;
-  "></div>
-
-  <!-- CENTER MARKER -->
-<div style="
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-100%);
-  font-size:42px;
-  pointer-events:none;
-  z-index:1000;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,.4));
-">
-  📍
-</div>
-  
-<div style="
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,10px);
-  font-size:12px;
-  font-weight:700;
-  background:#fff;
-  padding:3px 8px;
-  border-radius:10px;
-  box-shadow:0 2px 6px rgba(0,0,0,.2);
-  pointer-events:none;
-">
-  Deliver here
-</div>
-  
-    <!-- SAVE BUTTON -->
-  <p id="mapLive" style="
-  margin-top:10px;
-  font-size:13px;
-  text-align:center;
-  color:#444;
-  font-weight:600;
-">
-  Adjust map to select location
-</p>
-  
-    <button class="primary" style="margin-top:14px;" onclick="saveMapLocation()">
-      Confirm this location
-    </button>
-
-  </div>
-</div>
 
     <!-- PAGE 6: ORDER CONFIRMATION -->
 <div id="page-confirm" class="page">
@@ -767,7 +676,7 @@ let platformFee = 5;
 let restaurantList, menuItems, catList, summaryItems,
     cartBar, cartInfo, menuTitle, menuLogo,
     itemTotal, deliveryCharge, platformFeeEl, grandTotal,
-    custName, custPhone, custAddress, locStatus,
+    custName, custPhone, custAddress,
     savingHintMenu, savingHintSummary;
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -787,7 +696,6 @@ grandTotal = document.getElementById("grandTotal");
   custName = document.getElementById("custName");
   custPhone = document.getElementById("custPhone");
   custAddress = document.getElementById("custAddress");
-  locStatus = document.getElementById("locStatus");
 savingHintMenu = document.getElementById("savingHintMenu");
 savingHintSummary = document.getElementById("savingHintSummary");
 
@@ -894,61 +802,6 @@ function haversineKm(lat1, lon1, lat2, lon2) {
 
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return +(R * c).toFixed(2);
-}
-
-  let map, marker;
-
-function initMap(){
-
-  if(map){
-    map.remove();
-  }
-
-  const defaultLat = 23.6980;
-  const defaultLng = 72.5525;
-
-  map = L.map('map').setView([defaultLat, defaultLng], 14);
-
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap'
-  }).addTo(map);
-
-  // ✅ marker
-  marker = null;
-
-map.on("moveend", function(){
-
-  const center = map.getCenter();
-
-  if(marker){
-    marker.setLatLng(center);
-  }
-
-  const live = document.getElementById("mapLive");
-
-  if(live){
-    live.innerText =
-      `Selected: ${center.lat.toFixed(5)}, ${center.lng.toFixed(5)}`;
-  }
-});
-
-
-// 🔥 FORCE FIRST UPDATE
-setTimeout(() => {
-
-  if(!map) return;
-
-  const center = map.getCenter();
-
-  const live = document.getElementById("mapLive");
-
-  if(live){
-    live.innerText =
-      `Selected: ${center.lat.toFixed(5)}, ${center.lng.toFixed(5)}`;
-  }
-
-}, 300);
-
 }
   
   /* ================= DISTANCE NORMALIZATION ================= */
@@ -1091,16 +944,7 @@ function nav(p){
     history.back();
   }
 };
-  
-function openMapPage(){
-  nav("page-map");
-
-  // ⏳ wait for page to render
-  setTimeout(() => {
-    initMap();
-  }, 200);
-}
-  
+    
 function goBack(){
   history.back();  // 🔥 trigger browser back instead
 }
@@ -1108,9 +952,6 @@ function goBack(){
 function backToRestaurants(){
   cart = {};
   updateBar();
-
-  localStorage.removeItem("fx_lat");
-  localStorage.removeItem("fx_lng");
 
   lat = "";
   lng = "";
@@ -1621,115 +1462,6 @@ function goToAddress(){
   nav("page-address");
 }
 
-function captureLocation(){
-
-  // 1️⃣ REUSE SAVED LOCATION
-  const savedLat = localStorage.getItem("fx_lat");
-  const savedLng = localStorage.getItem("fx_lng");
-
-  if(savedLat && savedLng){
-    lat = Number(savedLat);
-    lng = Number(savedLng);
-    mapLink = `https://maps.google.com/?q=${lat},${lng}`;
-
-    recalculateDistance();
-
-    locStatus.innerText =
-      `Location already captured ✓ Distance: ${pricedDistanceKm} km`;
-
-    // ✅ IMPORTANT FIX
-    renderSummary();
-
-    return;
-  }
-
-  // 2️⃣ GET GPS LOCATION
-  navigator.geolocation.getCurrentPosition(
-
-    p => {
-
-      // 3️⃣ ACCURACY CHECK
-      if(p.coords.accuracy > 100){
-        alert("Location not accurate. Please turn ON GPS and disable VPN.");
-        return;
-      }
-
-      lat = p.coords.latitude;
-      lng = p.coords.longitude;
-      mapLink = `https://maps.google.com/?q=${lat},${lng}`;
-
-      const rest = restaurants.find(r => String(r.id) === String(currentRestaurant));
-
-      if(rest && rest.lat && rest.lng){
-
-        const rawDist = haversineKm(rest.lat, rest.lng, lat, lng);
-        const dist = +(rawDist * 1.5).toFixed(2);
-        const pricedDist = normalizeDistanceForPricing(dist);
-
-        // 4️⃣ DISTANCE VALIDATION
-        if(pricedDist > 20){
-          alert("Location seems incorrect. Please try again.");
-          return;
-        }
-
-        pricedDistanceKm = pricedDist;
-
-        // 5️⃣ SAVE LOCATION
-        localStorage.setItem("fx_lat", lat);
-        localStorage.setItem("fx_lng", lng);
-        
-        locStatus.innerText =
-          `Location captured ✓ Distance: ${pricedDistanceKm} km`;
-
-        // ✅ IMPORTANT FIX
-        renderSummary();
-
-      } else {
-
-        locStatus.innerText = "Location captured ✓";
-
-        // ✅ STILL UPDATE SUMMARY
-        renderSummary();
-      }
-    },
-
-    () => alert("Location required"),
-
-    {
-      enableHighAccuracy: true,
-      timeout: 15000,
-      maximumAge: 0
-    }
-  );
-}
-
-  function saveMapLocation(){
-
-  if(!map) return;
-
-  const center = map.getCenter();
-
-  lat = center.lat;
-  lng = center.lng;
-
-  mapLink = `https://maps.google.com/?q=${lat},${lng}`;
-
-  // SAVE
-  localStorage.setItem("fx_lat", lat);
-  localStorage.setItem("fx_lng", lng);
-
-  recalculateDistance();
-
-  // UPDATE STATUS
-  locStatus.innerText =
-    `Location selected ✓ Distance: ${pricedDistanceKm} km`;
-
-  // GO BACK
-  goBack();
-
-  // IMPORTANT → update summary
-  renderSummary();
-}
   
 /* ================= PLACE ORDER ================= */
 function placeOrder(){
@@ -1759,17 +1491,17 @@ function placeOrder(){
     return;
   }
 
-  const address = custAddress.value.trim();
-  if(address.length < 15){
-    alert("Please enter a complete delivery address");
-    return;
-  }
+const roomNumber = custAddress.value.trim();
 
-  if(!mapLink){
-    alert("Delivery location is required");
-    return;
-  }
+if(roomNumber.length < 1){
+  alert("Please enter room number");
+  return;
+}
 
+const address =
+  (selectedGuestHouse ? selectedGuestHouse.GuestHouseName : "Guest House")
+  + "\nRoom: " + roomNumber;
+  
 const del = finalDeliveryCharge(pricedDistanceKm, itemTotal);
 
 if(del.blocked){
@@ -1841,8 +1573,6 @@ setTimeout(() => {
   // ✅ clear Order ID so next order gets a new one
 localStorage.removeItem("fx_order_id");
 orderId = "";
-  localStorage.removeItem("fx_lat");
-localStorage.removeItem("fx_lng");
 
 }
 
@@ -1888,6 +1618,5 @@ box-shadow:0 4px 10px rgba(0,0,0,0.2);
 💬 Chat
 </a>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </body>
 </html>
