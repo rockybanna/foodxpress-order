@@ -1612,6 +1612,11 @@ function goToAddress(){
     return;
   }
 
+  if(selectedGuestHouse){
+  mapLink =
+    `https://maps.google.com/?q=${selectedGuestHouse.Latitude},${selectedGuestHouse.Longitude}`;
+}
+
   nav("page-address");
 }
 
