@@ -825,7 +825,17 @@ selectedGuestHouse =
 
 console.log("GuestHouse ID:", guestHouseId);
 console.log("Selected GuestHouse:", selectedGuestHouse);
+if(selectedGuestHouse){
 
+  lat = Number(selectedGuestHouse.Latitude);
+  lng = Number(selectedGuestHouse.Longitude);
+
+  mapLink =
+    `https://maps.google.com/?q=${lat},${lng}`;
+
+  console.log("Guest House Location Loaded", lat, lng);
+}
+      
       renderRestaurants();
     })
     .catch(() => alert("Unable to connect"));
