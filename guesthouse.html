@@ -411,8 +411,6 @@ line-height:1.4;
   </div>
 
   <div class="sticky-stack">
-  <!-- SAVING HINT -->
-<div id="savingHintMenu" style="display:none;"></div>
     
   <div class="search-wrap">
   <input
@@ -469,9 +467,6 @@ line-height:1.4;
 
     <div style="width:60px;"></div>
   </div>
-
-  <!-- SAVING BAR -->
-<div id="savingHintSummary" style="display:none;"></div>
   
   <!-- 🔥 RESTAURANT STICKY -->
   <div id="summaryRestName" style="
@@ -505,9 +500,6 @@ line-height:1.4;
     flex-direction:column;
     gap:10px;
     "></div>
-
-    <!-- SAVING BOX -->
-<div id="savingBox" style="display:none;"></div>
     
     <!-- BILL -->
     <div class="bill" style="
@@ -591,22 +583,6 @@ line-height:1.4;
   <div class="header">
     <img src="company-logo.png">
   </div>
-
-  <!-- 🔥 SAVING HINT (CONSISTENCY) -->
-  <div id="savingHintAddress" style="
-  position:sticky;
-  top:75px;
-  z-index:1000;
-  background:#e3f2fd;
-  color:#0d47a1;
-  padding:10px;
-  font-size:13px;
-  font-weight:700;
-  text-align:center;
-  display:none;
-  box-shadow:0 2px 6px rgba(0,0,0,0.1);
-  margin-bottom:6px;
-  "></div>
 
   <div class="content">
 
@@ -850,46 +826,21 @@ function baseDeliveryFromDistance(km){
 
   pricedDistanceKm = pricedDist;
 }
-  
-/* ================= DELIVERY DISCOUNT ================= */
-function deliveryDiscount(itemTotal){
-
-  const discount =
-    Math.floor(itemTotal / 200) * 20;
-
-  return Math.min(discount, 60);
-}
-  
+    
 /* ================= FINAL DELIVERY ================= */
-function finalDeliveryCharge(pricedKm, itemTotal){
+function finalDeliveryCharge(pricedKm){
+
   const base = baseDeliveryFromDistance(pricedKm);
 
   if(base.blocked){
-    return { blocked: true, charge: 0 };
+    return { blocked:true, charge:0 };
   }
-
-  const discount = deliveryDiscount(itemTotal);
-  const finalCharge = Math.max(base.charge - discount, 1);
 
   return {
-    blocked: false,
-    charge: Math.round(finalCharge)
+    blocked:false,
+    charge:Math.round(base.charge)
   };
 }
-  
-  function actualDeliverySaving(pricedKm, itemTotal){
-
-  const base = baseDeliveryFromDistance(pricedKm);
-
-  if(base.blocked){
-    return 0;
-  }
-
-  const final = finalDeliveryCharge(pricedKm, itemTotal);
-
-  return Math.max(base.charge - final.charge, 0);
-}
-
   
 /* ================= TIME ================= */
 function toMin(t){const[a,b]=t.split(":").map(Number);return a*60+b}
@@ -1130,7 +1081,6 @@ categoryBar.innerHTML += `
   });
 
   updateBar();
-  updateSavingHint();
 }
 
 function scrollToCat(catId){
@@ -1195,7 +1145,6 @@ function upd(itemName, priceIgnored, delta){
   if (stack.at(-1) === "page-summary") renderSummary();
 
   updateBar();
-  updateSavingHint();
 }
 
 function price(itemName){
@@ -1218,14 +1167,10 @@ function updateBar(){
     total += cart[i] * price(i);
   }
 
-  const saved = pricedDistanceKm
-  ? actualDeliverySaving(pricedDistanceKm, total)
-  : Math.floor(total / 200) * 20;
-
   if (itemCount > 0 && stack.at(-1) === "page-menu"){
     cartBar.style.display = "flex";
     cartInfo.innerText =
-      `${itemCount} items | ₹${total} • Saved ₹${saved}`;
+      `${itemCount} items | ₹${total}`;
   } else {
     cartBar.style.display = "none";
   }
@@ -1312,8 +1257,6 @@ if(pricedDistanceKm){
   // ✅ ALWAYS SHOW PLATFORM FEE
   platformFeeEl.innerText = `₹${platformFee}`;
 
-  updateSavingHint();
-
   if(!pricedDistanceKm){
     deliveryCharge.innerHTML =
       `—<br><small>Delivery charge will be calculated after location</small>`;
@@ -1354,69 +1297,6 @@ if(base.charge > del.charge){
   grandTotal.innerText =
     `₹${total + del.charge + platformFee}`;
 }
-
-
-/* ================= SAVING HINT SYSTEM ================= */
-
-function updateSavingHint(){
-
-  let total = 0;
-
-  for (const i in cart){
-    total += cart[i] * price(i);
-  }
-
-  if(total === 0){
-    if(savingHintMenu) savingHintMenu.style.display = "none";
-    if(savingHintSummary) savingHintSummary.style.display = "none";
-
-    const savingHintAddress = document.getElementById("savingHintAddress");
-    if(savingHintAddress) savingHintAddress.style.display = "none";
-
-    return;
-  }
-
-  const remainder = total % 200;
-
-// ✅ MAX DISCOUNT LIMIT (delivery can't go below ₹1)
-const maxSavingReached = pricedDistanceKm && finalDeliveryCharge(pricedDistanceKm, total).charge <= 1;
-
-let message = "";
-
-if(maxSavingReached){
-  const saved = actualDeliverySaving(pricedDistanceKm, total);
-message = `🎉 You saved ₹${saved}\n🔥 Maximum savings applied`;
-}
-else if(remainder === 0){
-  const saved = pricedDistanceKm
-  ? actualDeliverySaving(pricedDistanceKm, total)
-  : Math.floor(total / 200) * 20;
-
-message = `🎉 You saved ₹${saved}`;
-}
-else{
-  const remaining = 200 - remainder;
-  const nextSave = Math.floor(total / 200) * 20 + 20;
-  message = `Add ₹${remaining} more → save ₹${nextSave}`;
-}
-
-  if(savingHintMenu){
-    savingHintMenu.innerText = message;
-    savingHintMenu.style.display = "block";
-  }
-
-  if(savingHintSummary){
-    savingHintSummary.innerText = message;
-    savingHintSummary.style.display = "block";
-  }
-
-  const savingHintAddress = document.getElementById("savingHintAddress");
-  if(savingHintAddress){
-    savingHintAddress.innerText = message;
-    savingHintAddress.style.display = "block";
-  }
-}
-
 
 /* ================= ADDRESS ================= */
 
