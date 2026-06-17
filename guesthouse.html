@@ -1209,8 +1209,14 @@ function openMenu(id){
 
   cart = {};
   currentRestaurant = id;
-  recalculateDistance();
 
+  if(selectedGuestHouse){
+    lat = Number(selectedGuestHouse.Latitude);
+    lng = Number(selectedGuestHouse.Longitude);
+  }
+
+  recalculateDistance();
+  
   const rest = restaurants.find(r => String(r.id) === String(id));
   if(!rest) return;
 
