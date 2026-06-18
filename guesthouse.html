@@ -541,7 +541,7 @@ line-height:1.4;
     color:#777;
     text-align:center;
     ">
-      Delivery charges depend on distance. Higher order value may reduce delivery cost.
+      Delivery charges depend on distance from the restaurant.
     </div>
 
   </div>
@@ -647,12 +647,11 @@ let platformFee = 5;
   
 /* ================= DOM READY (PWA SAFE) ================= */
 
-  let restaurantList, menuItems, summaryItems,
-  cartBar, cartInfo, menuTitle,
+let restaurantList, menuItems, summaryItems,
+cartBar, cartInfo, menuTitle,
 itemTotal, deliveryCharge, platformFeeEl, grandTotal,
-    custName, custPhone, custAddress,
-    savingHintMenu, savingHintSummary;
-
+custName, custPhone, custAddress;
+  
 document.addEventListener("DOMContentLoaded", () => {
 
 
@@ -670,9 +669,6 @@ grandTotal = document.getElementById("grandTotal");
   custName = document.getElementById("custName");
   custPhone = document.getElementById("custPhone");
   custAddress = document.getElementById("custAddress");
-savingHintMenu = document.getElementById("savingHintMenu");
-savingHintSummary = document.getElementById("savingHintSummary");
-
 
   /* ---------- FETCH DATA AFTER DOM READY ---------- */
   fetch("https://script.google.com/macros/s/AKfycbw66W91wIe-cAXwIZPgfEGJ1gy4TQ_MQ5WANbm3jQ9g4t_OmKNgqD7K8-pq7njoteWwEg/exec")
@@ -1226,34 +1222,6 @@ if(restEl){
 
   itemTotal.innerText = `₹${total}`;
 
-  const savingBox = document.getElementById("savingBox");
-
-if(pricedDistanceKm){
-
-  const saved = actualDeliverySaving(pricedDistanceKm, total);
-
-  if(saved > 0){
-    savingBox.style.display = "block";
-
-    const isMax = finalDeliveryCharge(pricedDistanceKm, total).charge <= 1;
-
-    if(isMax){
-      savingBox.innerText =
-  `🎉 You saved ₹${saved} on delivery\n🔥 Maximum savings applied\n🎉 You unlocked ₹1 delivery`;
-    } else {
-      savingBox.innerText =
-        `🎉 You saved ₹${saved} on delivery`;
-    }
-
-  } else {
-    savingBox.style.display = "none";
-  }
-
-} else {
-  savingBox.style.display = "none";
-}
-  
-
   // ✅ ALWAYS SHOW PLATFORM FEE
   platformFeeEl.innerText = `₹${platformFee}`;
 
@@ -1265,34 +1233,11 @@ if(pricedDistanceKm){
     return;
   }
 
-const del = finalDeliveryCharge(pricedDistanceKm, total);
-const base = baseDeliveryFromDistance(pricedDistanceKm);
+const del = finalDeliveryCharge(pricedDistanceKm);
 
-if(del.blocked){
-  alert("Service not available beyond 15 km");
-  backToRestaurants();
-  return;
-}
-
-// ✅ SHOW STRIKE ONLY IF DISCOUNT EXISTS
-if(base.charge > del.charge){
-
-  deliveryCharge.innerHTML =
-    `<span style="color:#888;text-decoration:line-through;">
-      ₹${base.charge}
-    </span>
-    <span style="margin-left:6px;font-weight:800;">
-      ₹${del.charge}
-    </span>
-    <br>
-    <small>Distance: ${pricedDistanceKm} km</small>`;
-
-} else {
-
-  deliveryCharge.innerHTML =
-    `₹${del.charge}<br>
-     <small>Distance: ${pricedDistanceKm} km</small>`;
-}
+deliveryCharge.innerHTML =
+`₹${del.charge}<br>
+<small>Distance: ${pricedDistanceKm} km</small>`;
   
   grandTotal.innerText =
     `₹${total + del.charge + platformFee}`;
@@ -1357,8 +1302,8 @@ const address =
   (selectedGuestHouse ? selectedGuestHouse.GuestHouseName : "Guest House")
   + "\nRoom: " + roomNumber;
   
-const del = finalDeliveryCharge(pricedDistanceKm, itemTotal);
-
+const del = finalDeliveryCharge(pricedDistanceKm);
+  
 if(del.blocked){
   alert("Service not available beyond 15 km");
   return;
