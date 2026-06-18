@@ -442,193 +442,56 @@ line-height:1.4;
 </div> <!-- sticky-stack -->
 </div> <!-- page-menu -->
     
-<!-- PAGE 3: ORDER SUMMARY -->
-<div id="page-summary" class="page" style="background:#f6f6f6;">
-
-  <!-- HEADER -->
-  <div style="
-  position:sticky;
-  top:0;
-  z-index:1002;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:12px;
-  background:#e53935;
-  color:#fff;
-  font-weight:800;
-  ">
-
-    <div onclick="goBack()" style="font-size:14px;">← Back</div>
-
-    <div style="flex:1;text-align:center;">
-      20nagar Food Xpress
-    </div>
-
-    <div style="width:60px;"></div>
-  </div>
-  
-  <!-- 🔥 RESTAURANT STICKY -->
-  <div id="summaryRestName" style="
-  position:sticky;
-  top:96px;
-  z-index:1000;
-  background:#fff;
-  text-align:center;
-  font-size:14px;
-  font-weight:800;
-  padding:8px;
-  color:#333;
-  border-bottom:1px solid #eee;
-  box-shadow:0 2px 6px rgba(0,0,0,0.04);
-  ">
-  </div>
-
-  <!-- CONTENT -->
-  <div class="content" style="padding:12px; padding-bottom:90px;">
-
-    <h2 style="
-    margin-top:4px;
-    text-align:center;
-    font-size:20px;
-    ">Order Summary</h2>
-
-    <!-- ITEMS -->
-    <div id="summaryItems" style="
-    margin-top:10px;
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-    "></div>
-    
-    <!-- BILL -->
-    <div class="bill" style="
-    background:#fff;
-    border-radius:12px;
-    padding:14px;
-    margin-top:12px;
-    box-shadow:0 2px 6px rgba(0,0,0,0.05);
-    font-size:14px;
-    ">
-
-      <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
-        <span>Item Total</span>
-        <span id="itemTotal">₹0</span>
-      </div>
-
-      <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
-        <span>Delivery</span>
-        <span id="deliveryCharge" style="color:#888;">Shown after address</span>
-      </div>
-
-      <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
-        <span>Platform Fee</span>
-        <span id="platformFee">₹0</span>
-      </div>
-
-      <hr style="border:none;border-top:1px solid #eee;margin:10px 0;">
-
-      <div style="display:flex;justify-content:space-between;font-weight:800;font-size:16px;">
-        <span>Total Payable</span>
-        <span id="grandTotal">₹0</span>
-      </div>
-    </div>
-
-    <!-- NOTE -->
-    <div class="note" style="
-    margin-top:10px;
-    font-size:12px;
-    color:#777;
-    text-align:center;
-    ">
-      Delivery charges depend on distance from the restaurant.
-    </div>
-
-  </div>
-
-  <!-- STICKY CTA -->
-  <div style="
-  position:fixed;
-  bottom:0;
-  left:0;
-  width:100%;
-  background:#fff;
-  padding:10px;
-  box-shadow:0 -2px 10px rgba(0,0,0,0.08);
-  z-index:1003;
-  ">
-
-    <button class="primary" onclick="goToAddress()" style="
-    width:100%;
-    padding:14px;
-    border:none;
-    border-radius:10px;
-    background:#e53935;
-    color:#fff;
-    font-size:16px;
-    font-weight:700;
-    ">
-      Continue → Address
-    </button>
-
-  </div>
-
-</div>
-    
 <!-- PAGE 4: ADDRESS -->
 <div id="page-address" class="page">
 
-  <div class="topbar" onclick="goBack()">← Back</div>
-
-  <div class="header">
-    <img src="company-logo.png">
-  </div>
-
-  <div class="content">
-
-    <h2 style="margin-top:6px;">Delivery Details</h2>
-
-    <label>Name</label>
-    <input id="custName">
-
-    <label>Phone</label>
-    <input id="custPhone">
-
-<label>Room Number</label>
-<input id="custAddress" placeholder="Example: Room 203">
-    
-    <button class="primary" style="margin-top:12px;" onclick="placeOrder()">
-      Place Order
-    </button>
-
-  </div>
+<div class="header">
+<img src="company-logo.png">
 </div>
 
+<div class="content">
 
-    <!-- PAGE 6: ORDER CONFIRMATION -->
-<div id="page-confirm" class="page">
+<h2 style="margin-top:6px;">Delivery Details</h2>
 
-  <div class="header">
-    <img src="company-logo.png">
-  </div>
+<label>Address</label>
+<input
+id="guestHouseName"
+readonly
+style="background:#f5f5f5;font-weight:700;"
+>
 
-  <div class="content" style="text-align:center; padding-top:40px;">
+<label>Room Number *</label>
+<input
+id="custAddress"
+placeholder="Example: Room 203"
+>
 
-    <h2>✅ Order Placed</h2>
+<label>Name *</label>
+<input id="custName">
 
-    <p style="margin-top:10px; font-weight:600;">
-      Order ID: <span id="confirmOrderId"></span>
-    </p>
+<label>Phone *</label>
+<input id="custPhone">
 
-    <p style="margin-top:10px; color:#666;">
-      Redirecting to WhatsApp...
-    </p>
+<div id="addressBill" style="
+background:#fff;
+padding:14px;
+margin-top:16px;
+border-radius:12px;
+border:1px solid #eee;
+line-height:1.9;
+">
+</div>
 
-    <button class="primary" style="margin-top:20px;" onclick="goToWhatsAppNow()">
-      Continue to WhatsApp
-    </button>
+<button
+class="primary"
+style="margin-top:16px;"
+onclick="placeOrder()"
+>
+Place Order
+</button>
 
-  </div>
+</div>
+
 </div>
     
 <script>
@@ -647,10 +510,14 @@ let platformFee = 5;
   
 /* ================= DOM READY (PWA SAFE) ================= */
 
-let restaurantList, menuItems, summaryItems,
-cartBar, cartInfo, menuTitle,
-itemTotal, deliveryCharge, platformFeeEl, grandTotal,
-custName, custPhone, custAddress;
+let restaurantList,
+menuItems,
+cartBar,
+cartInfo,
+menuTitle,
+custName,
+custPhone,
+custAddress;
   
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -658,14 +525,9 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ---------- DOM REFERENCES ---------- */
   restaurantList = document.getElementById("restaurantList");
   menuItems = document.getElementById("menuItems");
-  summaryItems = document.getElementById("summaryItems");
   cartBar = document.getElementById("cartBar");
   cartInfo = document.getElementById("cartInfo");
   menuTitle = document.getElementById("menuTitle");
-  itemTotal = document.getElementById("itemTotal");
-  deliveryCharge = document.getElementById("deliveryCharge");
-  platformFeeEl = document.getElementById("platformFee");  //
-grandTotal = document.getElementById("grandTotal");
   custName = document.getElementById("custName");
   custPhone = document.getElementById("custPhone");
   custAddress = document.getElementById("custAddress");
@@ -1138,8 +1000,7 @@ function upd(itemName, priceIgnored, delta){
   if (cart[itemName] <= 0) delete cart[itemName];
 
   if (stack.at(-1) === "page-menu") renderMenu();
-  if (stack.at(-1) === "page-summary") renderSummary();
-
+  // summary page removed
   updateBar();
 }
 
@@ -1182,86 +1043,68 @@ function updateBar(){
     el.style.display = text.includes(query) ? "flex" : "none";
   });
 }
-  
-function openSummary(){
-  renderSummary();
-  nav("page-summary");
-}
 
-function renderSummary(){
-  const rest = restaurants.find(r => String(r.id) === String(currentRestaurant));
-const restName = rest ? rest.name : "";
-
-const restEl = document.getElementById("summaryRestName");
-if(restEl){
-  restEl.innerText = restName;
+  function openSummary(){
+  goToAddress();
 }
   
-  recalculateDistance();
-  summaryItems.innerHTML = "";
-  let total = 0;
-
-  for (const i in cart){
-    const p = price(i);
-    total += cart[i] * p;
-
-    summaryItems.innerHTML += `
-      <div class="cart-item">
-        <div>
-          ${i}
-          <div class="small">₹${p}</div>
-        </div>
-        <div class="qty">
-          <button onclick="upd('${i}', ${p}, -1)">−</button>
-          <span>${cart[i]}</span>
-          <button onclick="upd('${i}', ${p}, 1)">+</button>
-        </div>
-      </div>
-    `;
-  }
-
-  itemTotal.innerText = `₹${total}`;
-
-  // ✅ ALWAYS SHOW PLATFORM FEE
-  platformFeeEl.innerText = `₹${platformFee}`;
-
-  if(!pricedDistanceKm){
-    deliveryCharge.innerHTML =
-      `—<br><small>Delivery charge will be calculated after location</small>`;
-
-    grandTotal.innerText = `₹${total + platformFee}`;
-    return;
-  }
-
-const del = finalDeliveryCharge(pricedDistanceKm);
-
-deliveryCharge.innerHTML =
-`₹${del.charge}<br>
-<small>Distance: ${pricedDistanceKm} km</small>`;
-  
-  grandTotal.innerText =
-    `₹${total + del.charge + platformFee}`;
-}
-
 /* ================= ADDRESS ================= */
 
 function goToAddress(){
-  let t = 0;
-  for(const i in cart) t += cart[i] * price(i);
 
-  if(t < 200){
-    alert("Minimum order ₹200. Add more items to continue.");
-    return;
-  }
+let itemTotalValue = 0;
 
-  if(selectedGuestHouse){
-  mapLink =
-    `https://maps.google.com/?q=${selectedGuestHouse.Latitude},${selectedGuestHouse.Longitude}`;
+for(const i in cart){
+itemTotalValue += cart[i] * price(i);
 }
 
-  nav("page-address");
+if(itemTotalValue < 200){
+alert("Minimum order ₹200. Add more items to continue.");
+return;
 }
 
+if(selectedGuestHouse){
+
+document.getElementById("guestHouseName").value =
+selectedGuestHouse.GuestHouseName;
+
+mapLink =
+`https://maps.google.com/?q=${selectedGuestHouse.Latitude},${selectedGuestHouse.Longitude}`;
+}
+
+const del = finalDeliveryCharge(pricedDistanceKm);
+
+document.getElementById("addressBill").innerHTML = `
+<div style="display:flex;justify-content:space-between;">
+<span>Item Total</span>
+<span>₹${itemTotalValue}</span>
+</div>
+
+<div style="display:flex;justify-content:space-between;">
+<span>Delivery</span>
+<span>₹${del.charge}</span>
+</div>
+
+<div style="display:flex;justify-content:space-between;">
+<span>Platform Fee</span>
+<span>₹${platformFee}</span>
+</div>
+
+<hr>
+
+<div style="
+display:flex;
+justify-content:space-between;
+font-size:18px;
+font-weight:800;
+">
+<span>Total Payable</span>
+<span>₹${itemTotalValue + del.charge + platformFee}</span>
+</div>
+`;
+
+nav("page-address");
+}
   
 /* ================= PLACE ORDER ================= */
 function placeOrder(){
@@ -1362,18 +1205,11 @@ localStorage.setItem("last_order", JSON.stringify({
 window.pendingWhatsAppMsg = customerMsg;
 
 // ✅ SHOW CONFIRM PAGE
-document.getElementById("confirmOrderId").innerText = orderId;
-nav("page-confirm");
-
-// ✅ AUTO REDIRECT (2 sec)
-setTimeout(() => {
-  goToWhatsAppNow();
-}, 2000);
-  
-  // ✅ clear Order ID so next order gets a new one
 localStorage.removeItem("fx_order_id");
 orderId = "";
 
+goToWhatsAppNow();
+  
 }
 
   
