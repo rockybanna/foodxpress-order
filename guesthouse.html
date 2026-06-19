@@ -1064,17 +1064,45 @@ function updateBar(){
   }
 }
 
-  function filterMenuItems(query){
+function filterMenuItems(query){
+
   query = query.toLowerCase().trim();
 
-  const allItems = document.querySelectorAll(".item");
+  const categories = document.querySelectorAll(".category");
 
-  allItems.forEach(el => {
-    const text = el.innerText.toLowerCase();
-    el.style.display = text.includes(query) ? "flex" : "none";
+  categories.forEach(category => {
+
+    let hasVisibleItem = false;
+
+    let next = category.nextElementSibling;
+
+    while(next && !next.classList.contains("category")){
+
+      if(next.classList.contains("item")){
+
+        const text = next.innerText.toLowerCase();
+
+        if(text.includes(query)){
+          next.style.display = "flex";
+          hasVisibleItem = true;
+        }else{
+          next.style.display = "none";
+        }
+
+      }
+
+      next = next.nextElementSibling;
+    }
+
+    category.style.display =
+      (query === "" || hasVisibleItem)
+      ? "block"
+      : "none";
+
   });
-}
 
+}
+  
   function openSummary(){
   goToAddress();
 }
