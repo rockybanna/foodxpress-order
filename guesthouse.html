@@ -410,34 +410,36 @@ line-height:1.4;
     <div id="menuTitle" class="menu-title"></div>
   </div>
 
-  <div class="sticky-stack">
-    
+<div class="sticky-stack">
+
   <div class="search-wrap">
-  <input
-    class="search"
-    placeholder="Search item..."
-    oninput="filterMenuItems(this.value)"
-  >
+    <input
+      class="search"
+      placeholder="Search item..."
+      oninput="filterMenuItems(this.value)"
+    >
+  </div>
+
+  <div id="categoryBar" style="
+    background:#fff;
+    padding:8px 6px;
+    overflow-x:auto;
+    white-space:nowrap;
+    border-bottom:1px solid #eee;
+  "></div>
+
 </div>
 
-    <div id="categoryBar" style="
-  background:#fff;
-  padding:8px 6px;
-  overflow-x:auto;
-  white-space:nowrap;
-  border-bottom:1px solid #eee;
-"></div>
-      
-  <!-- MAIN CONTENT -->
-  <div class="content menu-content">
-    <div id="menuItems"></div>
-  </div>
+<!-- MAIN CONTENT -->
+<div class="content menu-content">
+  <div id="menuItems"></div>
+</div>
 
-  <!-- CART BAR -->
-  <div id="cartBar" class="cart-bar" onclick="openSummary()">
-    <span id="cartInfo"></span>
-    <span>View Cart →</span>
-  </div>
+<!-- CART BAR -->
+<div id="cartBar" class="cart-bar" onclick="openSummary()">
+  <span id="cartInfo"></span>
+  <span>View Cart →</span>
+</div>
   
   </div> <!-- page-menu -->
     
