@@ -451,7 +451,24 @@ line-height:1.4;
 
 <div class="content">
 
-<h2 style="margin-top:6px;">Delivery Details</h2>
+  <div
+  onclick="goBack()"
+  style="
+  display:inline-block;
+  background:#e53935;
+  color:#fff;
+  padding:8px 14px;
+  border-radius:10px;
+  font-weight:700;
+  margin-bottom:10px;
+  cursor:pointer;
+">
+← Back
+</div>
+  
+<h2 id="addressRestaurantName" style="margin-top:6px;">
+Delivery Details
+</h2>
 
 <div id="orderSummary" style="
 background:#fff;
@@ -762,7 +779,14 @@ function nav(p){
 };
     
 function goBack(){
-  history.back();  // 🔥 trigger browser back instead
+
+  if(stack.length > 1){
+    stack.pop();
+    show(stack.at(-1));
+    return;
+  }
+
+  show("page-restaurants");
 }
   
 function backToRestaurants(){
@@ -1097,6 +1121,26 @@ mapLink =
 `https://maps.google.com/?q=${selectedGuestHouse.Latitude},${selectedGuestHouse.Longitude}`;
 }
 
+  const rest = restaurants.find(
+  r => String(r.id) === String(currentRestaurant)
+);
+
+document.getElementById("addressRestaurantName").innerHTML =
+`
+<div style="font-size:24px;font-weight:800;">
+Delivery Details
+</div>
+
+<div style="
+font-size:15px;
+color:#666;
+font-weight:700;
+margin-top:4px;
+">
+🍽️ ${rest ? rest.name : ""}
+</div>
+`;
+  
 const del = finalDeliveryCharge(pricedDistanceKm);
 
   let itemsHtml = `
