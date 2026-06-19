@@ -1223,7 +1223,9 @@ font-weight:800;
 </div>
 `;
 
-nav("page-address");
+if(stack.at(-1) !== "page-address"){
+  nav("page-address");
+}
 }
   
 /* ================= PLACE ORDER ================= */
