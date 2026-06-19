@@ -1056,6 +1056,22 @@ function updateBar(){
   function openSummary(){
   goToAddress();
 }
+
+  function changeCheckoutQty(item, delta){
+
+  cart[item] = (cart[item] || 0) + delta;
+
+  if(cart[item] <= 0){
+    delete cart[item];
+  }
+
+  if(Object.keys(cart).length === 0){
+backToRestaurants();
+    return;
+  }
+
+  goToAddress();
+}
   
 /* ================= ADDRESS ================= */
 
@@ -1098,16 +1114,41 @@ for(const item in cart){
   const qty = cart[item];
   const total = qty * price(item);
 
-  itemsHtml += `
+itemsHtml += `
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:10px;
+">
+
+<div>
+  <div>${item}</div>
+
   <div style="
   display:flex;
-  justify-content:space-between;
-  margin-bottom:8px;
+  align-items:center;
+  gap:8px;
+  margin-top:4px;
   ">
-    <span>${item} × ${qty}</span>
-    <span>₹${total}</span>
+
+    <button onclick="changeCheckoutQty('${item}',-1)">
+      −
+    </button>
+
+    <span>${qty}</span>
+
+    <button onclick="changeCheckoutQty('${item}',1)">
+      +
+    </button>
+
   </div>
-  `;
+</div>
+
+<div>₹${total}</div>
+
+</div>
+`;
 }
 
 document.getElementById("orderSummary").innerHTML = itemsHtml;
