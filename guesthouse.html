@@ -482,6 +482,15 @@ line-height:1.9;
 ">
 </div>
 
+<div id="orderSummary" style="
+background:#fff;
+padding:14px;
+margin-top:12px;
+border-radius:12px;
+border:1px solid #eee;
+">
+</div>
+
 <button
 class="primary"
 style="margin-top:16px;"
@@ -1073,6 +1082,35 @@ mapLink =
 }
 
 const del = finalDeliveryCharge(pricedDistanceKm);
+
+  let itemsHtml = `
+<div style="
+font-weight:800;
+font-size:16px;
+margin-bottom:10px;
+">
+Order Summary
+</div>
+`;
+
+for(const item in cart){
+
+  const qty = cart[item];
+  const total = qty * price(item);
+
+  itemsHtml += `
+  <div style="
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:8px;
+  ">
+    <span>${item} × ${qty}</span>
+    <span>₹${total}</span>
+  </div>
+  `;
+}
+
+document.getElementById("orderSummary").innerHTML = itemsHtml;
 
 document.getElementById("addressBill").innerHTML = `
 <div style="display:flex;justify-content:space-between;">
