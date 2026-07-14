@@ -358,7 +358,7 @@ input,textarea{
 
 <!-- PAGE 1: RESTAURANTS -->
 <div id="page-restaurants" class="page active">
-  <div class="header"><img src="company-logo.png"></div>
+  <div class="header"><img loading="eager" decoding="async" src="company-logo.png" alt="20nagar Food Xpress"></div>
  <div class="content">
 
 <!-- 🔥 OFFER BANNER -->
@@ -642,7 +642,7 @@ line-height:1.4;
   <div class="topbar" onclick="goBack()">← Back</div>
 
   <div class="header">
-    <img src="company-logo.png">
+    <img loading="eager" decoding="async" src="company-logo.png" alt="20nagar Food Xpress">
   </div>
 
   <!-- 🔥 SAVING HINT (CONSISTENCY) -->
@@ -696,7 +696,7 @@ line-height:1.4;
   <div class="topbar" onclick="goBack()">← Back</div>
 
   <div class="header">
-    <img src="company-logo.png">
+    <img loading="eager" decoding="async" src="company-logo.png" alt="20nagar Food Xpress">
   </div>
 
   <div class="content">
@@ -775,7 +775,7 @@ line-height:1.4;
 <div id="page-confirm" class="page">
 
   <div class="header">
-    <img src="company-logo.png">
+    <img loading="eager" decoding="async" src="company-logo.png" alt="20nagar Food Xpress">
   </div>
 
   <div class="content" style="text-align:center; padding-top:40px;">
@@ -816,7 +816,7 @@ let restaurantList, menuItems, catList, summaryItems,
     savingHintMenu, savingHintSummary;
 
 document.addEventListener("DOMContentLoaded", () => {
-
+const appStart = performance.now();
 
   /* ---------- DOM REFERENCES ---------- */
   restaurantList = document.getElementById("restaurantList");
@@ -838,9 +838,15 @@ savingHintSummary = document.getElementById("savingHintSummary");
 
 
   /* ---------- FETCH DATA AFTER DOM READY ---------- */
+  const fetchStart = performance.now();
   fetch("https://script.google.com/macros/s/AKfycbw66W91wIe-cAXwIZPgfEGJ1gy4TQ_MQ5WANbm3jQ9g4t_OmKNgqD7K8-pq7njoteWwEg/exec")
-    .then(r => r.json())
+    .then(r => {
+  console.log("Network:", (performance.now() - fetchStart).toFixed(0), "ms");
+  return r.json();
+})
     .then(d => {
+
+setTimeout(() => {
 
 restaurants = d.restaurants.map(r => ({
   id: r.RestaurantID,
@@ -861,6 +867,11 @@ restaurants = d.restaurants.map(r => ({
       items = d.items || [];
 
       renderRestaurants();
+  
+      console.log("Total startup:", (performance.now() - appStart).toFixed(0), "ms");
+
+}, 0);
+      
     })
     .catch(() => alert("Unable to connect"));
   orderId = getOrderId();
@@ -1206,7 +1217,7 @@ function renderRestaurants(){
     d.className = "restaurant " + (s.open ? "open" : "closed");
 
     d.innerHTML = `
-      <img src="${r.logo}" onerror="this.src='company-logo.png'">
+      <img loading="lazy" decoding="async" src="${r.logo}" onerror="this.src='company-logo.png'">
       <div class="rest-info">
         <div class="rest-name">${r.name}</div>
         <div class="rest-status ${s.open ? "open-text" : "closed-text"}">
@@ -1252,6 +1263,7 @@ window.onscroll = handleCategoryHighlight;
 
 function renderMenu(){
   menuItems.innerHTML = "";
+  let html = "";
   const categoryBar = document.getElementById("categoryBar");
 categoryBar.innerHTML = "";
 
@@ -1273,7 +1285,7 @@ categoryBar.innerHTML += `
   </span>
 `;
     
-    menuItems.innerHTML += `
+    html += `
       <div class="category" id="cat-${cat.CategoryID}">
         ${cat.CategoryName}
       </div>
@@ -1289,7 +1301,7 @@ categoryBar.innerHTML += `
 
         const q = cart[it.ItemName] || 0;
 
-        menuItems.innerHTML += `
+        html += `
           <div class="item">
             <div>
               <div class="item-name">${it.ItemName}</div>
@@ -1306,6 +1318,8 @@ categoryBar.innerHTML += `
       });
 
   });
+
+  menuItems.innerHTML = html;
 
   updateBar();
   updateSavingHint();
